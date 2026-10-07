@@ -1,0 +1,577 @@
+<!doctype html><meta charset="utf-8"><title>Spectre Tile Editor</title>
+<style>
+/* Layout: a working drawing on the left (the tile with its handles), a live nine-tile proof on the right, controls in a thin bar above. */
+:root {
+  --paper: #f6f4ef; --surface: #ffffff; --ink: #1d2430; --muted: #5f6877; --line: #c9cfd8; --tile: #8a919c;
+  --blue: #0072B2; --orange: #D55E00; --green: #009E73; --pink: #CC79A7; --handle: #1d2430; --handle-fill: #ffffff; --accent: #0072B2; --accent-soft: #e2edf6;
+  --font-ui: 'Source Sans 3', system-ui, -apple-system, 'Segoe UI', sans-serif; --font-mono: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --paper: #15181d; --surface: #1d2127; --ink: #e8ebf0; --muted: #9aa3b0; --line: #3a414b; --tile: #6b7380; --blue: #4aa3e0; --orange: #f0813a; --green: #2fc29a; --pink: #e39ac4; --handle: #e8ebf0; --handle-fill: #1d2127; --accent: #4aa3e0; --accent-soft: #23303d; color-scheme: dark; } }
+:root[data-theme="dark"] { --paper: #15181d; --surface: #1d2127; --ink: #e8ebf0; --muted: #9aa3b0; --line: #3a414b; --tile: #6b7380; --blue: #4aa3e0; --orange: #f0813a; --green: #2fc29a; --pink: #e39ac4; --handle: #e8ebf0; --handle-fill: #1d2127; --accent: #4aa3e0; --accent-soft: #23303d; color-scheme: dark; }
+html, body { height: 100%; }
+body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--font-ui); font-size: 15px; line-height: 1.4; }
+.wrap { padding-block: 12px; padding-inline: 16px; display: grid; gap: 12px; max-width: 1700px; margin: 0 auto; }
+header { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 18px; }
+h1 { font-size: 20px; margin: 0; font-weight: 600; letter-spacing: -0.01em; }
+header p { margin: 0; color: var(--muted); font-size: 14px; max-width: 70ch; }
+.bar { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; }
+.bar .grp { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.bar label { font-size: 13px; color: var(--muted); display: flex; align-items: center; gap: 6px; }
+button { font: inherit; font-size: 14px; padding: 5px 11px; border-radius: 6px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; }
+button:hover { border-color: var(--accent); }
+button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+button.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+button:disabled { opacity: .5; cursor: default; }
+input[type=range] { width: 110px; }
+.main { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 12px; align-items: start; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px; min-width: 0; user-select: none; -webkit-user-select: none; }
+textarea, .help { user-select: text; -webkit-user-select: text; }
+.panel h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin: 0 0 6px 4px; font-weight: 600; }
+svg { display: block; width: 100%; height: auto; max-width: 100%; touch-action: none; }
+#edit { cursor: default; }
+.tile { fill: none; stroke: var(--tile); stroke-width: 1.4; }
+.tile9 { fill: none; stroke: var(--tile); stroke-width: 1; stroke-opacity: .7; }
+.spoke { fill: none; stroke: var(--tile); stroke-width: 0.8; stroke-dasharray: 4 4; stroke-opacity: .6; }
+.rib-out { fill: none; stroke: var(--ink); stroke-linecap: butt; stroke-linejoin: round; }
+.rib-in { fill: none; stroke-linecap: butt; stroke-linejoin: round; }
+.c0 { stroke: var(--blue); } .c1 { stroke: var(--orange); }
+.hl { fill: none; stroke: var(--handle); stroke-width: 0.9; stroke-opacity: .55; }
+.anchor { fill: var(--handle-fill); stroke: var(--handle); stroke-width: 1.5; cursor: grab; }
+.anchor.fixed { cursor: default; }
+.anchor.x0 { fill: var(--green); }
+.handle { fill: var(--handle); stroke: var(--handle-fill); stroke-width: 1; cursor: grab; }
+.handle.locked { fill: var(--green); }
+.knob { fill: var(--surface); fill-opacity: .85; stroke: var(--green); stroke-width: 2.5; cursor: grab; pointer-events: all; }
+.knobglyph { fill: none; stroke: var(--green); stroke-width: 1.6; pointer-events: none; }
+.dragging { cursor: grabbing; }
+.lbl { font: 9px var(--font-mono); fill: var(--muted); pointer-events: none; }
+.warn-out { fill: none; stroke: var(--orange); stroke-width: 2.2; stroke-dasharray: 3 3; pointer-events: none; }
+.warn-x { fill: var(--pink); fill-opacity: .25; stroke: var(--pink); stroke-width: 2.2; pointer-events: none; }
+.checks { font-size: 13px; color: var(--muted); margin: 6px 4px 0; }
+.checks b { color: var(--ink); }
+.checks .bad { color: var(--pink); font-weight: 600; }
+.designs { display: flex; gap: 8px; overflow-x: auto; padding: 2px 2px 6px; scroll-snap-type: x proximity; }
+.dcard { flex: 0 0 auto; width: 112px; display: grid; gap: 2px; padding: 6px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--ink); cursor: pointer; text-align: left; font: inherit; scroll-snap-align: start; }
+.dcard:hover { border-color: var(--accent); }
+.dcard[aria-pressed="true"] { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-soft); }
+.dcard svg { width: 100%; height: auto; }
+.dcard .nm { font: 600 12px var(--font-mono); }
+.dcard .sb { font-size: 11px; color: var(--muted); line-height: 1.25; }
+.pill { justify-self: start; font-size: 10.5px; font-weight: 600; letter-spacing: .02em; padding: 1px 6px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); }
+.pill.proved { background: var(--green); border-color: var(--green); color: #fff; }
+.pill.edited { border-color: var(--accent); color: var(--accent); }
+.tags { display: flex; gap: 4px; flex-wrap: wrap; }
+.tb path { fill: none; stroke-linecap: round; }
+.tb .t { stroke: var(--tile); stroke-width: 3; }
+.tb .r0 { stroke: var(--blue); stroke-width: 7; } .tb .r1 { stroke: var(--orange); stroke-width: 7; }
+.tb .sp { stroke: var(--tile); stroke-width: 3; stroke-dasharray: 8 6; }
+.dhead { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 14px; }
+.dhead .nm { font: 600 15px var(--font-mono); }
+.dhead .what { font-size: 14px; color: var(--muted); }
+.banner { font-size: 13.5px; padding: 6px 10px; border-radius: 6px; border: 1px solid var(--line); }
+.banner.proved { border-color: var(--green); }
+.banner.proved b { color: var(--green); }
+.banner.unproved b { color: var(--orange); }
+.spoke.cross { stroke: var(--green); stroke-dasharray: none; stroke-width: 1.6; stroke-opacity: .8; }
+.spoke.wall { stroke: var(--ink); stroke-dasharray: 6 4; stroke-width: 1.6; stroke-opacity: .7; }
+.hitpath { fill: none; stroke: transparent; stroke-width: 14; cursor: copy; pointer-events: stroke; }
+.status { font-size: 13px; color: var(--muted); min-height: 1.2em; }
+.status b { color: var(--ink); font-weight: 600; }
+textarea { width: 100%; box-sizing: border-box; font: 12px/1.4 var(--font-mono); min-height: 110px; border: 1px solid var(--line); border-radius: 6px; background: var(--paper); color: var(--ink); padding: 8px; resize: vertical; }
+details { border-top: 1px solid var(--line); padding-top: 8px; }
+summary { cursor: pointer; color: var(--muted); font-size: 14px; }
+.help { font-size: 13px; color: var(--muted); display: grid; gap: 3px; margin: 6px 0 0; padding-left: 18px; }
+kbd { font: 11px var(--font-mono); border: 1px solid var(--line); border-radius: 4px; padding: 0 4px; }
+@media (max-width: 900px) { .main { grid-template-columns: 1fr; } }
+</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600&family=JetBrains+Mono:wght@400&display=swap">
+<div class="wrap">
+  <header>
+    <h1>Spectre Tile Editor</h1>
+    <p>17 one-tile designs that may make a single endless ribbon on the spectre tiling, in order of how far the two strands through the internal crossing travel (port to port, as the crow flies). Pick one, drag its anchors and handles; the rim ports stay fixed and the strands always cross at right angles. The nine-tile supertile follows every edit.</p>
+  </header>
+  <div class="panel" style="user-select:none">
+    <h2>Designs: one crossing spoke and one turn-back spoke, 9 grid points per tile · shortest crossing strands first</h2>
+    <div class="designs" id="designs" role="group" aria-label="Choose a design"></div>
+  </div>
+  <div class="dhead"><span class="nm" id="dName"></span><span class="what" id="dWhat"></span></div>
+  <div class="banner" id="dBanner"></div>
+  <div class="bar">
+    <div class="grp">
+      <button id="undo" title="Undo (Ctrl/Cmd+Z)">Undo</button>
+      <button id="redo" title="Redo (Ctrl/Cmd+Shift+Z)">Redo</button>
+      <button id="reset">Reset to automatic</button>
+    </div>
+    <div class="grp">
+      <button id="save" class="primary">Save design</button>
+      <button id="copy">Copy JSON</button>
+    </div>
+    <div class="grp">
+      <label><input type="checkbox" id="showHandles" checked> handles</label>
+      <label><input type="checkbox" id="showLabels"> port labels</label>
+      <label><input type="checkbox" id="showSpokes" checked> spokes</label>
+      <label>width <input type="range" id="width" min="4" max="24" step="1" value="10"></label>
+      <label title="Slides every edge crossing along its edge: even-numbered edges one way, odd-numbered edges the other, so neighbouring tiles always agree. Double-click to centre.">edge offset <input type="range" id="offset" min="-0.3" max="0.3" step="0.01" value="0"> <span id="offsetVal" style="font-family:var(--font-mono);min-width:3.5em;display:inline-block">0.00</span></label>
+    </div>
+    <div class="status" id="status"></div>
+  </div>
+  <div class="main">
+    <div class="panel">
+      <h2>Tile</h2>
+      <svg id="edit" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Editable spectre tile with the ribbon's Bezier anchors and handles"></svg>
+      <div class="checks" id="checksTile"></div>
+    </div>
+    <div class="panel">
+      <h2>Nine-tile supertile, live</h2>
+      <svg id="prev" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="The level-1 Delta supertile drawn from the current tile design"></svg>
+      <div class="checks" id="checksPrev"></div>
+      <details>
+        <summary>Design JSON (paste to load)</summary>
+        <textarea id="json" spellcheck="false" aria-label="Design JSON"></textarea>
+        <div class="grp" style="margin-top:6px"><button id="load">Load JSON</button></div>
+      </details>
+      <details open>
+        <summary>How to edit</summary>
+        <ul class="help">
+          <li>Drag a round anchor to move it; its two handles move with it.</li>
+          <li>Drag a handle to reshape the curve. The opposite handle follows to keep the join smooth; hold <kbd>Shift</kbd> to bend it into a corner.</li>
+          <li>Square anchors are the ports on the rim: fixed. Their green handles slide along the 45° line only.</li>
+          <li>Edge offset slides every rim crossing along its edge (up to 0.3 of an edge either way). Even-numbered edges move one way and odd-numbered edges the other; in the spectre tiling an even edge always meets an odd one, so both sides of every edge still agree. Double-click the slider to centre it.</li>
+          <li>The green anchor is the spoke crossing. Drag it to move the crossing. Drag any of its four handles, or the ring, to turn it: the two strands always stay at 90°.</li>
+          <li>Double-click a curve to add an anchor there; double-click a round anchor to remove it.</li>
+          <li>Keep every strand inside its tile outline (orange dashes mark where it strays). Pink rings mark strands running through each other.</li>
+          <li>The solid green line is the crossing spoke; the dashed line is the turn-back spoke, which no strand crosses.</li>
+          <li>Each of the 17 designs keeps its own edits and undo history. Save design keeps the one on screen on this page for next time (and for Claude to read). Copy JSON puts the same data on the clipboard.</li>
+        </ul>
+      </details>
+    </div>
+  </div>
+</div>
+<script>
+const DATA = {"PTS":[[0,0],[1,0],[1.5,-0.866],[2.366,-0.366],[2.366,0.634],[3.366,0.634],[3.866,1.5],[3,2],[2.134,1.5],[1.634,2.366],[0.634,2.366],[-0.366,2.366],[-0.866,1.5],[0,1]],"KERNEL":[1.6268,0.9],"T9":[[-1,0,0,0,1,0],[-0.5,0.866,1.5,0.866,0.5,-0.866],[-0.5,0.866,3.2321,0.866,0.5,0.866],[0.5,0.866,3.2321,0.866,-0.5,-0.866],[1,0.0,1.7321,0.0,-1,-1.7321],[1,0.0,2.366,0.0,-1,-4.0981],[0.5,-0.866,0.866,-0.866,-0.5,-3.2321],[0.5,0.866,-3.2321,0.866,-0.5,-2.5981],[0.866,0.5,-0.866,0.5,-0.866,-1.5]],"designs":[{"id":"0.1:01","spokes":[0,1],"states":[0,1],"passages":[{"anchors":[{"p":[0.65,0.0],"h1":null,"h2":[0.4716,0.1784]},{"p":[0.6214,0.4993],"h1":[0.4677,0.3289],"h2":[0.7621,0.6552]},{"p":[1.175,-0.3031088913245535],"h1":[1.3952506034606935,0.5188775511884605],"h2":null}],"from":"e0","to":"e1","over":[true,true],"x0":1,"x0over":false,"dir0":[-0.7071,0.7071],"dir1":[-0.2588,-0.9659],"shift":0.15},{"anchors":[{"p":[0.65,0.0],"h1":null,"h2":[0.8447,0.19469999999999998]},{"p":[0.6214,0.4993],"h1":[0.7982,0.3398],"h2":[0.3071,0.783]},{"p":[0.0,0.65],"h1":[0.1402,0.5098],"h2":null}],"from":"e0","to":"e13","over":[false,false],"x0":1,"x0over":true,"dir0":[0.7071,0.7071],"dir1":[-0.7071,0.7071],"shift":0.15},{"anchors":[{"p":[1.175,-0.3031088913245535],"h1":null,"h2":[1.3501888303354381,-0.3500505969358871]},{"p":[2.0629165124598847,-0.5410254037844386],"h1":[1.8877276821244466,-0.49408369817310505],"h2":null}],"from":"e1","to":"e2","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.9659,-0.2588],"dir1":[0.9659,-0.2588],"shift":0.15},{"anchors":[{"p":[2.0629165124598847,-0.5410254037844386],"h1":null,"h2":[2.1291510722419353,-0.2938346614608678]},{"p":[2.3660254037844384,-0.01602540378443862],"h1":[2.1497254037844384,-0.2323254037844386],"h2":null}],"from":"e2","to":"e3","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.2588,0.9659],"dir1":[0.7071,0.7071],"shift":0.15},{"anchors":[{"p":[2.3660254037844384,-0.01602540378443862],"h1":null,"h2":[2.1497254037844384,0.20027459621556137]},{"p":[2.2728,0.7125],"h1":[2.1089,0.5376],"h2":[2.4631,0.9155]},{"p":[3.0160254037844383,0.6339745962155614],"h1":[2.8590254037844383,0.7909745962155614],"h2":null}],"from":"e3","to":"e4","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.7071,0.7071],"dir1":[0.7071,-0.7071],"shift":0.15},{"anchors":[{"p":[3.0160254037844383,0.6339745962155614],"h1":null,"h2":[3.1775254037844385,0.7954745962155615]},{"p":[3.541025403784438,0.9370834875401148],"h1":[3.345521419999341,0.8846983529678307],"h2":null}],"from":"e4","to":"e5","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.7071,0.7071],"dir1":[0.9659,0.2588],"shift":0.15},{"anchors":[{"p":[3.541025403784438,0.9370834875401148],"h1":null,"h2":[3.4940836981731045,1.112272317875553]},{"p":[3.3031088913245537,1.825],"h1":[3.3500505969358874,1.6498111696645619],"h2":null}],"from":"e5","to":"e6","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.2588,0.9659],"dir1":[-0.2588,0.9659],"shift":0.15},{"anchors":[{"p":[3.3031088913245537,1.825],"h1":null,"h2":[3.1086129202251467,1.7728849616128068]},{"p":[2.6968911086754463,1.825],"h1":[2.875900385659876,1.7770346087943427],"h2":null}],"from":"e6","to":"e7","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.9659,-0.2588],"dir1":[-0.9659,0.2588],"shift":0.15},{"anchors":[{"p":[2.6968911086754463,1.825],"h1":null,"h2":[2.63108334442707,1.5794020802925437]},{"p":[2.1168,1.3916],"h1":[2.3854,1.3258],"h2":[1.7853,1.4728]},{"p":[1.8089745962155614,2.0629165124598847],"h1":[1.7595654236279086,1.878518970002824],"h2":null}],"from":"e7","to":"e8","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.2588,-0.9659],"dir1":[0.2588,0.9659],"shift":0.15},{"anchors":[{"p":[1.8089745962155614,2.0629165124598847],"h1":null,"h2":[1.6059730176459646,2.1173106214998514]},{"p":[1.2839745962155615,2.3660254037844384],"h1":[1.4041745962155616,2.2458254037844383],"h2":null}],"from":"e8","to":"e9","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.9659,0.2588],"dir1":[-0.7071,0.7071],"shift":0.15},{"anchors":[{"p":[1.2839745962155615,2.3660254037844384],"h1":null,"h2":[1.0841745962155613,2.166225403784438]},{"p":[-0.01602540378443862,2.3660254037844384],"h1":[0.36797459621556144,1.9820254037844385],"h2":null}],"from":"e9","to":"e10","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.7071,-0.7071],"dir1":[-0.7071,0.7071],"shift":0.15},{"anchors":[{"p":[-0.01602540378443862,2.3660254037844384],"h1":null,"h2":[-0.23232540378443858,2.1497254037844384]},{"p":[-0.5410254037844386,2.0629165124598847],"h1":[-0.2938346614608678,2.1291510722419353],"h2":null}],"from":"e10","to":"e11","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.7071,-0.7071],"dir1":[-0.9659,-0.2588],"shift":0.15},{"anchors":[{"p":[-0.5410254037844386,2.0629165124598847],"h1":null,"h2":[-0.4940836981731051,1.8877276821244466]},{"p":[-0.30310889132455354,1.175],"h1":[-0.35005059693588714,1.3501888303354381],"h2":null}],"from":"e11","to":"e12","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.2588,-0.9659],"dir1":[0.2588,-0.9659],"shift":0.15},{"anchors":[{"p":[-0.30310889132455354,1.175],"h1":null,"h2":[-0.15249717207598837,1.215356288543316]},{"p":[0.1038,1.065],"h1":[0.0251,1.1976],"h2":[0.1667,0.9588]},{"p":[0.0,0.65],"h1":[0.1282,0.7782],"h2":null}],"from":"e12","to":"e13","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.9659,0.2588],"dir1":[-0.7071,-0.7071],"shift":0.15}],"aliases":["0.1:10"],"crow":1.5731,"proved":true,"featured":true},{"id":"0.13:10","spokes":[0,13],"states":[1,0],"passages":[{"anchors":[{"p":[0.5,0],"h1":null,"h2":[0.3228,0.1772]},{"p":[0.8929,0.7321],"h1":[0.7755,0.4875],"h2":[1.0103,0.9766]},{"p":[0.4073,0.975],"h1":[0.7923,1.1554],"h2":[0.1977,0.8768]},{"p":[0,0.5],"h1":[0.1573,0.6573],"h2":null}],"from":"e0","to":"e13","over":[true,true],"x0":2,"x0over":false,"dir0":[-0.7071,0.7071],"dir1":[-0.7071,-0.7071]},{"anchors":[{"p":[0.5,0],"h1":null,"h2":[0.616,0.116]},{"p":[1.1726,0.2371],"h1":[1.0011,0.3258],"h2":[1.3441,0.1485]},{"p":[1.25,-0.433],"h1":[1.3021,-0.2388],"h2":null}],"from":"e0","to":"e1","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.7071,0.7071],"dir1":[-0.2588,-0.9659]},{"anchors":[{"p":[1.25,-0.433],"h1":null,"h2":[1.4777,-0.494]},{"p":[1.933,-0.616],"h1":[1.7053,-0.555],"h2":null}],"from":"e1","to":"e2","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.9659,-0.2588],"dir1":[0.9659,-0.2588]},{"anchors":[{"p":[1.933,-0.616],"h1":null,"h2":[2.0191,-0.2946]},{"p":[2.366,0.134],"h1":[2.1307,-0.1013],"h2":null}],"from":"e2","to":"e3","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.2588,0.9659],"dir1":[0.7071,0.7071]},{"anchors":[{"p":[2.366,0.134],"h1":null,"h2":[2.1957,0.3043]},{"p":[2.2177,0.7852],"h1":[2.0929,0.66],"h2":[2.3426,0.9103]},{"p":[2.866,0.634],"h1":[2.6952,0.8048],"h2":null}],"from":"e3","to":"e4","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.7071,0.7071],"dir1":[0.7071,-0.7071]},{"anchors":[{"p":[2.866,0.634],"h1":null,"h2":[3.1013,0.8693]},{"p":[3.616,1.067],"h1":[3.2946,0.9809],"h2":null}],"from":"e4","to":"e5","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.7071,0.7071],"dir1":[0.9659,0.2588]},{"anchors":[{"p":[3.616,1.067],"h1":null,"h2":[3.555,1.2947]},{"p":[3.433,1.75],"h1":[3.494,1.5223],"h2":null}],"from":"e5","to":"e6","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.2588,0.9659],"dir1":[-0.2588,0.9659]},{"anchors":[{"p":[3.433,1.75],"h1":null,"h2":[3.1116,1.6639]},{"p":[2.567,1.75],"h1":[2.8884,1.6639],"h2":null}],"from":"e6","to":"e7","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.9659,-0.2588],"dir1":[-0.9659,0.2588]},{"anchors":[{"p":[2.567,1.75],"h1":null,"h2":[2.5028,1.5105]},{"p":[2.0833,1.3086],"h1":[2.2541,1.2629],"h2":[1.9126,1.3543]},{"p":[1.884,1.933],"h1":[1.8197,1.6933],"h2":null}],"from":"e7","to":"e8","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.2588,-0.9659],"dir1":[0.2588,0.9659]},{"anchors":[{"p":[1.884,1.933],"h1":null,"h2":[1.5625,2.0191]},{"p":[1.134,2.366],"h1":[1.3693,2.1307],"h2":null}],"from":"e8","to":"e9","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.9659,0.2588],"dir1":[-0.7071,0.7071]},{"anchors":[{"p":[1.134,2.366],"h1":null,"h2":[0.7813,2.0134]},{"p":[0.134,2.366],"h1":[0.4866,2.0134],"h2":null}],"from":"e9","to":"e10","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.7071,-0.7071],"dir1":[-0.7071,0.7071]},{"anchors":[{"p":[0.134,2.366],"h1":null,"h2":[-0.1013,2.1307]},{"p":[-0.616,1.933],"h1":[-0.2946,2.0191],"h2":null}],"from":"e10","to":"e11","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.7071,-0.7071],"dir1":[-0.9659,-0.2588]},{"anchors":[{"p":[-0.616,1.933],"h1":null,"h2":[-0.555,1.7053]},{"p":[-0.433,1.25],"h1":[-0.494,1.4777],"h2":null}],"from":"e11","to":"e12","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.2588,-0.9659],"dir1":[0.2588,-0.9659]},{"anchors":[{"p":[-0.433,1.25],"h1":null,"h2":[-0.0272,1.3587]},{"p":[0.4073,0.975],"h1":[0.2131,1.3894],"h2":[0.5323,0.7081]},{"p":[0,0.5],"h1":[0.2857,0.2143],"h2":null}],"from":"e12","to":"e13","over":[false,false],"x0":1,"x0over":true,"dir0":[0.9659,0.2588],"dir1":[-0.7071,0.7071]}],"aliases":["0.13:01"],"crow":1.5731},{"id":"1.2:10","spokes":[1,2],"states":[1,0],"passages":[{"anchors":[{"p":[0.5,0],"h1":null,"h2":[0.3333,0.1667]},{"p":[0,0.5],"h1":[0.1667,0.3333],"h2":null}],"from":"e0","to":"e13","over":[true,false],"x0":-1,"x0over":false,"dir0":[-0.7071,0.7071],"dir1":[-0.7071,0.7071]},{"anchors":[{"p":[0.5,0],"h1":null,"h2":[0.6914,0.1914]},{"p":[1.2441,0.3326],"h1":[0.9665,0.3181],"h2":[1.5216,0.347]},{"p":[1.5549,-0.1017],"h1":[1.8016,0.2493],"h2":[1.4436,-0.2599]},{"p":[1.25,-0.433],"h1":[1.5172,-0.5046],"h2":null}],"from":"e0","to":"e1","over":[false,false],"x0":2,"x0over":true,"dir0":[0.7071,0.7071],"dir1":[-0.9659,0.2588]},{"anchors":[{"p":[1.25,-0.433],"h1":null,"h2":[1.2951,-0.2646]},{"p":[1.5549,-0.1017],"h1":[1.3013,0.0766],"h2":[1.7676,-0.2513]},{"p":[1.933,-0.616],"h1":[1.6677,-0.5449],"h2":null}],"from":"e1","to":"e2","over":[true,true],"x0":1,"x0over":false,"dir0":[0.2588,0.9659],"dir1":[0.9659,-0.2588]},{"anchors":[{"p":[1.933,-0.616],"h1":null,"h2":[2.0133,-0.3164]},{"p":[2.366,0.134],"h1":[2.1481,-0.084],"h2":null}],"from":"e2","to":"e3","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.2588,0.9659],"dir1":[0.7071,0.7071]},{"anchors":[{"p":[2.366,0.134],"h1":null,"h2":[2.1957,0.3043]},{"p":[2.2177,0.7852],"h1":[2.0929,0.66],"h2":[2.3426,0.9103]},{"p":[2.866,0.634],"h1":[2.6952,0.8048],"h2":null}],"from":"e3","to":"e4","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.7071,0.7071],"dir1":[0.7071,-0.7071]},{"anchors":[{"p":[2.866,0.634],"h1":null,"h2":[3.1013,0.8693]},{"p":[3.616,1.067],"h1":[3.2946,0.9809],"h2":null}],"from":"e4","to":"e5","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.7071,0.7071],"dir1":[0.9659,0.2588]},{"anchors":[{"p":[3.616,1.067],"h1":null,"h2":[3.555,1.2947]},{"p":[3.433,1.75],"h1":[3.494,1.5223],"h2":null}],"from":"e5","to":"e6","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.2588,0.9659],"dir1":[-0.2588,0.9659]},{"anchors":[{"p":[3.433,1.75],"h1":null,"h2":[3.1116,1.6639]},{"p":[2.567,1.75],"h1":[2.8884,1.6639],"h2":null}],"from":"e6","to":"e7","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.9659,-0.2588],"dir1":[-0.9659,0.2588]},{"anchors":[{"p":[2.567,1.75],"h1":null,"h2":[2.5028,1.5105]},{"p":[2.0833,1.3086],"h1":[2.2541,1.2629],"h2":[1.9126,1.3543]},{"p":[1.884,1.933],"h1":[1.8197,1.6933],"h2":null}],"from":"e7","to":"e8","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.2588,-0.9659],"dir1":[0.2588,0.9659]},{"anchors":[{"p":[1.884,1.933],"h1":null,"h2":[1.5625,2.0191]},{"p":[1.134,2.366],"h1":[1.3693,2.1307],"h2":null}],"from":"e8","to":"e9","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.9659,0.2588],"dir1":[-0.7071,0.7071]},{"anchors":[{"p":[1.134,2.366],"h1":null,"h2":[0.7813,2.0134]},{"p":[0.134,2.366],"h1":[0.4866,2.0134],"h2":null}],"from":"e9","to":"e10","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.7071,-0.7071],"dir1":[-0.7071,0.7071]},{"anchors":[{"p":[0.134,2.366],"h1":null,"h2":[-0.1013,2.1307]},{"p":[-0.616,1.933],"h1":[-0.2946,2.0191],"h2":null}],"from":"e10","to":"e11","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.7071,-0.7071],"dir1":[-0.9659,-0.2588]},{"anchors":[{"p":[-0.616,1.933],"h1":null,"h2":[-0.555,1.7053]},{"p":[-0.433,1.25],"h1":[-0.494,1.4777],"h2":null}],"from":"e11","to":"e12","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.2588,-0.9659],"dir1":[0.2588,-0.9659]},{"anchors":[{"p":[-0.433,1.25],"h1":null,"h2":[-0.2388,1.302]},{"p":[0.1854,1.1071],"h1":[0.0902,1.272],"h2":[0.2807,0.9421]},{"p":[0,0.5],"h1":[0.1422,0.6422],"h2":null}],"from":"e12","to":"e13","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.9659,0.2588],"dir1":[-0.7071,-0.7071]}],"aliases":["1.2:01"],"crow":1.5731},{"id":"2.3:01","spokes":[2,3],"states":[0,1],"passages":[{"anchors":[{"p":[0.5,0],"h1":null,"h2":[0.3333,0.1667]},{"p":[0,0.5],"h1":[0.1667,0.3333],"h2":null}],"from":"e0","to":"e13","over":[true,false],"x0":-1,"x0over":false,"dir0":[-0.7071,0.7071],"dir1":[-0.7071,0.7071]},{"anchors":[{"p":[0.5,0],"h1":null,"h2":[0.6686,0.1686]},{"p":[1.0893,0.3604],"h1":[0.9363,0.4823],"h2":[1.2423,0.2386]},{"p":[1.25,-0.433],"h1":[1.2806,-0.3188],"h2":null}],"from":"e0","to":"e1","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.7071,0.7071],"dir1":[-0.2588,-0.9659]},{"anchors":[{"p":[1.25,-0.433],"h1":null,"h2":[1.536,-0.5096]},{"p":[1.5549,-0.1009],"h1":[1.2874,-0.0566],"h2":[1.9084,-0.1595]},{"p":[1.933,-0.616],"h1":[2.0249,-0.2732],"h2":null}],"from":"e1","to":"e2","over":[false,false],"x0":1,"x0over":true,"dir0":[0.9659,-0.2588],"dir1":[-0.2588,-0.9659]},{"anchors":[{"p":[1.933,-0.616],"h1":null,"h2":[1.7048,-0.5549]},{"p":[1.5549,-0.1009],"h1":[1.513,-0.3537],"h2":[1.6643,0.5587]},{"p":[2.366,0.134],"h1":[2.0078,-0.2243],"h2":null}],"from":"e2","to":"e3","over":[true,true],"x0":1,"x0over":false,"dir0":[-0.9659,0.2588],"dir1":[0.7071,0.7071]},{"anchors":[{"p":[2.366,0.134],"h1":null,"h2":[2.2095,0.2905]},{"p":[2.2467,0.785],"h1":[2.1242,0.6575],"h2":[2.3692,0.9125]},{"p":[2.866,0.634],"h1":[2.6994,0.8006],"h2":null}],"from":"e3","to":"e4","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.7071,0.7071],"dir1":[0.7071,-0.7071]},{"anchors":[{"p":[2.866,0.634],"h1":null,"h2":[3.1013,0.8693]},{"p":[3.616,1.067],"h1":[3.2946,0.9809],"h2":null}],"from":"e4","to":"e5","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.7071,0.7071],"dir1":[0.9659,0.2588]},{"anchors":[{"p":[3.616,1.067],"h1":null,"h2":[3.555,1.2947]},{"p":[3.433,1.75],"h1":[3.494,1.5223],"h2":null}],"from":"e5","to":"e6","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.2588,0.9659],"dir1":[-0.2588,0.9659]},{"anchors":[{"p":[3.433,1.75],"h1":null,"h2":[3.1116,1.6639]},{"p":[2.567,1.75],"h1":[2.8884,1.6639],"h2":null}],"from":"e6","to":"e7","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.9659,-0.2588],"dir1":[-0.9659,0.2588]},{"anchors":[{"p":[2.567,1.75],"h1":null,"h2":[2.5028,1.5105]},{"p":[2.0833,1.3086],"h1":[2.2541,1.2629],"h2":[1.9126,1.3543]},{"p":[1.884,1.933],"h1":[1.8197,1.6933],"h2":null}],"from":"e7","to":"e8","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.2588,-0.9659],"dir1":[0.2588,0.9659]},{"anchors":[{"p":[1.884,1.933],"h1":null,"h2":[1.5625,2.0191]},{"p":[1.134,2.366],"h1":[1.3693,2.1307],"h2":null}],"from":"e8","to":"e9","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.9659,0.2588],"dir1":[-0.7071,0.7071]},{"anchors":[{"p":[1.134,2.366],"h1":null,"h2":[0.7813,2.0134]},{"p":[0.134,2.366],"h1":[0.4866,2.0134],"h2":null}],"from":"e9","to":"e10","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.7071,-0.7071],"dir1":[-0.7071,0.7071]},{"anchors":[{"p":[0.134,2.366],"h1":null,"h2":[-0.1013,2.1307]},{"p":[-0.616,1.933],"h1":[-0.2946,2.0191],"h2":null}],"from":"e10","to":"e11","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.7071,-0.7071],"dir1":[-0.9659,-0.2588]},{"anchors":[{"p":[-0.616,1.933],"h1":null,"h2":[-0.555,1.7053]},{"p":[-0.433,1.25],"h1":[-0.494,1.4777],"h2":null}],"from":"e11","to":"e12","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.2588,-0.9659],"dir1":[0.2588,-0.9659]},{"anchors":[{"p":[-0.433,1.25],"h1":null,"h2":[-0.2388,1.302]},{"p":[0.1854,1.1071],"h1":[0.0902,1.272],"h2":[0.2807,0.9421]},{"p":[0,0.5],"h1":[0.1422,0.6422],"h2":null}],"from":"e12","to":"e13","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.9659,0.2588],"dir1":[-0.7071,-0.7071]}],"aliases":["2.3:10"],"crow":1.5731},{"id":"11.12:10","spokes":[11,12],"states":[1,0],"passages":[{"anchors":[{"p":[0.5,0],"h1":null,"h2":[0.3283,0.1717]},{"p":[0,0.5],"h1":[0.1713,0.3287],"h2":null}],"from":"e0","to":"e13","over":[true,false],"x0":-1,"x0over":false,"dir0":[-0.7071,0.7071],"dir1":[-0.7071,0.7071]},{"anchors":[{"p":[0.5,0],"h1":null,"h2":[0.6122,0.1122]},{"p":[1.1457,0.1669],"h1":[0.9725,0.252],"h2":[1.3189,0.0819]},{"p":[1.25,-0.433],"h1":[1.3049,-0.228],"h2":null}],"from":"e0","to":"e1","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.7071,0.7071],"dir1":[-0.2588,-0.9659]},{"anchors":[{"p":[1.25,-0.433],"h1":null,"h2":[1.4777,-0.494]},{"p":[1.933,-0.616],"h1":[1.7053,-0.555],"h2":null}],"from":"e1","to":"e2","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.9659,-0.2588],"dir1":[0.9659,-0.2588]},{"anchors":[{"p":[1.933,-0.616],"h1":null,"h2":[2.0191,-0.2946]},{"p":[2.366,0.134],"h1":[2.1307,-0.1013],"h2":null}],"from":"e2","to":"e3","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.2588,0.9659],"dir1":[0.7071,0.7071]},{"anchors":[{"p":[2.366,0.134],"h1":null,"h2":[2.1957,0.3043]},{"p":[2.2177,0.7852],"h1":[2.0929,0.66],"h2":[2.3426,0.9103]},{"p":[2.866,0.634],"h1":[2.6952,0.8048],"h2":null}],"from":"e3","to":"e4","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.7071,0.7071],"dir1":[0.7071,-0.7071]},{"anchors":[{"p":[2.866,0.634],"h1":null,"h2":[3.1013,0.8693]},{"p":[3.616,1.067],"h1":[3.2946,0.9809],"h2":null}],"from":"e4","to":"e5","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.7071,0.7071],"dir1":[0.9659,0.2588]},{"anchors":[{"p":[3.616,1.067],"h1":null,"h2":[3.555,1.2947]},{"p":[3.433,1.75],"h1":[3.494,1.5223],"h2":null}],"from":"e5","to":"e6","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.2588,0.9659],"dir1":[-0.2588,0.9659]},{"anchors":[{"p":[3.433,1.75],"h1":null,"h2":[3.1116,1.6639]},{"p":[2.567,1.75],"h1":[2.8884,1.6639],"h2":null}],"from":"e6","to":"e7","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.9659,-0.2588],"dir1":[-0.9659,0.2588]},{"anchors":[{"p":[2.567,1.75],"h1":null,"h2":[2.5028,1.5105]},{"p":[2.0833,1.3086],"h1":[2.2541,1.2629],"h2":[1.9126,1.3543]},{"p":[1.884,1.933],"h1":[1.8197,1.6933],"h2":null}],"from":"e7","to":"e8","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.2588,-0.9659],"dir1":[0.2588,0.9659]},{"anchors":[{"p":[1.884,1.933],"h1":null,"h2":[1.5625,2.0191]},{"p":[1.134,2.366],"h1":[1.3693,2.1307],"h2":null}],"from":"e8","to":"e9","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.9659,0.2588],"dir1":[-0.7071,0.7071]},{"anchors":[{"p":[1.134,2.366],"h1":null,"h2":[0.8717,2.1038]},{"p":[0.134,2.366],"h1":[0.4194,2.0806],"h2":null}],"from":"e9","to":"e10","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.7071,-0.7071],"dir1":[-0.7071,0.7071]},{"anchors":[{"p":[0.134,2.366],"h1":null,"h2":[-0.1286,2.1035]},{"p":[0.7956,1.5829],"h1":[0.6772,1.8949],"h2":[0.9139,1.271]},{"p":[0.1194,1.2628],"h1":[0.3449,0.8557],"h2":[-0.0136,1.5029]},{"p":[-0.616,1.933],"h1":[-0.5924,1.8448],"h2":null}],"from":"e10","to":"e11","over":[false,false],"x0":2,"x0over":true,"dir0":[-0.7071,-0.7071],"dir1":[-0.2588,0.9659]},{"anchors":[{"p":[-0.616,1.933],"h1":null,"h2":[-0.3172,2.0131]},{"p":[0.1144,1.924],"h1":[-0.0844,2.0619],"h2":[0.3132,1.7861]},{"p":[0.1194,1.2628],"h1":[0.4779,1.4615],"h2":[0.0408,1.2193]},{"p":[-0.433,1.25],"h1":[-0.6317,1.9916],"h2":null}],"from":"e11","to":"e12","over":[true,true],"x0":2,"x0over":false,"dir0":[0.9659,0.2588],"dir1":[0.2588,-0.9659]},{"anchors":[{"p":[-0.433,1.25],"h1":null,"h2":[-0.1254,1.3324]},{"p":[0.1502,0.9851],"h1":[-0.0852,1.1754],"h2":[0.3855,0.7949]},{"p":[0.731,0.509],"h1":[0.8159,0.5713],"h2":[0.6461,0.4468]},{"p":[0,0.5],"h1":[0.0459,0.5459],"h2":null}],"from":"e12","to":"e13","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.9659,0.2588],"dir1":[-0.7071,-0.7071]}],"aliases":["11.12:01"],"crow":1.5731},{"id":"12.13:01","spokes":[12,13],"states":[0,1],"passages":[{"anchors":[{"p":[0.5,0],"h1":null,"h2":[0.3333,0.1667]},{"p":[0,0.5],"h1":[0.1667,0.3333],"h2":null}],"from":"e0","to":"e13","over":[true,false],"x0":-1,"x0over":false,"dir0":[-0.7071,0.7071],"dir1":[-0.7071,0.7071]},{"anchors":[{"p":[0.5,0],"h1":null,"h2":[0.6409,0.1409]},{"p":[1.119,0.2061],"h1":[0.9538,0.3014],"h2":[1.2841,0.1107]},{"p":[1.25,-0.433],"h1":[1.3016,-0.2406],"h2":null}],"from":"e0","to":"e1","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.7071,0.7071],"dir1":[-0.2588,-0.9659]},{"anchors":[{"p":[1.25,-0.433],"h1":null,"h2":[1.4777,-0.494]},{"p":[1.933,-0.616],"h1":[1.7053,-0.555],"h2":null}],"from":"e1","to":"e2","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.9659,-0.2588],"dir1":[0.9659,-0.2588]},{"anchors":[{"p":[1.933,-0.616],"h1":null,"h2":[2.0191,-0.2946]},{"p":[2.366,0.134],"h1":[2.1307,-0.1013],"h2":null}],"from":"e2","to":"e3","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.2588,0.9659],"dir1":[0.7071,0.7071]},{"anchors":[{"p":[2.366,0.134],"h1":null,"h2":[2.1957,0.3043]},{"p":[2.2177,0.7852],"h1":[2.0929,0.66],"h2":[2.3426,0.9103]},{"p":[2.866,0.634],"h1":[2.6952,0.8048],"h2":null}],"from":"e3","to":"e4","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.7071,0.7071],"dir1":[0.7071,-0.7071]},{"anchors":[{"p":[2.866,0.634],"h1":null,"h2":[3.1013,0.8693]},{"p":[3.616,1.067],"h1":[3.2946,0.9809],"h2":null}],"from":"e4","to":"e5","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.7071,0.7071],"dir1":[0.9659,0.2588]},{"anchors":[{"p":[3.616,1.067],"h1":null,"h2":[3.555,1.2947]},{"p":[3.433,1.75],"h1":[3.494,1.5223],"h2":null}],"from":"e5","to":"e6","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.2588,0.9659],"dir1":[-0.2588,0.9659]},{"anchors":[{"p":[3.433,1.75],"h1":null,"h2":[3.1116,1.6639]},{"p":[2.567,1.75],"h1":[2.8884,1.6639],"h2":null}],"from":"e6","to":"e7","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.9659,-0.2588],"dir1":[-0.9659,0.2588]},{"anchors":[{"p":[2.567,1.75],"h1":null,"h2":[2.5028,1.5105]},{"p":[2.0833,1.3086],"h1":[2.2541,1.2629],"h2":[1.9126,1.3543]},{"p":[1.884,1.933],"h1":[1.8197,1.6933],"h2":null}],"from":"e7","to":"e8","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.2588,-0.9659],"dir1":[0.2588,0.9659]},{"anchors":[{"p":[1.884,1.933],"h1":null,"h2":[1.5625,2.0191]},{"p":[1.134,2.366],"h1":[1.3693,2.1307],"h2":null}],"from":"e8","to":"e9","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.9659,0.2588],"dir1":[-0.7071,0.7071]},{"anchors":[{"p":[1.134,2.366],"h1":null,"h2":[0.7813,2.0134]},{"p":[0.134,2.366],"h1":[0.4866,2.0134],"h2":null}],"from":"e9","to":"e10","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.7071,-0.7071],"dir1":[-0.7071,0.7071]},{"anchors":[{"p":[0.134,2.366],"h1":null,"h2":[-0.0693,2.1628]},{"p":[-0.616,1.933],"h1":[-0.3313,2.0093],"h2":null}],"from":"e10","to":"e11","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.7071,-0.7071],"dir1":[-0.9659,-0.2588]},{"anchors":[{"p":[-0.616,1.933],"h1":null,"h2":[-0.5382,1.6425]},{"p":[0.1405,1.8264],"h1":[-0.1035,1.8632],"h2":[0.3846,1.7896]},{"p":[0.1554,1.2542],"h1":[0.4379,1.4952],"h2":[0.0407,1.1563]},{"p":[-0.433,1.25],"h1":[-0.2516,1.2986],"h2":null}],"from":"e11","to":"e12","over":[false,false],"x0":2,"x0over":true,"dir0":[0.2588,-0.9659],"dir1":[-0.9659,-0.2588]},{"anchors":[{"p":[-0.433,1.25],"h1":null,"h2":[-0.5545,1.7035]},{"p":[0.1554,1.2542],"h1":[0.0233,1.4089],"h2":[0.2876,1.0992]},{"p":[0.6766,0.8348],"h1":[0.7219,0.958],"h2":[0.6313,0.7116]},{"p":[0,0.5],"h1":[0.1063,0.6063],"h2":null}],"from":"e12","to":"e13","over":[true,true],"x0":1,"x0over":false,"dir0":[-0.2588,0.9659],"dir1":[-0.7071,-0.7071]}],"aliases":["12.13:10"],"crow":1.5731},{"id":"0.3:01","spokes":[0,3],"states":[0,1],"passages":[{"anchors":[{"p":[0.5,0],"h1":null,"h2":[0.2144,0.2856]},{"p":[0.8911,0.493],"h1":[0.7997,0.3536],"h2":[1.1217,0.8447]},{"p":[1.6826,0.6429],"h1":[1.4639,0.913],"h2":[1.9013,0.3729]},{"p":[2.366,0.134],"h1":[1.9965,-0.2356],"h2":null}],"from":"e0","to":"e3","over":[true,true],"x0":1,"x0over":false,"dir0":[-0.7071,0.7071],"dir1":[0.7071,0.7071]},{"anchors":[{"p":[0.5,0],"h1":null,"h2":[0.6069,0.1069]},{"p":[1.1884,0.1711],"h1":[1.0119,0.2472],"h2":[1.3649,0.0949]},{"p":[1.25,-0.433],"h1":[1.3131,-0.1977],"h2":null}],"from":"e0","to":"e1","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.7071,0.7071],"dir1":[-0.2588,-0.9659]},{"anchors":[{"p":[1.25,-0.433],"h1":null,"h2":[1.4777,-0.494]},{"p":[1.933,-0.616],"h1":[1.7053,-0.555],"h2":null}],"from":"e1","to":"e2","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.9659,-0.2588],"dir1":[0.9659,-0.2588]},{"anchors":[{"p":[1.933,-0.616],"h1":null,"h2":[1.988,-0.4109]},{"p":[1.6566,0.176],"h1":[1.8776,-0.015],"h2":[1.4356,0.3671]},{"p":[0.8911,0.493],"h1":[1.1039,0.3534],"h2":[0.4936,0.7535]},{"p":[0,0.5],"h1":[0.203,0.297],"h2":null}],"from":"e2","to":"e13","over":[false,false],"x0":2,"x0over":true,"dir0":[0.2588,0.9659],"dir1":[-0.7071,0.7071]},{"anchors":[{"p":[2.366,0.134],"h1":null,"h2":[2.2106,0.2894]},{"p":[2.2127,0.8114],"h1":[2.0879,0.6862],"h2":[2.3374,0.9367]},{"p":[2.866,0.634],"h1":[2.7097,0.7903],"h2":null}],"from":"e3","to":"e4","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.7071,0.7071],"dir1":[0.7071,-0.7071]},{"anchors":[{"p":[2.866,0.634],"h1":null,"h2":[3.1013,0.8693]},{"p":[3.616,1.067],"h1":[3.2946,0.9809],"h2":null}],"from":"e4","to":"e5","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.7071,0.7071],"dir1":[0.9659,0.2588]},{"anchors":[{"p":[3.616,1.067],"h1":null,"h2":[3.555,1.2947]},{"p":[3.433,1.75],"h1":[3.494,1.5223],"h2":null}],"from":"e5","to":"e6","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.2588,0.9659],"dir1":[-0.2588,0.9659]},{"anchors":[{"p":[3.433,1.75],"h1":null,"h2":[3.1116,1.6639]},{"p":[2.567,1.75],"h1":[2.8884,1.6639],"h2":null}],"from":"e6","to":"e7","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.9659,-0.2588],"dir1":[-0.9659,0.2588]},{"anchors":[{"p":[2.567,1.75],"h1":null,"h2":[2.5028,1.5105]},{"p":[2.0833,1.3086],"h1":[2.2541,1.2629],"h2":[1.9126,1.3543]},{"p":[1.884,1.933],"h1":[1.8197,1.6933],"h2":null}],"from":"e7","to":"e8","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.2588,-0.9659],"dir1":[0.2588,0.9659]},{"anchors":[{"p":[1.884,1.933],"h1":null,"h2":[1.5625,2.0191]},{"p":[1.134,2.366],"h1":[1.3693,2.1307],"h2":null}],"from":"e8","to":"e9","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.9659,0.2588],"dir1":[-0.7071,0.7071]},{"anchors":[{"p":[1.134,2.366],"h1":null,"h2":[0.7813,2.0134]},{"p":[0.134,2.366],"h1":[0.4866,2.0134],"h2":null}],"from":"e9","to":"e10","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.7071,-0.7071],"dir1":[-0.7071,0.7071]},{"anchors":[{"p":[0.134,2.366],"h1":null,"h2":[-0.1013,2.1307]},{"p":[-0.616,1.933],"h1":[-0.2946,2.0191],"h2":null}],"from":"e10","to":"e11","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.7071,-0.7071],"dir1":[-0.9659,-0.2588]},{"anchors":[{"p":[-0.616,1.933],"h1":null,"h2":[-0.555,1.7053]},{"p":[-0.433,1.25],"h1":[-0.494,1.4777],"h2":null}],"from":"e11","to":"e12","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.2588,-0.9659],"dir1":[0.2588,-0.9659]},{"anchors":[{"p":[-0.433,1.25],"h1":null,"h2":[-0.2424,1.3011]},{"p":[0.2312,1.1585],"h1":[0.1398,1.328],"h2":[0.3225,0.9889]},{"p":[0,0.5],"h1":[0.1228,0.6228],"h2":null}],"from":"e12","to":"e13","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.9659,0.2588],"dir1":[-0.7071,-0.7071]}],"aliases":["0.3:10"],"crow":4.1028},{"id":"0.11:01","spokes":[0,11],"states":[0,1],"passages":[{"anchors":[{"p":[0.5,0],"h1":null,"h2":[0.1685,0.3315]},{"p":[0.7091,0.3923],"h1":[0.6982,0.232],"h2":[0.7397,0.8418]},{"p":[0.2747,1.3719],"h1":[0.5284,1.0763],"h2":[0.021,1.6676]},{"p":[-0.616,1.933],"h1":[-0.2751,2.0244],"h2":null}],"from":"e0","to":"e11","over":[true,true],"x0":1,"x0over":false,"dir0":[-0.7071,0.7071],"dir1":[-0.9659,-0.2588]},{"anchors":[{"p":[0.5,0],"h1":null,"h2":[0.5885,0.0885]},{"p":[1.1626,0.1453],"h1":[0.9826,0.2209],"h2":[1.3427,0.0697]},{"p":[1.25,-0.433],"h1":[1.3087,-0.2139],"h2":null}],"from":"e0","to":"e1","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.7071,0.7071],"dir1":[-0.2588,-0.9659]},{"anchors":[{"p":[1.25,-0.433],"h1":null,"h2":[1.4777,-0.494]},{"p":[1.933,-0.616],"h1":[1.7053,-0.555],"h2":null}],"from":"e1","to":"e2","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.9659,-0.2588],"dir1":[0.9659,-0.2588]},{"anchors":[{"p":[1.933,-0.616],"h1":null,"h2":[2.0191,-0.2946]},{"p":[2.366,0.134],"h1":[2.1307,-0.1013],"h2":null}],"from":"e2","to":"e3","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.2588,0.9659],"dir1":[0.7071,0.7071]},{"anchors":[{"p":[2.366,0.134],"h1":null,"h2":[2.1957,0.3043]},{"p":[2.2177,0.7852],"h1":[2.0929,0.66],"h2":[2.3426,0.9103]},{"p":[2.866,0.634],"h1":[2.6952,0.8048],"h2":null}],"from":"e3","to":"e4","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.7071,0.7071],"dir1":[0.7071,-0.7071]},{"anchors":[{"p":[2.866,0.634],"h1":null,"h2":[3.1013,0.8693]},{"p":[3.616,1.067],"h1":[3.2946,0.9809],"h2":null}],"from":"e4","to":"e5","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.7071,0.7071],"dir1":[0.9659,0.2588]},{"anchors":[{"p":[3.616,1.067],"h1":null,"h2":[3.555,1.2947]},{"p":[3.433,1.75],"h1":[3.494,1.5223],"h2":null}],"from":"e5","to":"e6","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.2588,0.9659],"dir1":[-0.2588,0.9659]},{"anchors":[{"p":[3.433,1.75],"h1":null,"h2":[3.1116,1.6639]},{"p":[2.567,1.75],"h1":[2.8884,1.6639],"h2":null}],"from":"e6","to":"e7","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.9659,-0.2588],"dir1":[-0.9659,0.2588]},{"anchors":[{"p":[2.567,1.75],"h1":null,"h2":[2.5028,1.5105]},{"p":[2.0833,1.3086],"h1":[2.2541,1.2629],"h2":[1.9126,1.3543]},{"p":[1.884,1.933],"h1":[1.8197,1.6933],"h2":null}],"from":"e7","to":"e8","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.2588,-0.9659],"dir1":[0.2588,0.9659]},{"anchors":[{"p":[1.884,1.933],"h1":null,"h2":[1.5625,2.0191]},{"p":[1.134,2.366],"h1":[1.3693,2.1307],"h2":null}],"from":"e8","to":"e9","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.9659,0.2588],"dir1":[-0.7071,0.7071]},{"anchors":[{"p":[1.134,2.366],"h1":null,"h2":[0.7923,2.0244]},{"p":[0.134,2.366],"h1":[0.4987,2.0013],"h2":null}],"from":"e9","to":"e10","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.7071,-0.7071],"dir1":[-0.7071,0.7071]},{"anchors":[{"p":[0.134,2.366],"h1":null,"h2":[-0.1209,2.1111]},{"p":[0.4095,1.73],"h1":[0.1686,1.9122],"h2":[0.6504,1.5478]},{"p":[0.9442,1.0876],"h1":[0.8428,1.3824],"h2":[1.0457,0.7928]},{"p":[0.7091,0.3923],"h1":[1.0562,0.3687],"h2":[0.5578,0.4026]},{"p":[0,0.5],"h1":[0.0746,0.4254],"h2":null}],"from":"e10","to":"e13","over":[false,false],"x0":3,"x0over":true,"dir0":[-0.7071,-0.7071],"dir1":[-0.7071,0.7071]},{"anchors":[{"p":[-0.616,1.933],"h1":null,"h2":[-0.555,1.7053]},{"p":[-0.433,1.25],"h1":[-0.494,1.4777],"h2":null}],"from":"e11","to":"e12","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.2588,-0.9659],"dir1":[0.2588,-0.9659]},{"anchors":[{"p":[-0.433,1.25],"h1":null,"h2":[-0.2503,1.299]},{"p":[0.1864,1.1114],"h1":[0.0892,1.2766],"h2":[0.2835,0.9463]},{"p":[0,0.5],"h1":[0.1384,0.6384],"h2":null}],"from":"e12","to":"e13","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.9659,0.2588],"dir1":[-0.7071,-0.7071]}],"aliases":["0.11:10"],"crow":4.1028,"proved":true,"legacy":"0222221"},{"id":"2.5:10","spokes":[2,5],"states":[1,0],"passages":[{"anchors":[{"p":[0.5,0],"h1":null,"h2":[0.3333,0.1667]},{"p":[0,0.5],"h1":[0.1667,0.3333],"h2":null}],"from":"e0","to":"e13","over":[true,false],"x0":-1,"x0over":false,"dir0":[-0.7071,0.7071],"dir1":[-0.7071,0.7071]},{"anchors":[{"p":[0.5,0],"h1":null,"h2":[0.6517,0.1517]},{"p":[1.0857,0.2067],"h1":[0.9249,0.3109],"h2":[1.2465,0.1026]},{"p":[1.25,-0.433],"h1":[1.2951,-0.2649],"h2":null}],"from":"e0","to":"e1","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.7071,0.7071],"dir1":[-0.2588,-0.9659]},{"anchors":[{"p":[1.25,-0.433],"h1":null,"h2":[1.6055,-0.5283]},{"p":[1.4171,0.1908],"h1":[1.5611,-0.1086],"h2":[1.273,0.4902]},{"p":[1.138,0.8947],"h1":[1.0293,0.6693],"h2":[1.2467,1.1201]},{"p":[1.9445,1.3397],"h1":[1.7077,1.3918],"h2":[2.1814,1.2876]},{"p":[2.4685,0.7713],"h1":[2.1941,0.9116],"h2":[2.6196,0.694]},{"p":[2.866,0.634],"h1":[3.3956,1.1635],"h2":null}],"from":"e1","to":"e4","over":[false,false],"x0":4,"x0over":true,"dir0":[0.9659,-0.2588],"dir1":[-0.7071,-0.7071]},{"anchors":[{"p":[1.933,-0.616],"h1":null,"h2":[1.6488,-0.5399]},{"p":[1.8101,0.0993],"h1":[1.8644,-0.1992],"h2":[1.7558,0.3978]},{"p":[1.4712,0.7639],"h1":[1.4315,0.654],"h2":[1.5109,0.8739]},{"p":[2.0916,0.6898],"h1":[1.9146,0.8375],"h2":[2.2686,0.5421]},{"p":[2.4685,0.7713],"h1":[2.2189,0.2832],"h2":[2.5033,0.8392]},{"p":[2.8931,1.4913],"h1":[2.6334,1.4392],"h2":[3.1529,1.5433]},{"p":[3.616,1.067],"h1":[3.5423,1.0472],"h2":null}],"from":"e2","to":"e5","over":[true,true],"x0":4,"x0over":false,"dir0":[-0.9659,0.2588],"dir1":[0.9659,0.2588]},{"anchors":[{"p":[1.933,-0.616],"h1":null,"h2":[2.007,-0.3398]},{"p":[2.366,0.134],"h1":[2.166,-0.066],"h2":null}],"from":"e2","to":"e3","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.2588,0.9659],"dir1":[0.7071,0.7071]},{"anchors":[{"p":[2.366,0.134],"h1":null,"h2":[2.1886,0.3114]},{"p":[1.8655,0.562],"h1":[1.9491,0.4111],"h2":[1.7819,0.713]},{"p":[1.9952,1.0219],"h1":[1.8543,0.9151],"h2":[2.136,1.1287]},{"p":[2.4202,1.1128],"h1":[2.3453,1.14],"h2":[2.4951,1.0856]},{"p":[2.5914,1.0679],"h1":[2.4356,1.0198],"h2":[2.7472,1.116]},{"p":[3.1362,1.1695],"h1":[3.1183,1.2781],"h2":[3.1541,1.0608]},{"p":[2.866,0.634],"h1":[2.8187,0.6813],"h2":null}],"from":"e3","to":"e4","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.7071,0.7071],"dir1":[0.7071,-0.7071]},{"anchors":[{"p":[3.616,1.067],"h1":null,"h2":[3.5531,1.302]},{"p":[3.433,1.75],"h1":[3.4953,1.5176],"h2":null}],"from":"e5","to":"e6","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.2588,0.9659],"dir1":[-0.2588,0.9659]},{"anchors":[{"p":[3.433,1.75],"h1":null,"h2":[3.2672,1.7056]},{"p":[2.567,1.75],"h1":[2.7345,1.7051],"h2":null}],"from":"e6","to":"e7","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.9659,-0.2588],"dir1":[-0.9659,0.2588]},{"anchors":[{"p":[2.567,1.75],"h1":null,"h2":[2.467,1.3767]},{"p":[1.7923,1.5345],"h1":[1.9588,1.4729],"h2":[1.6258,1.5962]},{"p":[1.884,1.933],"h1":[1.801,1.6234],"h2":null}],"from":"e7","to":"e8","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.2588,-0.9659],"dir1":[0.2588,0.9659]},{"anchors":[{"p":[1.884,1.933],"h1":null,"h2":[1.5625,2.0191]},{"p":[1.134,2.366],"h1":[1.3693,2.1307],"h2":null}],"from":"e8","to":"e9","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.9659,0.2588],"dir1":[-0.7071,0.7071]},{"anchors":[{"p":[1.134,2.366],"h1":null,"h2":[0.7813,2.0134]},{"p":[0.134,2.366],"h1":[0.4866,2.0134],"h2":null}],"from":"e9","to":"e10","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.7071,-0.7071],"dir1":[-0.7071,0.7071]},{"anchors":[{"p":[0.134,2.366],"h1":null,"h2":[-0.1013,2.1307]},{"p":[-0.616,1.933],"h1":[-0.2946,2.0191],"h2":null}],"from":"e10","to":"e11","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.7071,-0.7071],"dir1":[-0.9659,-0.2588]},{"anchors":[{"p":[-0.616,1.933],"h1":null,"h2":[-0.555,1.7053]},{"p":[-0.433,1.25],"h1":[-0.494,1.4777],"h2":null}],"from":"e11","to":"e12","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.2588,-0.9659],"dir1":[0.2588,-0.9659]},{"anchors":[{"p":[-0.433,1.25],"h1":null,"h2":[-0.2388,1.302]},{"p":[0.1854,1.1071],"h1":[0.0902,1.272],"h2":[0.2807,0.9421]},{"p":[0,0.5],"h1":[0.1422,0.6422],"h2":null}],"from":"e12","to":"e13","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.9659,0.2588],"dir1":[-0.7071,-0.7071]}],"aliases":["2.5:01"],"crow":4.3166},{"id":"9.12:10","spokes":[9,12],"states":[1,0],"passages":[{"anchors":[{"p":[0.5,0],"h1":null,"h2":[0.3333,0.1667]},{"p":[0,0.5],"h1":[0.1667,0.3333],"h2":null}],"from":"e0","to":"e13","over":[true,false],"x0":-1,"x0over":false,"dir0":[-0.7071,0.7071],"dir1":[-0.7071,0.7071]},{"anchors":[{"p":[0.5,0],"h1":null,"h2":[0.6409,0.1409]},{"p":[1.119,0.2061],"h1":[0.9538,0.3014],"h2":[1.2841,0.1107]},{"p":[1.25,-0.433],"h1":[1.3016,-0.2406],"h2":null}],"from":"e0","to":"e1","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.7071,0.7071],"dir1":[-0.2588,-0.9659]},{"anchors":[{"p":[1.25,-0.433],"h1":null,"h2":[1.4777,-0.494]},{"p":[1.933,-0.616],"h1":[1.7053,-0.555],"h2":null}],"from":"e1","to":"e2","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.9659,-0.2588],"dir1":[0.9659,-0.2588]},{"anchors":[{"p":[1.933,-0.616],"h1":null,"h2":[2.0191,-0.2946]},{"p":[2.366,0.134],"h1":[2.1307,-0.1013],"h2":null}],"from":"e2","to":"e3","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.2588,0.9659],"dir1":[0.7071,0.7071]},{"anchors":[{"p":[2.366,0.134],"h1":null,"h2":[2.1957,0.3043]},{"p":[2.2177,0.7852],"h1":[2.0929,0.66],"h2":[2.3426,0.9103]},{"p":[2.866,0.634],"h1":[2.6952,0.8048],"h2":null}],"from":"e3","to":"e4","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.7071,0.7071],"dir1":[0.7071,-0.7071]},{"anchors":[{"p":[2.866,0.634],"h1":null,"h2":[3.1013,0.8693]},{"p":[3.616,1.067],"h1":[3.2946,0.9809],"h2":null}],"from":"e4","to":"e5","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.7071,0.7071],"dir1":[0.9659,0.2588]},{"anchors":[{"p":[3.616,1.067],"h1":null,"h2":[3.555,1.2947]},{"p":[3.433,1.75],"h1":[3.494,1.5223],"h2":null}],"from":"e5","to":"e6","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.2588,0.9659],"dir1":[-0.2588,0.9659]},{"anchors":[{"p":[3.433,1.75],"h1":null,"h2":[3.1116,1.6639]},{"p":[2.567,1.75],"h1":[2.8884,1.6639],"h2":null}],"from":"e6","to":"e7","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.9659,-0.2588],"dir1":[-0.9659,0.2588]},{"anchors":[{"p":[2.567,1.75],"h1":null,"h2":[2.5044,1.5164]},{"p":[2.0822,1.2954],"h1":[2.2529,1.2497],"h2":[1.9114,1.341]},{"p":[1.884,1.933],"h1":[1.8213,1.699],"h2":null}],"from":"e7","to":"e8","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.2588,-0.9659],"dir1":[0.2588,0.9659]},{"anchors":[{"p":[1.884,1.933],"h1":null,"h2":[1.5573,2.0206]},{"p":[1.3945,1.5828],"h1":[1.4927,1.819],"h2":[1.2962,1.3466]},{"p":[0.9577,0.9369],"h1":[1.1644,1.0759],"h2":[0.751,0.798]},{"p":[0.4941,1.1726],"h1":[0.4694,0.7909],"h2":[0.5141,1.4815]},{"p":[0.2639,1.9036],"h1":[0.5238,1.8752],"h2":[0.004,1.9319]},{"p":[-0.616,1.933],"h1":[-0.5254,1.5949],"h2":null}],"from":"e8","to":"e11","over":[false,false],"x0":3,"x0over":true,"dir0":[-0.9659,0.2588],"dir1":[-0.2588,0.9659]},{"anchors":[{"p":[1.134,2.366],"h1":null,"h2":[1.3688,2.1312]},{"p":[1.0954,1.6344],"h1":[1.2305,1.8795],"h2":[0.9603,1.3894]},{"p":[0.4941,1.1726],"h1":[0.8285,1.151],"h2":[0.3883,1.1795]},{"p":[-0.433,1.25],"h1":[-0.6372,2.0122],"h2":null}],"from":"e9","to":"e12","over":[true,true],"x0":2,"x0over":false,"dir0":[0.7071,-0.7071],"dir1":[0.2588,-0.9659]},{"anchors":[{"p":[1.134,2.366],"h1":null,"h2":[0.809,2.0411]},{"p":[0.134,2.366],"h1":[0.468,2.032],"h2":null}],"from":"e9","to":"e10","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.7071,-0.7071],"dir1":[-0.7071,0.7071]},{"anchors":[{"p":[0.134,2.366],"h1":null,"h2":[-0.0646,2.1674]},{"p":[-0.616,1.933],"h1":[-0.3386,2.0073],"h2":null}],"from":"e10","to":"e11","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.7071,-0.7071],"dir1":[-0.9659,-0.2588]},{"anchors":[{"p":[-0.433,1.25],"h1":null,"h2":[0.1037,1.3938]},{"p":[0,0.5],"h1":[0.3921,0.8921],"h2":null}],"from":"e12","to":"e13","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.9659,0.2588],"dir1":[-0.7071,-0.7071]}],"aliases":["9.12:01"],"crow":4.4238},{"id":"1.12:10","spokes":[1,12],"states":[1,0],"passages":[{"anchors":[{"p":[0.5,0],"h1":null,"h2":[0.3333,0.1667]},{"p":[0,0.5],"h1":[0.1667,0.3333],"h2":null}],"from":"e0","to":"e13","over":[true,false],"x0":-1,"x0over":false,"dir0":[-0.7071,0.7071],"dir1":[-0.7071,0.7071]},{"anchors":[{"p":[0.5,0],"h1":null,"h2":[0.9885,0.4885]},{"p":[0.4954,1.1723],"h1":[0.3362,0.6943],"h2":[0.6079,1.51]},{"p":[0.2779,1.8902],"h1":[0.5623,1.8652],"h2":[-0.0064,1.9152]},{"p":[-0.616,1.933],"h1":[-0.5295,1.61],"h2":null}],"from":"e0","to":"e11","over":[false,false],"x0":1,"x0over":true,"dir0":[0.7071,0.7071],"dir1":[-0.2588,0.9659]},{"anchors":[{"p":[1.25,-0.433],"h1":null,"h2":[1.3294,-0.1367]},{"p":[1.2449,0.5606],"h1":[1.375,0.2594],"h2":[1.1148,0.8617]},{"p":[0.4954,1.1723],"h1":[0.8089,1.0679],"h2":[0.3956,1.2056]},{"p":[-0.433,1.25],"h1":[-0.6355,2.0057],"h2":null}],"from":"e1","to":"e12","over":[true,true],"x0":2,"x0over":false,"dir0":[0.2588,0.9659],"dir1":[0.2588,-0.9659]},{"anchors":[{"p":[1.25,-0.433],"h1":null,"h2":[1.4777,-0.494]},{"p":[1.933,-0.616],"h1":[1.7053,-0.555],"h2":null}],"from":"e1","to":"e2","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.9659,-0.2588],"dir1":[0.9659,-0.2588]},{"anchors":[{"p":[1.933,-0.616],"h1":null,"h2":[2.0191,-0.2946]},{"p":[2.366,0.134],"h1":[2.1307,-0.1013],"h2":null}],"from":"e2","to":"e3","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.2588,0.9659],"dir1":[0.7071,0.7071]},{"anchors":[{"p":[2.366,0.134],"h1":null,"h2":[2.1957,0.3043]},{"p":[2.2177,0.7852],"h1":[2.0929,0.66],"h2":[2.3426,0.9103]},{"p":[2.866,0.634],"h1":[2.6952,0.8048],"h2":null}],"from":"e3","to":"e4","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.7071,0.7071],"dir1":[0.7071,-0.7071]},{"anchors":[{"p":[2.866,0.634],"h1":null,"h2":[3.1013,0.8693]},{"p":[3.616,1.067],"h1":[3.2946,0.9809],"h2":null}],"from":"e4","to":"e5","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.7071,0.7071],"dir1":[0.9659,0.2588]},{"anchors":[{"p":[3.616,1.067],"h1":null,"h2":[3.555,1.2947]},{"p":[3.433,1.75],"h1":[3.494,1.5223],"h2":null}],"from":"e5","to":"e6","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.2588,0.9659],"dir1":[-0.2588,0.9659]},{"anchors":[{"p":[3.433,1.75],"h1":null,"h2":[3.1116,1.6639]},{"p":[2.567,1.75],"h1":[2.8884,1.6639],"h2":null}],"from":"e6","to":"e7","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.9659,-0.2588],"dir1":[-0.9659,0.2588]},{"anchors":[{"p":[2.567,1.75],"h1":null,"h2":[2.5028,1.5105]},{"p":[2.0833,1.3086],"h1":[2.2541,1.2629],"h2":[1.9126,1.3543]},{"p":[1.884,1.933],"h1":[1.8197,1.6933],"h2":null}],"from":"e7","to":"e8","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.2588,-0.9659],"dir1":[0.2588,0.9659]},{"anchors":[{"p":[1.884,1.933],"h1":null,"h2":[1.5625,2.0191]},{"p":[1.134,2.366],"h1":[1.3693,2.1307],"h2":null}],"from":"e8","to":"e9","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.9659,0.2588],"dir1":[-0.7071,0.7071]},{"anchors":[{"p":[1.134,2.366],"h1":null,"h2":[0.8023,2.0344]},{"p":[0.134,2.366],"h1":[0.4722,2.0278],"h2":null}],"from":"e9","to":"e10","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.7071,-0.7071],"dir1":[-0.7071,0.7071]},{"anchors":[{"p":[0.134,2.366],"h1":null,"h2":[-0.0652,2.1668]},{"p":[-0.616,1.933],"h1":[-0.3382,2.0075],"h2":null}],"from":"e10","to":"e11","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.7071,-0.7071],"dir1":[-0.9659,-0.2588]},{"anchors":[{"p":[-0.433,1.25],"h1":null,"h2":[0.0974,1.3921]},{"p":[0,0.5],"h1":[0.3985,0.8985],"h2":null}],"from":"e12","to":"e13","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.9659,0.2588],"dir1":[-0.7071,-0.7071]}],"aliases":["1.12:01"],"crow":4.6121},{"id":"2.13:10","spokes":[2,13],"states":[1,0],"passages":[{"anchors":[{"p":[0.5,0],"h1":null,"h2":[0.3333,0.1667]},{"p":[0,0.5],"h1":[0.1667,0.3333],"h2":null}],"from":"e0","to":"e13","over":[true,false],"x0":-1,"x0over":false,"dir0":[-0.7071,0.7071],"dir1":[-0.7071,0.7071]},{"anchors":[{"p":[0.5,0],"h1":null,"h2":[0.651,0.151]},{"p":[1.0813,0.2491],"h1":[0.9219,0.3591],"h2":[1.2407,0.1391]},{"p":[1.25,-0.433],"h1":[1.2886,-0.289],"h2":null}],"from":"e0","to":"e1","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.7071,0.7071],"dir1":[-0.2588,-0.9659]},{"anchors":[{"p":[1.25,-0.433],"h1":null,"h2":[1.6183,-0.5317]},{"p":[1.4631,0.4094],"h1":[1.6462,0.1149],"h2":[1.2799,0.7038]},{"p":[0.6096,0.9625],"h1":[0.8859,0.6461],"h2":[0.2911,1.3272]},{"p":[-0.433,1.25],"h1":[0.0278,1.3735],"h2":null}],"from":"e1","to":"e12","over":[false,false],"x0":2,"x0over":true,"dir0":[0.9659,-0.2588],"dir1":[-0.9659,-0.2588]},{"anchors":[{"p":[1.933,-0.616],"h1":null,"h2":[1.5503,-0.5135]},{"p":[1.8835,0.2024],"h1":[1.861,-0.138],"h2":[1.906,0.5428]},{"p":[1.3983,1.0246],"h1":[1.6405,0.8481],"h2":[1.1561,1.2011]},{"p":[0.6096,0.9625],"h1":[0.9374,1.2488],"h2":[0.4143,0.792]},{"p":[0,0.5],"h1":[0.1844,0.6844],"h2":null}],"from":"e2","to":"e13","over":[true,true],"x0":3,"x0over":false,"dir0":[-0.9659,0.2588],"dir1":[-0.7071,-0.7071]},{"anchors":[{"p":[1.933,-0.616],"h1":null,"h2":[1.9925,-0.3939]},{"p":[2.366,0.134],"h1":[2.2019,-0.0301],"h2":null}],"from":"e2","to":"e3","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.2588,0.9659],"dir1":[0.7071,0.7071]},{"anchors":[{"p":[2.366,0.134],"h1":null,"h2":[2.214,0.286]},{"p":[2.2535,0.7884],"h1":[2.1311,0.6608],"h2":[2.3759,0.916]},{"p":[2.866,0.634],"h1":[2.7037,0.7963],"h2":null}],"from":"e3","to":"e4","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.7071,0.7071],"dir1":[0.7071,-0.7071]},{"anchors":[{"p":[2.866,0.634],"h1":null,"h2":[3.1013,0.8693]},{"p":[3.616,1.067],"h1":[3.2946,0.9809],"h2":null}],"from":"e4","to":"e5","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.7071,0.7071],"dir1":[0.9659,0.2588]},{"anchors":[{"p":[3.616,1.067],"h1":null,"h2":[3.555,1.2947]},{"p":[3.433,1.75],"h1":[3.494,1.5223],"h2":null}],"from":"e5","to":"e6","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.2588,0.9659],"dir1":[-0.2588,0.9659]},{"anchors":[{"p":[3.433,1.75],"h1":null,"h2":[3.1116,1.6639]},{"p":[2.567,1.75],"h1":[2.8884,1.6639],"h2":null}],"from":"e6","to":"e7","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.9659,-0.2588],"dir1":[-0.9659,0.2588]},{"anchors":[{"p":[2.567,1.75],"h1":null,"h2":[2.5028,1.5105]},{"p":[2.0833,1.3086],"h1":[2.2541,1.2629],"h2":[1.9126,1.3543]},{"p":[1.884,1.933],"h1":[1.8197,1.6933],"h2":null}],"from":"e7","to":"e8","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.2588,-0.9659],"dir1":[0.2588,0.9659]},{"anchors":[{"p":[1.884,1.933],"h1":null,"h2":[1.5625,2.0191]},{"p":[1.134,2.366],"h1":[1.3693,2.1307],"h2":null}],"from":"e8","to":"e9","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.9659,0.2588],"dir1":[-0.7071,0.7071]},{"anchors":[{"p":[1.134,2.366],"h1":null,"h2":[0.7813,2.0134]},{"p":[0.134,2.366],"h1":[0.4866,2.0134],"h2":null}],"from":"e9","to":"e10","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.7071,-0.7071],"dir1":[-0.7071,0.7071]},{"anchors":[{"p":[0.134,2.366],"h1":null,"h2":[-0.1013,2.1307]},{"p":[-0.616,1.933],"h1":[-0.2946,2.0191],"h2":null}],"from":"e10","to":"e11","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.7071,-0.7071],"dir1":[-0.9659,-0.2588]},{"anchors":[{"p":[-0.616,1.933],"h1":null,"h2":[-0.555,1.7053]},{"p":[-0.433,1.25],"h1":[-0.494,1.4777],"h2":null}],"from":"e11","to":"e12","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.2588,-0.9659],"dir1":[0.2588,-0.9659]}],"aliases":["2.13:01"],"crow":4.6121},{"id":"0.9:10","spokes":[0,9],"states":[1,0],"passages":[{"anchors":[{"p":[0.5,0],"h1":null,"h2":[0.2798,0.2202]},{"p":[1.1285,0.7438],"h1":[0.724,0.5088],"h2":[1.533,0.9788]},{"p":[1.63,1.5569],"h1":[1.8978,1.1604],"h2":[1.4574,1.8125]},{"p":[1.134,2.366],"h1":[1.3468,2.1532],"h2":null}],"from":"e0","to":"e9","over":[true,true],"x0":2,"x0over":false,"dir0":[-0.7071,0.7071],"dir1":[-0.7071,0.7071]},{"anchors":[{"p":[0.5,0],"h1":null,"h2":[0.6164,0.1164]},{"p":[1.1692,0.2317],"h1":[0.9977,0.3204],"h2":[1.3406,0.1431]},{"p":[1.25,-0.433],"h1":[1.3022,-0.2381],"h2":null}],"from":"e0","to":"e1","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.7071,0.7071],"dir1":[-0.2588,-0.9659]},{"anchors":[{"p":[1.25,-0.433],"h1":null,"h2":[1.4777,-0.494]},{"p":[1.933,-0.616],"h1":[1.7053,-0.555],"h2":null}],"from":"e1","to":"e2","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.9659,-0.2588],"dir1":[0.9659,-0.2588]},{"anchors":[{"p":[1.933,-0.616],"h1":null,"h2":[2.0191,-0.2946]},{"p":[2.366,0.134],"h1":[2.1307,-0.1013],"h2":null}],"from":"e2","to":"e3","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.2588,0.9659],"dir1":[0.7071,0.7071]},{"anchors":[{"p":[2.366,0.134],"h1":null,"h2":[2.1946,0.3054]},{"p":[2.2253,0.7703],"h1":[2.098,0.6476],"h2":[2.3526,0.8929]},{"p":[2.866,0.634],"h1":[2.7039,0.7961],"h2":null}],"from":"e3","to":"e4","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.7071,0.7071],"dir1":[0.7071,-0.7071]},{"anchors":[{"p":[2.866,0.634],"h1":null,"h2":[3.1013,0.8693]},{"p":[3.616,1.067],"h1":[3.2946,0.9809],"h2":null}],"from":"e4","to":"e5","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.7071,0.7071],"dir1":[0.9659,0.2588]},{"anchors":[{"p":[3.616,1.067],"h1":null,"h2":[3.555,1.2947]},{"p":[3.433,1.75],"h1":[3.494,1.5223],"h2":null}],"from":"e5","to":"e6","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.2588,0.9659],"dir1":[-0.2588,0.9659]},{"anchors":[{"p":[3.433,1.75],"h1":null,"h2":[3.1116,1.6639]},{"p":[2.567,1.75],"h1":[2.8884,1.6639],"h2":null}],"from":"e6","to":"e7","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.9659,-0.2588],"dir1":[-0.9659,0.2588]},{"anchors":[{"p":[2.567,1.75],"h1":null,"h2":[2.4976,1.491]},{"p":[2.1736,1.1625],"h1":[2.3392,1.0975],"h2":[2.0081,1.2276]},{"p":[1.884,1.933],"h1":[1.8353,1.7512],"h2":null}],"from":"e7","to":"e8","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.2588,-0.9659],"dir1":[0.2588,0.9659]},{"anchors":[{"p":[1.884,1.933],"h1":null,"h2":[1.5465,2.0234]},{"p":[1.63,1.5569],"h1":[1.7871,1.663],"h2":[1.2917,1.3285]},{"p":[0.7855,0.9997],"h1":[1.0495,1.2657],"h2":[0.5215,0.7336]},{"p":[0,0.5],"h1":[0.2357,0.2643],"h2":null}],"from":"e8","to":"e13","over":[false,false],"x0":1,"x0over":true,"dir0":[-0.9659,0.2588],"dir1":[-0.7071,0.7071]},{"anchors":[{"p":[1.134,2.366],"h1":null,"h2":[0.7813,2.0134]},{"p":[0.134,2.366],"h1":[0.4866,2.0134],"h2":null}],"from":"e9","to":"e10","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.7071,-0.7071],"dir1":[-0.7071,0.7071]},{"anchors":[{"p":[0.134,2.366],"h1":null,"h2":[-0.1013,2.1307]},{"p":[-0.616,1.933],"h1":[-0.2946,2.0191],"h2":null}],"from":"e10","to":"e11","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.7071,-0.7071],"dir1":[-0.9659,-0.2588]},{"anchors":[{"p":[-0.616,1.933],"h1":null,"h2":[-0.555,1.7053]},{"p":[-0.433,1.25],"h1":[-0.494,1.4777],"h2":null}],"from":"e11","to":"e12","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.2588,-0.9659],"dir1":[0.2588,-0.9659]},{"anchors":[{"p":[-0.433,1.25],"h1":null,"h2":[-0.2435,1.3008]},{"p":[0.2346,1.1587],"h1":[0.1429,1.3281],"h2":[0.3262,0.9893]},{"p":[0,0.5],"h1":[0.1232,0.6232],"h2":null}],"from":"e12","to":"e13","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.9659,0.2588],"dir1":[-0.7071,-0.7071]}],"aliases":["0.9:01"],"crow":4.8165},{"id":"2.7:10","spokes":[2,7],"states":[1,0],"passages":[{"anchors":[{"p":[0.5,0],"h1":null,"h2":[0.3333,0.1667]},{"p":[0,0.5],"h1":[0.1667,0.3333],"h2":null}],"from":"e0","to":"e13","over":[true,false],"x0":-1,"x0over":false,"dir0":[-0.7071,0.7071],"dir1":[-0.7071,0.7071]},{"anchors":[{"p":[0.5,0],"h1":null,"h2":[0.6529,0.1529]},{"p":[1.0766,0.2301],"h1":[0.9168,0.3372],"h2":[1.2364,0.1229]},{"p":[1.25,-0.433],"h1":[1.2921,-0.2758],"h2":null}],"from":"e0","to":"e1","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.7071,0.7071],"dir1":[-0.2588,-0.9659]},{"anchors":[{"p":[1.25,-0.433],"h1":null,"h2":[1.8308,-0.5886]},{"p":[1.323,0.323],"h1":[1.4441,-0.0315],"h2":[1.2019,0.6775]},{"p":[1.4693,1.0255],"h1":[1.3464,0.8293],"h2":[1.5921,1.2218]},{"p":[1.7708,1.5355],"h1":[1.6933,1.4625],"h2":[1.8483,1.6086]},{"p":[2.3338,1.4664],"h1":[1.9021,1.5141],"h2":[2.4871,1.4494]},{"p":[3.0354,1.0128],"h1":[2.8169,0.9424],"h2":[3.254,1.0831]},{"p":[3.433,1.75],"h1":[3.3613,1.7308],"h2":null}],"from":"e1","to":"e6","over":[false,false],"x0":4,"x0over":true,"dir0":[0.9659,-0.2588],"dir1":[0.9659,0.2588]},{"anchors":[{"p":[1.933,-0.616],"h1":null,"h2":[1.7467,-0.5661]},{"p":[1.8292,0.0968],"h1":[1.7896,-0.1783],"h2":[1.8688,0.3718]},{"p":[2.0148,0.7476],"h1":[1.9052,0.5341],"h2":[2.1244,0.9611]},{"p":[2.3338,1.4664],"h1":[2.3073,1.2259],"h2":[2.3401,1.5228]},{"p":[2.8653,1.5101],"h1":[2.7948,1.457],"h2":[2.9357,1.5633]},{"p":[2.567,1.75],"h1":[2.6219,1.7353],"h2":null}],"from":"e2","to":"e7","over":[true,true],"x0":3,"x0over":false,"dir0":[-0.9659,0.2588],"dir1":[-0.9659,0.2588]},{"anchors":[{"p":[1.933,-0.616],"h1":null,"h2":[2.0042,-0.3505]},{"p":[2.366,0.134],"h1":[2.1726,-0.0594],"h2":null}],"from":"e2","to":"e3","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.2588,0.9659],"dir1":[0.7071,0.7071]},{"anchors":[{"p":[2.366,0.134],"h1":null,"h2":[2.167,0.333]},{"p":[2.2812,0.6669],"h1":[2.1502,0.5479],"h2":[2.4122,0.786]},{"p":[2.866,0.634],"h1":[2.6908,0.8092],"h2":null}],"from":"e3","to":"e4","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.7071,0.7071],"dir1":[0.7071,-0.7071]},{"anchors":[{"p":[2.866,0.634],"h1":null,"h2":[2.9829,0.7508]},{"p":[3.616,1.067],"h1":[3.4517,1.023],"h2":null}],"from":"e4","to":"e5","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.7071,0.7071],"dir1":[0.9659,0.2588]},{"anchors":[{"p":[3.616,1.067],"h1":null,"h2":[3.5534,1.3008]},{"p":[3.433,1.75],"h1":[3.4955,1.5169],"h2":null}],"from":"e5","to":"e6","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.2588,0.9659],"dir1":[-0.2588,0.9659]},{"anchors":[{"p":[2.567,1.75],"h1":null,"h2":[2.548,1.6792]},{"p":[3.0942,1.4351],"h1":[3.0703,1.5143],"h2":[3.1182,1.3559]},{"p":[2.5004,1.2934],"h1":[2.6437,1.3624],"h2":[2.357,1.2244]},{"p":[2.426,1.0047],"h1":[2.5447,1.0799],"h2":[2.3074,0.9295]},{"p":[1.8031,0.947],"h1":[1.8824,0.9236],"h2":[1.7237,0.9703]},{"p":[1.8468,1.146],"h1":[1.99,1.0228],"h2":[1.7036,1.2692]},{"p":[1.1913,1.6113],"h1":[1.1509,1.463],"h2":[1.2316,1.7595]},{"p":[1.884,1.933],"h1":[1.865,1.8622],"h2":null}],"from":"e7","to":"e8","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.2588,-0.9659],"dir1":[0.2588,0.9659]},{"anchors":[{"p":[1.884,1.933],"h1":null,"h2":[1.596,2.0102]},{"p":[1.134,2.366],"h1":[1.3383,2.1617],"h2":null}],"from":"e8","to":"e9","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.9659,0.2588],"dir1":[-0.7071,0.7071]},{"anchors":[{"p":[1.134,2.366],"h1":null,"h2":[0.7813,2.0134]},{"p":[0.134,2.366],"h1":[0.4866,2.0134],"h2":null}],"from":"e9","to":"e10","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.7071,-0.7071],"dir1":[-0.7071,0.7071]},{"anchors":[{"p":[0.134,2.366],"h1":null,"h2":[-0.1013,2.1307]},{"p":[-0.616,1.933],"h1":[-0.2946,2.0191],"h2":null}],"from":"e10","to":"e11","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.7071,-0.7071],"dir1":[-0.9659,-0.2588]},{"anchors":[{"p":[-0.616,1.933],"h1":null,"h2":[-0.555,1.7053]},{"p":[-0.433,1.25],"h1":[-0.494,1.4777],"h2":null}],"from":"e11","to":"e12","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.2588,-0.9659],"dir1":[0.2588,-0.9659]},{"anchors":[{"p":[-0.433,1.25],"h1":null,"h2":[-0.2388,1.302]},{"p":[0.1854,1.1071],"h1":[0.0902,1.272],"h2":[0.2807,0.9421]},{"p":[0,0.5],"h1":[0.1422,0.6422],"h2":null}],"from":"e12","to":"e13","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.9659,0.2588],"dir1":[-0.7071,-0.7071]}],"aliases":["2.7:01"],"crow":5.5367},{"id":"0.5:10","spokes":[0,5],"states":[1,0],"passages":[{"anchors":[{"p":[0.5,0],"h1":null,"h2":[0.3307,0.1693]},{"p":[0.9322,0.6439],"h1":[0.6168,0.4295],"h2":[1.2477,0.8583]},{"p":[1.762,0.9332],"h1":[1.5924,1.0269],"h2":[1.9316,0.8395]},{"p":[1.9855,0.3997],"h1":[1.9261,0.4837],"h2":[2.045,0.3158]},{"p":[2.5223,0.763],"h1":[2.1694,0.5038],"h2":[2.6925,0.888]},{"p":[3.0174,1.1864],"h1":[2.8548,1.16],"h2":[3.18,1.2129]},{"p":[3.616,1.067],"h1":[3.3429,0.9938],"h2":null}],"from":"e0","to":"e5","over":[true,true],"x0":4,"x0over":false,"dir0":[-0.7071,0.7071],"dir1":[0.9659,0.2588]},{"anchors":[{"p":[0.5,0],"h1":null,"h2":[0.6317,0.1317]},{"p":[1.121,0.1925],"h1":[0.954,0.2874],"h2":[1.288,0.0976]},{"p":[1.25,-0.433],"h1":[1.2996,-0.2479],"h2":null}],"from":"e0","to":"e1","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.7071,0.7071],"dir1":[-0.2588,-0.9659]},{"anchors":[{"p":[1.25,-0.433],"h1":null,"h2":[1.4777,-0.494]},{"p":[1.933,-0.616],"h1":[1.7053,-0.555],"h2":null}],"from":"e1","to":"e2","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.9659,-0.2588],"dir1":[0.9659,-0.2588]},{"anchors":[{"p":[1.933,-0.616],"h1":null,"h2":[2.0111,-0.3246]},{"p":[2.366,0.134],"h1":[2.1475,-0.0845],"h2":null}],"from":"e2","to":"e3","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.2588,0.9659],"dir1":[0.7071,0.7071]},{"anchors":[{"p":[2.366,0.134],"h1":null,"h2":[2.3172,0.1828]},{"p":[1.5013,0.1523],"h1":[1.6447,0.0532],"h2":[1.358,0.2514]},{"p":[1.901,0.7742],"h1":[1.7437,0.579],"h2":[2.0582,0.9695]},{"p":[2.1457,0.9915],"h1":[1.9869,1.0322],"h2":[2.3045,0.9507]},{"p":[2.866,0.634],"h1":[2.6935,0.8065],"h2":null}],"from":"e3","to":"e4","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.7071,0.7071],"dir1":[0.7071,-0.7071]},{"anchors":[{"p":[2.866,0.634],"h1":null,"h2":[2.9519,0.7198]},{"p":[2.5223,0.763],"h1":[2.5483,0.7276],"h2":[2.3442,1.0055]},{"p":[2.3972,1.2206],"h1":[2.5472,1.1356],"h2":[2.2472,1.3055]},{"p":[1.4053,1.3176],"h1":[1.7442,1.3452],"h2":[1.0664,1.29]},{"p":[0.6857,0.9368],"h1":[0.8916,1.195],"h2":[0.4797,0.6786]},{"p":[0,0.5],"h1":[0.2427,0.2573],"h2":null}],"from":"e4","to":"e13","over":[false,false],"x0":1,"x0over":true,"dir0":[0.7071,0.7071],"dir1":[-0.7071,0.7071]},{"anchors":[{"p":[3.616,1.067],"h1":null,"h2":[3.555,1.2947]},{"p":[3.433,1.75],"h1":[3.494,1.5223],"h2":null}],"from":"e5","to":"e6","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.2588,0.9659],"dir1":[-0.2588,0.9659]},{"anchors":[{"p":[3.433,1.75],"h1":null,"h2":[3.1116,1.6639]},{"p":[2.567,1.75],"h1":[2.8884,1.6639],"h2":null}],"from":"e6","to":"e7","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.9659,-0.2588],"dir1":[-0.9659,0.2588]},{"anchors":[{"p":[2.567,1.75],"h1":null,"h2":[2.5036,1.5133]},{"p":[2.0808,1.3568],"h1":[2.2521,1.3131],"h2":[1.9095,1.4006]},{"p":[1.884,1.933],"h1":[1.8184,1.6882],"h2":null}],"from":"e7","to":"e8","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.2588,-0.9659],"dir1":[0.2588,0.9659]},{"anchors":[{"p":[1.884,1.933],"h1":null,"h2":[1.5625,2.0191]},{"p":[1.134,2.366],"h1":[1.3693,2.1307],"h2":null}],"from":"e8","to":"e9","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.9659,0.2588],"dir1":[-0.7071,0.7071]},{"anchors":[{"p":[1.134,2.366],"h1":null,"h2":[0.7813,2.0134]},{"p":[0.134,2.366],"h1":[0.4866,2.0134],"h2":null}],"from":"e9","to":"e10","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.7071,-0.7071],"dir1":[-0.7071,0.7071]},{"anchors":[{"p":[0.134,2.366],"h1":null,"h2":[-0.1013,2.1307]},{"p":[-0.616,1.933],"h1":[-0.2946,2.0191],"h2":null}],"from":"e10","to":"e11","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.7071,-0.7071],"dir1":[-0.9659,-0.2588]},{"anchors":[{"p":[-0.616,1.933],"h1":null,"h2":[-0.555,1.7053]},{"p":[-0.433,1.25],"h1":[-0.494,1.4777],"h2":null}],"from":"e11","to":"e12","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.2588,-0.9659],"dir1":[0.2588,-0.9659]},{"anchors":[{"p":[-0.433,1.25],"h1":null,"h2":[-0.2444,1.3005]},{"p":[0.2337,1.1546],"h1":[0.1413,1.3234],"h2":[0.3261,0.9857]},{"p":[0,0.5],"h1":[0.1252,0.6252],"h2":null}],"from":"e12","to":"e13","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.9659,0.2588],"dir1":[-0.7071,-0.7071]}],"aliases":["0.5:01"],"crow":6.1628},{"id":"0.7:10","spokes":[0,7],"states":[1,0],"passages":[{"anchors":[{"p":[0.5,0],"h1":null,"h2":[0.3108,0.1892]},{"p":[1.0575,0.6082],"h1":[0.7036,0.5476],"h2":[1.4114,0.6687]},{"p":[1.9529,0.5947],"h1":[1.7263,0.4315],"h2":[2.1795,0.758]},{"p":[2.3338,1.4664],"h1":[2.3178,1.3217],"h2":[2.3398,1.5208]},{"p":[2.8581,1.5157],"h1":[2.788,1.462],"h2":[2.9281,1.5695]},{"p":[2.567,1.75],"h1":[2.6199,1.7358],"h2":null}],"from":"e0","to":"e7","over":[true,true],"x0":3,"x0over":false,"dir0":[-0.7071,0.7071],"dir1":[-0.9659,0.2588]},{"anchors":[{"p":[0.5,0],"h1":null,"h2":[0.6126,0.1126]},{"p":[1.1758,0.2333],"h1":[1.0032,0.3203],"h2":[1.3484,0.1463]},{"p":[1.25,-0.433],"h1":[1.3029,-0.2355],"h2":null}],"from":"e0","to":"e1","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.7071,0.7071],"dir1":[-0.2588,-0.9659]},{"anchors":[{"p":[1.25,-0.433],"h1":null,"h2":[1.4777,-0.494]},{"p":[1.933,-0.616],"h1":[1.7053,-0.555],"h2":null}],"from":"e1","to":"e2","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.9659,-0.2588],"dir1":[0.9659,-0.2588]},{"anchors":[{"p":[1.933,-0.616],"h1":null,"h2":[2.0189,-0.2956]},{"p":[2.366,0.134],"h1":[2.1314,-0.1007],"h2":null}],"from":"e2","to":"e3","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.2588,0.9659],"dir1":[0.7071,0.7071]},{"anchors":[{"p":[2.366,0.134],"h1":null,"h2":[2.1794,0.3206]},{"p":[2.2403,0.6263],"h1":[2.1132,0.5034],"h2":[2.3674,0.7492]},{"p":[2.866,0.634],"h1":[2.6878,0.8122],"h2":null}],"from":"e3","to":"e4","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.7071,0.7071],"dir1":[0.7071,-0.7071]},{"anchors":[{"p":[2.866,0.634],"h1":null,"h2":[2.9684,0.7363]},{"p":[3.616,1.067],"h1":[3.4702,1.0279],"h2":null}],"from":"e4","to":"e5","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.7071,0.7071],"dir1":[0.9659,0.2588]},{"anchors":[{"p":[3.616,1.067],"h1":null,"h2":[3.5537,1.2996]},{"p":[3.433,1.75],"h1":[3.4959,1.5151],"h2":null}],"from":"e5","to":"e6","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.2588,0.9659],"dir1":[-0.2588,0.9659]},{"anchors":[{"p":[3.433,1.75],"h1":null,"h2":[3.3602,1.7305]},{"p":[3.0209,1.0006],"h1":[3.2407,1.0707],"h2":[2.8011,0.9305]},{"p":[2.3338,1.4664],"h1":[2.4811,1.4501],"h2":[1.7773,1.5278]},{"p":[1.7179,1.5179],"h1":[1.7071,1.6398],"h2":[1.7288,1.396]},{"p":[1.6464,0.959],"h1":[1.8208,1.0401],"h2":[1.472,0.8778]},{"p":[0.7361,0.9041],"h1":[1.0313,1.0715],"h2":[0.441,0.7368]},{"p":[0,0.5],"h1":[0.2915,0.2085],"h2":null}],"from":"e6","to":"e13","over":[false,false],"x0":2,"x0over":true,"dir0":[-0.9659,-0.2588],"dir1":[-0.7071,0.7071]},{"anchors":[{"p":[2.567,1.75],"h1":null,"h2":[2.5487,1.6816]},{"p":[3.0683,1.3859],"h1":[3.0345,1.4662],"h2":[3.1022,1.3055]},{"p":[2.5286,1.3016],"h1":[2.6842,1.3602],"h2":[2.3731,1.2431]},{"p":[2.3813,0.9991],"h1":[2.48,1.0713],"h2":[2.2826,0.9269]},{"p":[1.8841,1.0003],"h1":[1.9783,0.9542],"h2":[1.7898,1.0463]},{"p":[1.7001,1.2333],"h1":[1.9056,1.111],"h2":[1.4945,1.3557]},{"p":[1.0605,1.6629],"h1":[0.9677,1.5357],"h2":[1.1533,1.7901]},{"p":[1.884,1.933],"h1":[1.8656,1.8646],"h2":null}],"from":"e7","to":"e8","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.2588,-0.9659],"dir1":[0.2588,0.9659]},{"anchors":[{"p":[1.884,1.933],"h1":null,"h2":[1.6314,2.0007]},{"p":[1.134,2.366],"h1":[1.3196,2.1804],"h2":null}],"from":"e8","to":"e9","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.9659,0.2588],"dir1":[-0.7071,0.7071]},{"anchors":[{"p":[1.134,2.366],"h1":null,"h2":[0.7813,2.0134]},{"p":[0.134,2.366],"h1":[0.4866,2.0134],"h2":null}],"from":"e9","to":"e10","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.7071,-0.7071],"dir1":[-0.7071,0.7071]},{"anchors":[{"p":[0.134,2.366],"h1":null,"h2":[-0.1013,2.1307]},{"p":[-0.616,1.933],"h1":[-0.2946,2.0191],"h2":null}],"from":"e10","to":"e11","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.7071,-0.7071],"dir1":[-0.9659,-0.2588]},{"anchors":[{"p":[-0.616,1.933],"h1":null,"h2":[-0.555,1.7053]},{"p":[-0.433,1.25],"h1":[-0.494,1.4777],"h2":null}],"from":"e11","to":"e12","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.2588,-0.9659],"dir1":[0.2588,-0.9659]},{"anchors":[{"p":[-0.433,1.25],"h1":null,"h2":[-0.2443,1.3006]},{"p":[0.2349,1.1567],"h1":[0.1428,1.3257],"h2":[0.3271,0.9876]},{"p":[0,0.5],"h1":[0.1243,0.6243],"h2":null}],"from":"e12","to":"e13","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.9659,0.2588],"dir1":[-0.7071,-0.7071]}],"aliases":["0.7:01"],"crow":6.3618},{"id":"5.12:01","spokes":[5,12],"states":[0,1],"passages":[{"anchors":[{"p":[0.5,0],"h1":null,"h2":[0.3333,0.1667]},{"p":[0,0.5],"h1":[0.1667,0.3333],"h2":null}],"from":"e0","to":"e13","over":[true,false],"x0":-1,"x0over":false,"dir0":[-0.7071,0.7071],"dir1":[-0.7071,0.7071]},{"anchors":[{"p":[0.5,0],"h1":null,"h2":[0.6482,0.1482]},{"p":[1.1017,0.1912],"h1":[0.9391,0.2914],"h2":[1.2642,0.091]},{"p":[1.25,-0.433],"h1":[1.2984,-0.2525],"h2":null}],"from":"e0","to":"e1","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.7071,0.7071],"dir1":[-0.2588,-0.9659]},{"anchors":[{"p":[1.25,-0.433],"h1":null,"h2":[1.4777,-0.494]},{"p":[1.933,-0.616],"h1":[1.7053,-0.555],"h2":null}],"from":"e1","to":"e2","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.9659,-0.2588],"dir1":[0.9659,-0.2588]},{"anchors":[{"p":[1.933,-0.616],"h1":null,"h2":[2.006,-0.3435]},{"p":[2.366,0.134],"h1":[2.1595,-0.0726],"h2":null}],"from":"e2","to":"e3","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.2588,0.9659],"dir1":[0.7071,0.7071]},{"anchors":[{"p":[2.366,0.134],"h1":null,"h2":[2.3132,0.1868]},{"p":[1.4664,0.0908],"h1":[1.6015,0.0068],"h2":[1.3313,0.1748]},{"p":[1.9225,0.7423],"h1":[1.7728,0.5228],"h2":[2.0722,0.9617]},{"p":[2.0843,1.0152],"h1":[1.9302,1.0528],"h2":[2.2383,0.9777]},{"p":[2.866,0.634],"h1":[2.6885,0.8115],"h2":null}],"from":"e3","to":"e4","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.7071,0.7071],"dir1":[0.7071,-0.7071]},{"anchors":[{"p":[2.866,0.634],"h1":null,"h2":[2.9525,0.7204]},{"p":[2.5223,0.763],"h1":[2.5482,0.7278],"h2":[2.3926,0.9395]},{"p":[2.4243,1.2254],"h1":[2.5546,1.1375],"h2":[2.294,1.3133]},{"p":[1.5876,1.3981],"h1":[1.8714,1.291],"h2":[1.3037,1.5052]},{"p":[0.9324,1.8503],"h1":[1.1585,1.7418],"h2":[0.7064,1.9588]},{"p":[0.0866,1.8666],"h1":[0.3994,1.9394],"h2":[-0.2262,1.7937]},{"p":[-0.616,1.933],"h1":[-0.5449,1.6675],"h2":null}],"from":"e4","to":"e11","over":[false,false],"x0":1,"x0over":true,"dir0":[0.7071,0.7071],"dir1":[-0.2588,0.9659]},{"anchors":[{"p":[3.616,1.067],"h1":null,"h2":[3.3211,0.988]},{"p":[3.0616,1.176],"h1":[3.2264,1.2065],"h2":[2.8969,1.1454]},{"p":[2.5223,0.763],"h1":[2.6621,0.8658],"h2":[2.2365,0.5531]},{"p":[1.9351,0.3397],"h1":[1.988,0.325],"h2":[1.8822,0.3545]},{"p":[1.9039,0.805],"h1":[2.025,0.6121],"h2":[1.7829,0.9978]},{"p":[1.1169,1.2723],"h1":[1.3981,1.1258],"h2":[0.8358,1.4188]},{"p":[0.3254,1.6001],"h1":[0.6583,1.5838],"h2":[-0.0075,1.6164]},{"p":[-0.433,1.25],"h1":[-0.4957,1.484],"h2":null}],"from":"e5","to":"e12","over":[true,true],"x0":2,"x0over":false,"dir0":[-0.9659,-0.2588],"dir1":[0.2588,-0.9659]},{"anchors":[{"p":[3.616,1.067],"h1":null,"h2":[3.555,1.2947]},{"p":[3.433,1.75],"h1":[3.494,1.5223],"h2":null}],"from":"e5","to":"e6","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.2588,0.9659],"dir1":[-0.2588,0.9659]},{"anchors":[{"p":[3.433,1.75],"h1":null,"h2":[3.1141,1.6646]},{"p":[2.567,1.75],"h1":[2.8863,1.6644],"h2":null}],"from":"e6","to":"e7","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.9659,-0.2588],"dir1":[-0.9659,0.2588]},{"anchors":[{"p":[2.567,1.75],"h1":null,"h2":[2.4995,1.4982]},{"p":[2.1032,1.399],"h1":[2.2747,1.3562],"h2":[1.9317,1.4419]},{"p":[1.884,1.933],"h1":[1.8134,1.6696],"h2":null}],"from":"e7","to":"e8","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.2588,-0.9659],"dir1":[0.2588,0.9659]},{"anchors":[{"p":[1.884,1.933],"h1":null,"h2":[1.5645,2.0186]},{"p":[1.134,2.366],"h1":[1.3675,2.1325],"h2":null}],"from":"e8","to":"e9","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.9659,0.2588],"dir1":[-0.7071,0.7071]},{"anchors":[{"p":[1.134,2.366],"h1":null,"h2":[0.8451,2.0771]},{"p":[0.134,2.366],"h1":[0.4258,2.0742],"h2":null}],"from":"e9","to":"e10","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.7071,-0.7071],"dir1":[-0.7071,0.7071]},{"anchors":[{"p":[0.134,2.366],"h1":null,"h2":[-0.0672,2.1649]},{"p":[-0.616,1.933],"h1":[-0.3339,2.0086],"h2":null}],"from":"e10","to":"e11","over":[false,true],"x0":-1,"x0over":false,"dir0":[-0.7071,-0.7071],"dir1":[-0.9659,-0.2588]},{"anchors":[{"p":[-0.433,1.25],"h1":null,"h2":[-0.2795,1.2911]},{"p":[0.2683,1.1067],"h1":[0.1615,1.2677],"h2":[0.375,0.9458]},{"p":[0,0.5],"h1":[0.1474,0.6474],"h2":null}],"from":"e12","to":"e13","over":[false,true],"x0":-1,"x0over":false,"dir0":[0.9659,0.2588],"dir1":[-0.7071,-0.7071]}],"aliases":["5.12:10"],"crow":7.7695}]};
+const SVGNS = 'http://www.w3.org/2000/svg';
+const SC = 100;   // viewBox units per tile unit
+const X = (x) => x * SC, Y = (y) => -y * SC;
+const sub = (a, b) => [a[0] - b[0], a[1] - b[1]], add = (a, b) => [a[0] + b[0], a[1] + b[1]], scl = (a, k) => [a[0] * k, a[1] * k];
+const nrm = (a) => Math.hypot(a[0], a[1]), unit = (a) => { const n = nrm(a) || 1; return [a[0] / n, a[1] / n]; }, dot = (a, b) => a[0] * b[0] + a[1] * b[1];
+const rot90 = (v) => [-v[1], v[0]];
+const tp = (M, p) => [M[0] * p[0] + M[1] * p[1] + M[2], M[3] * p[0] + M[4] * p[1] + M[5]];
+const det = (M) => M[0] * M[4] - M[1] * M[3];
+const clone = (o) => JSON.parse(JSON.stringify(o));
+const fmt = (v) => Math.round(v * 10000) / 10000;
+
+// ---------- state
+const DESIGNS = DATA.designs;   // sorted by the crow-flies span of the two strands through the internal crossing
+const dirty = new Set();
+let cur = DESIGNS.find((d) => d.featured) || DESIGNS[0];
+let AUTO = clone(cur.passages);
+let design = clone(AUTO);
+let undoStack = [], redoStack = [];
+const work = {};   // id -> { design, undo, redo } for designs visited this session
+const savedIds = new Set();
+const docIdOf = (d) => d.legacy ? 'current' : 'd_' + d.id.replace(':', '_');
+const lsKey = (d) => 'spectre-tile-design:' + d.id;
+const pushUndo = () => { dirty.add(cur.id); undoStack.push(JSON.stringify(design)); if (undoStack.length > 200) undoStack.shift(); redoStack.length = 0; updateButtons(); };
+const x0Of = () => design.map((ps, i) => [ps, i]).filter(([ps]) => ps.x0 >= 0);
+function colouring(P) {   // two-colouring along the chain of passages through the ports
+  const adj = {}; P.forEach((ps, i) => { (adj[ps.from] = adj[ps.from] || []).push(i); (adj[ps.to] = adj[ps.to] || []).push(i); });
+  const col = P.map(() => -1); const stack = [];
+  P.forEach((_, i) => { if (col[i] >= 0) return; col[i] = 0; stack.push(i); while (stack.length) { const u = stack.pop(); for (const port of [P[u].from, P[u].to]) for (const v of adj[port]) if (col[v] < 0) { col[v] = 1 - col[u]; stack.push(v); } } });
+  return col;
+}
+let COL = colouring(AUTO);
+const colourOf = (i) => COL[i];
+
+// ---------- geometry of the fixed frame
+const portDir = (ps, end) => end === 0 ? ps.dir0 : ps.dir1;   // along the strand: into the tile at the start, out of the tile at the end
+function x0Frame() {   // the two directions through the spoke crossing, derived from the over passage's handle
+  const xs = x0Of(); if (xs.length < 2) return null;
+  const [a, ia] = xs[0], [b, ib] = xs[1];
+  const A = a.anchors[a.x0], B = b.anchors[b.x0];
+  const dA = unit(sub(A.h2, A.p)), dBraw = unit(sub(B.h2, B.p));
+  const sB = (dA[0] * dBraw[1] - dA[1] * dBraw[0]) >= 0 ? 1 : -1;
+  return { a, ia, b, ib, A, B, dA, dB: scl(rot90(dA), sB) };
+}
+function applyFrame(f, dA) {   // re-aim the four handles at the crossing, keeping their lengths
+  const dB = scl(rot90(dA), (dA[0] * f.dB[1] - dA[1] * f.dB[0]) >= 0 ? 1 : -1);
+  for (const [an, d] of [[f.A, dA], [f.B, dB]]) {
+    if (an.h1) an.h1 = sub(an.p, scl(d, nrm(sub(an.p, an.h1))));
+    if (an.h2) an.h2 = add(an.p, scl(d, nrm(sub(an.h2, an.p))));
+  }
+}
+const PAD = 0.55, BM = 0.04;
+const BOX = (() => { let a = 1e9, b = 1e9, c = -1e9, d = -1e9; for (const [x, y] of DATA.PTS) { a = Math.min(a, x); c = Math.max(c, x); b = Math.min(b, y); d = Math.max(d, y); } return [a - PAD + BM, b - PAD + BM, c + PAD - BM, d + PAD - BM]; })();
+const clampPt = (p) => [Math.min(BOX[2], Math.max(BOX[0], p[0])), Math.min(BOX[3], Math.max(BOX[1], p[1]))];
+function pullIn(a, h) {   // shorten a handle along its own direction until it lies inside the drawing area
+  let t = 1; for (let i = 0; i < 2; i++) { const d = h[i] - a[i], lo = BOX[i], hi = BOX[i + 2]; if (h[i] > hi && d > 0) t = Math.min(t, (hi - a[i]) / d); if (h[i] < lo && d < 0) t = Math.min(t, (lo - a[i]) / d); }
+  return t < 1 ? [a[0] + t * (h[0] - a[0]), a[1] + t * (h[1] - a[1])] : h;
+}
+// edge crossings sit at the edge midpoints, slid along the edge by the design's offset:
+// +offset on even edges, -offset on odd ones (every contact in the tiling joins an even edge to an odd one)
+const offOf = () => (design[0] && design[0].shift) || 0;
+function portPt(lab, s) { const e = +lab.slice(1), a = DATA.PTS[e], b = DATA.PTS[(e + 1) % 14], sg = e % 2 === 0 ? 1 : -1, t = 0.5 + sg * (s || 0); return [a[0] + t * (b[0] - a[0]), a[1] + t * (b[1] - a[1])]; }
+function enforce(ps, i) {   // keep the port anchors and their handle directions
+  const A = ps.anchors, n = A.length;
+  const auto = AUTO[i];
+  const sh = ps.shift || 0, P0 = portPt(ps.from, sh), P1 = portPt(ps.to, sh);
+  const m0 = sub(P0, A[0].p), m1 = sub(P1, A[n - 1].p);   // a port that moves carries its handle with it
+  A[0].p = P0; A[0].h2 = add(A[0].h2, m0); A[n - 1].p = P1; A[n - 1].h1 = add(A[n - 1].h1, m1);
+  const d0 = ps.dir0, d1 = ps.dir1;
+  const len = (v, d) => dot(v, d) > 0 ? Math.max(0.04, nrm(v)) : 0.04;
+  A[0].h2 = add(A[0].p, scl(d0, len(sub(A[0].h2, A[0].p), d0)));
+  A[n - 1].h1 = sub(A[n - 1].p, scl(d1, len(sub(A[n - 1].p, A[n - 1].h1), d1)));
+  for (const a of A) { a.p = clampPt(a.p); if (a.h1) a.h1 = pullIn(a.p, a.h1); if (a.h2) a.h2 = pullIn(a.p, a.h2); }
+}
+
+// ---------- Bezier helpers
+const segsOf = (A) => { const s = []; for (let i = 0; i + 1 < A.length; i++) s.push([A[i].p, A[i].h2, A[i + 1].h1, A[i + 1].p]); return s; };
+function split(bz, t) {   // de Casteljau: returns [left, right]
+  const [p0, p1, p2, p3] = bz; const L = (a, b) => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t];
+  const p01 = L(p0, p1), p12 = L(p1, p2), p23 = L(p2, p3), p012 = L(p01, p12), p123 = L(p12, p23), m = L(p012, p123);
+  return [[p0, p01, p012, m], [m, p123, p23, p3]];
+}
+const sub2 = (bz, t0, t1) => { const r = split(bz, t0)[1]; const t = (t1 - t0) / (1 - t0); return split(r, t)[0]; };
+const bzAt = (bz, t) => { const mt = 1 - t; return [mt * mt * mt * bz[0][0] + 3 * mt * mt * t * bz[1][0] + 3 * mt * t * t * bz[2][0] + t * t * t * bz[3][0], mt * mt * mt * bz[0][1] + 3 * mt * mt * t * bz[1][1] + 3 * mt * t * t * bz[2][1] + t * t * t * bz[3][1]]; };
+const dStr = (bz, T) => { const q = T ? bz.map((p) => tp(T, p)) : bz; return `M${X(q[0][0]).toFixed(2)} ${Y(q[0][1]).toFixed(2)}C${X(q[1][0]).toFixed(2)} ${Y(q[1][1]).toFixed(2)} ${X(q[2][0]).toFixed(2)} ${Y(q[2][1]).toFixed(2)} ${X(q[3][0]).toFixed(2)} ${Y(q[3][1]).toFixed(2)}`; };
+const chainStr = (segs, T) => segs.map((bz, k) => k === 0 ? dStr(bz, T) : dStr(bz, T).replace(/^M[^C]*/, '')).join('');
+
+// ---------- ribbon drawing (outline, fill, then the over halves at every crossing)
+function el(name, attrs, parent) { const e = document.createElementNS(SVGNS, name); for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; }
+function drawRibbons(g, pss, T, swap, W) {
+  const O = W * 0.22, ext = 0.1;
+  const outl = el('g', { class: 'rib-out', 'stroke-width': W + 2 * O }, g), fill = el('g', { class: 'rib-in', 'stroke-width': W }, g), tops = el('g', {}, g);
+  const overHalves = [];
+  pss.forEach((ps, i) => {
+    const segs = segsOf(ps.anchors); const c = 'c' + colourOf(i);
+    el('path', { d: chainStr(segs, T) }, outl); el('path', { d: chainStr(segs, T), class: c }, fill);
+    const over = (k) => swap ? !ps.over[k] : ps.over[k], x0over = swap ? !ps.x0over : ps.x0over;
+    if (over(0)) overHalves.push([segs[0], 0, c]);
+    if (over(1)) overHalves.push([segs[segs.length - 1], 1, c]);
+    if (ps.x0 >= 0 && x0over) { if (ps.x0 > 0) overHalves.push([segs[ps.x0 - 1], 1, c]); if (ps.x0 < segs.length) overHalves.push([segs[ps.x0], 0, c]); }
+  });
+  for (const [bz, end, c] of overHalves) {
+    const o = end === 0 ? sub2(bz, 0, 0.5) : sub2(bz, 0.5, 1), f = end === 0 ? sub2(bz, 0, 0.5 + ext) : sub2(bz, 0.5 - ext, 1);
+    el('path', { d: dStr(o, T), class: 'rib-out', 'stroke-width': W + 2 * O }, tops); el('path', { d: dStr(f, T), class: 'rib-in ' + c, 'stroke-width': W }, tops);
+  }
+}
+
+// ---------- checks: strands must stay inside the tile (clear of its edges except at the ports) and never run through each other
+const EDGES = DATA.PTS.map((p, i) => [p, DATA.PTS[(i + 1) % 14]]);
+const PORTS = EDGES.map(([p, q]) => [(p[0] + q[0]) / 2, (p[1] + q[1]) / 2]);
+function inside(p) { let c = false; for (let i = 0, j = 13; i < 14; j = i++) { const a = DATA.PTS[i], b = DATA.PTS[j]; if ((a[1] > p[1]) !== (b[1] > p[1]) && p[0] < (b[0] - a[0]) * (p[1] - a[1]) / (b[1] - a[1]) + a[0]) c = !c; } return c; }
+function edgeDist(p) { let best = 1e9; for (const [a, b] of EDGES) { const vx = b[0] - a[0], vy = b[1] - a[1], L2 = vx * vx + vy * vy; let t = ((p[0] - a[0]) * vx + (p[1] - a[1]) * vy) / L2; t = t < 0 ? 0 : t > 1 ? 1 : t; best = Math.min(best, Math.hypot(a[0] + t * vx - p[0], a[1] + t * vy - p[1])); } return best; }
+function flatten(pss, T, K) {   // segments [[x,y],[x,y], passage, segIndex, sampleIndex]
+  const segs = [];
+  pss.forEach((ps, i) => segsOf(ps.anchors).forEach((bz, k) => { const b2 = T ? bz.map((p) => tp(T, p)) : bz; let prev = b2[0]; for (let q = 1; q <= K; q++) { const p = bzAt(b2, q / K); segs.push([prev, p, i, k, q]); prev = p; } }));
+  return segs;
+}
+const orient = (o, a, b) => (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]);
+function properCross(a, b, c, d) { const d1 = orient(c, d, a), d2 = orient(c, d, b), d3 = orient(a, b, c), d4 = orient(a, b, d); return ((d1 > 1e-12 && d2 < -1e-12) || (d1 < -1e-12 && d2 > 1e-12)) && ((d3 > 1e-12 && d4 < -1e-12) || (d3 < -1e-12 && d4 > 1e-12)); }
+function intersections(segs, tileOf) {   // proper crossings between segments that are not neighbours on one curve
+  const cs = 0.25, grid = new Map(), key = (x, y) => Math.floor(x / cs) * 73856093 ^ Math.floor(y / cs) * 19349663;
+  segs.forEach((s, id) => { const x0 = Math.min(s[0][0], s[1][0]), x1 = Math.max(s[0][0], s[1][0]), y0 = Math.min(s[0][1], s[1][1]), y1 = Math.max(s[0][1], s[1][1]); for (let cx = Math.floor(x0 / cs); cx <= Math.floor(x1 / cs); cx++) for (let cy = Math.floor(y0 / cs); cy <= Math.floor(y1 / cs); cy++) { const k = key(cx * cs + 1e-9, cy * cs + 1e-9); let l = grid.get(k); if (!l) { l = []; grid.set(k, l); } l.push(id); } });
+  const hits = [];
+  for (const l of grid.values()) for (let u = 0; u < l.length; u++) for (let v = u + 1; v < l.length; v++) {
+    const A = segs[l[u]], B = segs[l[v]];
+    if (tileOf(l[u]) === tileOf(l[v]) && A[2] === B[2] && Math.abs(A[3] * 1000 + A[4] - (B[3] * 1000 + B[4])) <= 1) continue;   // consecutive samples of one curve
+    if (properCross(A[0], A[1], B[0], B[1])) {
+      // the crossing point
+      const r = [A[1][0] - A[0][0], A[1][1] - A[0][1]], s = [B[1][0] - B[0][0], B[1][1] - B[0][1]], den = r[0] * s[1] - r[1] * s[0];
+      const t = ((B[0][0] - A[0][0]) * s[1] - (B[0][1] - A[0][1]) * s[0]) / den;
+      hits.push([A[0][0] + t * r[0], A[0][1] + t * r[1]]);
+    }
+  }
+  // merge near-duplicates
+  const out = []; for (const h of hits) if (!out.some((q) => Math.hypot(q[0] - h[0], q[1] - h[1]) < 0.05)) out.push(h);
+  return out;
+}
+function runChecks(W) {
+  const half = W / SC / 2;
+  // inside the tile: sample every curve; a point outside, or nearer an edge than half the ribbon width (away from the ports), is flagged
+  const outside = [];
+  design.forEach((ps) => segsOf(ps.anchors).forEach((bz) => { for (let q = 1; q < 24; q++) { const p = bzAt(bz, q / 24); const nearPort = PORTS.some((pt, e) => { const q = portPt('e' + e, offOf()); return Math.hypot(q[0] - p[0], q[1] - p[1]) < 0.22; }); if (nearPort) continue; if (!inside(p) || edgeDist(p) < half) outside.push(p); } }));
+  const tileX = intersections(flatten(design, null, 10), () => 0).filter((h) => !x0Of().some(([ps]) => Math.hypot(ps.anchors[ps.x0].p[0] - h[0], ps.anchors[ps.x0].p[1] - h[1]) < 0.03));
+  const segs9 = []; DATA.T9.forEach((T, ti) => { for (const s of flatten(design, T, 8)) { s.push(ti); segs9.push(s); } });
+  const crossPts = PORTS.flatMap((pt, e) => DATA.T9.map((T) => tp(T, portPt('e' + e, offOf()))));
+  const x0pt = x0Of().length ? x0Of()[0][0].anchors[x0Of()[0][0].x0].p : null;
+  const nineX = intersections(segs9, (id) => segs9[id][5]).filter((h) => !crossPts.some((c) => Math.hypot(c[0] - h[0], c[1] - h[1]) < 0.03) && !(x0pt && DATA.T9.some((T) => { const c = tp(T, x0pt); return Math.hypot(c[0] - h[0], c[1] - h[1]) < 0.03; })));
+  return { outside, tileX, nineX };
+}
+// ---------- the editor view
+const edit = document.getElementById('edit'), prev = document.getElementById('prev');
+const PTS = DATA.PTS, KERNEL = DATA.KERNEL;
+{
+  let minx = 1e9, miny = 1e9, maxx = -1e9, maxy = -1e9; for (const [x, y] of PTS) { minx = Math.min(minx, x); maxx = Math.max(maxx, x); miny = Math.min(miny, y); maxy = Math.max(maxy, y); }
+  const pad = 0.55; edit.setAttribute('viewBox', `${X(minx - pad)} ${Y(maxy + pad)} ${(maxx - minx + 2 * pad) * SC} ${(maxy - miny + 2 * pad) * SC}`);
+  const all = []; for (const T of DATA.T9) for (const p of PTS) all.push(tp(T, p));
+  let a = 1e9, b = 1e9, c = -1e9, d = -1e9; for (const [x, y] of all) { a = Math.min(a, x); c = Math.max(c, x); b = Math.min(b, y); d = Math.max(d, y); }
+  prev.setAttribute('viewBox', `${X(a - 0.4)} ${Y(d + 0.4)} ${(c - a + 0.8) * SC} ${(d - b + 0.8) * SC}`);
+}
+const ui = { handles: true, labels: false, spokes: false, W: 10 };
+let selected = null;
+function render() {
+  // editor
+  edit.textContent = '';
+  const W = ui.W;
+  el('path', { d: 'M' + PTS.map((p) => `${X(p[0])} ${Y(p[1])}`).join('L') + 'Z', class: 'tile' }, edit);
+  if (ui.spokes) cur.spokes.forEach((v, k) => el('path', { d: `M${X(KERNEL[0])} ${Y(KERNEL[1])}L${X(PTS[v][0])} ${Y(PTS[v][1])}`, class: 'spoke ' + (cur.states[k] === 0 ? 'cross' : 'wall') }, edit));
+  drawRibbons(edit, design, null, false, W);
+  if (ui.labels) for (let e = 0; e < 14; e++) { const p = PTS[e], q = PTS[(e + 1) % 14], m = portPt('e' + e, offOf()), n = unit(rot90(sub(q, p))); el('text', { x: X(m[0] - 0.16 * n[0]), y: Y(m[1] - 0.16 * n[1]) + 3, class: 'lbl', 'text-anchor': 'middle' }, edit).textContent = 'e' + e; }
+  // checks
+  const chk = runChecks(W);
+  { const g = el('g', {}, edit); for (const p of chk.outside) el('circle', { cx: X(p[0]), cy: Y(p[1]), r: 2.2, class: 'warn-out' }, g); for (const p of chk.tileX) el('circle', { cx: X(p[0]), cy: Y(p[1]), r: 9, class: 'warn-x' }, g); }
+  { const c = document.getElementById('checksTile'); const parts = []; parts.push(chk.outside.length ? `<span class="bad">${chk.outside.length} points leave the tile or hug an edge</span> (orange dashes)` : '<b>Inside the tile</b>'); parts.push(chk.tileX.length ? `<span class="bad">${chk.tileX.length} strand collision${chk.tileX.length > 1 ? 's' : ''}</span> (pink)` : '<b>no collisions</b>'); c.innerHTML = parts.join(' · '); }
+  // hit paths for inserting anchors
+  const hits = el('g', {}, edit);
+  design.forEach((ps, i) => segsOf(ps.anchors).forEach((bz, k) => el('path', { d: dStr(bz), class: 'hitpath' }, hits)));
+  if (ui.handles) {
+    const hg = el('g', {}, edit);
+    const frame = x0Frame();
+    design.forEach((ps, i) => {
+      const A = ps.anchors, n = A.length;
+      A.forEach((a, k) => {
+        const isPort = k === 0 || k === n - 1, isX0 = k === ps.x0;
+        for (const key of ['h1', 'h2']) {
+          const h = a[key]; if (!h) continue;
+          el('line', { x1: X(a.p[0]), y1: Y(a.p[1]), x2: X(h[0]), y2: Y(h[1]), class: 'hl' }, hg);
+          const locked = isPort || isX0;
+          const c = el('circle', { cx: X(h[0]), cy: Y(h[1]), r: 4.2, class: 'handle' + (locked ? ' locked' : '') }, hg);
+          c.addEventListener('pointerdown', (ev) => startDrag(ev, { kind: 'handle', i, k, key, locked }));
+        }
+      });
+    });
+    design.forEach((ps, i) => {
+      const A = ps.anchors, n = A.length;
+      A.forEach((a, k) => {
+        const isPort = k === 0 || k === n - 1, isX0 = k === ps.x0;
+        if (isPort) { el('rect', { x: X(a.p[0]) - 5, y: Y(a.p[1]) - 5, width: 10, height: 10, class: 'anchor fixed' }, hg); return; }
+        if (isX0 && frame && i !== frame.ia) return;   // drawn once, from the over passage
+        const c = el('circle', { cx: X(a.p[0]), cy: Y(a.p[1]), r: isX0 ? 6.5 : 5.5, class: 'anchor' + (isX0 ? ' x0' : '') }, hg);
+        c.addEventListener('pointerdown', (ev) => startDrag(ev, { kind: isX0 ? 'x0' : 'anchor', i, k }));
+
+      });
+    });
+    if (frame) {   // rotation knob: a ring on the over strand's direction, with a turn glyph
+      const R = 0.3, q = add(frame.A.p, scl(frame.dA, R));
+      el('line', { x1: X(frame.A.p[0]), y1: Y(frame.A.p[1]), x2: X(q[0]), y2: Y(q[1]), class: 'hl' }, hg);
+      const kn = el('circle', { cx: X(q[0]), cy: Y(q[1]), r: 9, class: 'knob' }, hg);
+      el('path', { d: `M${X(q[0]) - 4.5} ${Y(q[1]) - 1}a4.6 4.6 0 1 1 1.6 3.4M${X(q[0]) - 4.8} ${Y(q[1]) - 4}v3.2h3.2`, class: 'knobglyph' }, hg);
+      kn.addEventListener('pointerdown', (ev) => startDrag(ev, { kind: 'knob' }));
+    }
+  }
+  // preview
+  prev.textContent = '';
+  for (const T of DATA.T9) el('path', { d: 'M' + PTS.map((p) => { const q = tp(T, p); return `${X(q[0]).toFixed(1)} ${Y(q[1]).toFixed(1)}`; }).join('L') + 'Z', class: 'tile9' }, prev);
+  for (const T of DATA.T9) drawRibbons(prev, design, T, det(T) < 0, W);
+  { const g = el('g', {}, prev); for (const p of chk.nineX) el('circle', { cx: X(p[0]), cy: Y(p[1]), r: 12, class: 'warn-x' }, g); }
+  { const c = document.getElementById('checksPrev'); c.innerHTML = chk.nineX.length ? `<span class="bad">${chk.nineX.length} collision${chk.nineX.length > 1 ? 's' : ''} between tiles</span> (pink): a strand that leaves its tile runs into a neighbour's.` : '<b>No collisions between tiles.</b> Keeping every strand inside its own tile guarantees this for the whole tiling.'; }
+  { const o = offOf(), sl = document.getElementById('offset'); if (document.activeElement !== sl) sl.value = o; document.getElementById('offsetVal').textContent = (o > 0 ? '+' : '') + o.toFixed(2); }
+  document.getElementById('json').value = exportJSON();
+  if (undoStack.length) { try { localStorage.setItem(lsKey(cur), JSON.stringify(design)); } catch (e) {} }
+  markEdited();
+}
+function exportJSON() {
+  return JSON.stringify({ design: cur.id, spokes: cur.spokes, states: cur.states, edgeOffset: Math.round(offOf() * 1000) / 1000, proved: !!cur.proved, alias: cur.legacy || undefined, passages: design.map((ps) => ({ from: ps.from, to: ps.to, over: ps.over, x0: ps.x0, x0over: ps.x0over, anchors: ps.anchors.map((a) => ({ p: a.p.map(fmt), h1: a.h1 ? a.h1.map(fmt) : null, h2: a.h2 ? a.h2.map(fmt) : null })) })) });
+}
+function importJSON(text) {
+  const obj = JSON.parse(text); const pss = obj.passages || obj;
+  if (obj.design && obj.design !== cur.id) { const d = DESIGNS.find((q) => q.id === obj.design || (q.aliases || []).includes(obj.design) || (q.legacy && obj.design === q.legacy)); if (d && d !== cur) selectDesign(d.id); }
+  if (!Array.isArray(pss) || pss.length !== AUTO.length) throw new Error('expected ' + AUTO.length + ' passages');
+  const next = AUTO.map((auto) => { const ps = pss.find((q) => q.from === auto.from && q.to === auto.to); if (!ps) throw new Error('missing passage ' + auto.from + '>' + auto.to); return Object.assign({}, auto, { anchors: clone(ps.anchors), x0: ps.x0, shift: obj.edgeOffset || 0 }); });
+  pushUndo(); design = next; design.forEach(enforce); render();
+}
+
+// ---------- dragging
+const svgPoint = (ev) => { const pt = new DOMPoint(ev.clientX, ev.clientY).matrixTransform(edit.getScreenCTM().inverse()); return [pt.x / SC, -pt.y / SC]; };
+let drag = null;
+function startDrag(ev, what) {
+  ev.stopPropagation();
+  drag = Object.assign({ start: svgPoint(ev), snapshot: clone(design), pushed: false }, what);
+  edit.classList.add('dragging');
+  edit.setPointerCapture(ev.pointerId);
+}
+edit.addEventListener('pointermove', (ev) => {
+  if (!drag) return;
+  const m = clampPt(svgPoint(ev)), d = sub(m, drag.start), snap = drag.snapshot;
+  if (!drag.pushed) { dirty.add(cur.id); undoStack.push(JSON.stringify(snap)); if (undoStack.length > 200) undoStack.shift(); redoStack.length = 0; updateButtons(); drag.pushed = true; }
+  if (drag.kind === 'anchor') {
+    const a = design[drag.i].anchors[drag.k], s = snap[drag.i].anchors[drag.k];
+    a.p = add(s.p, d); if (s.h1) a.h1 = add(s.h1, d); if (s.h2) a.h2 = add(s.h2, d);
+  } else if (drag.kind === 'x0') {
+    for (const [ps, i] of x0Of()) { const a = ps.anchors[ps.x0], s = snap[i].anchors[ps.x0]; a.p = add(s.p, d); if (s.h1) a.h1 = add(s.h1, d); if (s.h2) a.h2 = add(s.h2, d); }
+  } else if (drag.kind === 'knob') {
+    const f = x0Frame(); if (f) { const v = sub(m, f.A.p); if (nrm(v) > 0.02) applyFrame(f, unit(v)); }
+  } else if (drag.kind === 'handle') {
+    const ps = design[drag.i], a = ps.anchors[drag.k], s = snap[drag.i].anchors[drag.k], n = ps.anchors.length;
+    if (drag.locked && drag.k === ps.x0) {   // a crossing handle: turns the whole 90-degree frame and sets its own length
+      const f = x0Frame(), v = sub(m, a.p);
+      if (f && nrm(v) > 0.02) {
+        const sign = drag.key === 'h2' ? 1 : -1, dMine = scl(unit(v), sign);
+        let dA;
+        if (drag.i === f.ia) dA = dMine; else { const sB = (f.dA[0] * f.dB[1] - f.dA[1] * f.dB[0]) >= 0 ? 1 : -1; dA = scl(rot90(dMine), -sB); }
+        applyFrame(f, dA);
+        a[drag.key] = add(a.p, scl(dMine, sign * Math.max(0.04, nrm(v))));
+      }
+    } else if (drag.locked) {   // a port handle: slides along the fixed 45-degree direction
+      const dir = drag.k === 0 ? ps.dir0 : ps.dir1, sign = drag.key === 'h2' ? 1 : -1;
+      const len = Math.max(0.04, sign * dot(sub(m, a.p), dir));
+      a[drag.key] = add(a.p, scl(dir, sign * len));
+    } else {
+      a[drag.key] = m;
+      const other = drag.key === 'h2' ? 'h1' : 'h2';
+      if (a[other] && !ev.shiftKey) { const L = nrm(sub(a[other], a.p)); a[other] = sub(a.p, scl(unit(sub(a[drag.key], a.p)), L)); }
+    }
+  }
+  design.forEach(enforce);
+  render();
+});
+const endDrag = (ev) => { if (!drag) return; const moved = drag.pushed; drag = null; edit.classList.remove('dragging'); if (moved) render(); };
+edit.addEventListener('pointerup', endDrag); edit.addEventListener('pointercancel', endDrag);
+
+// ---------- add / remove anchors (double-click anywhere: an anchor within reach is removed, else the nearest curve gets one)
+edit.addEventListener('dblclick', (ev) => {
+  ev.preventDefault();
+  const m = svgPoint(ev); const reach = 0.09;
+  for (let i = 0; i < design.length; i++) { const ps = design[i]; for (let k = 1; k < ps.anchors.length - 1; k++) { if (k === ps.x0) continue; if (nrm(sub(ps.anchors[k].p, m)) < reach) { removeAnchor(i, k); return; } } }
+  let best = null, bd = 0.12;
+  design.forEach((ps, i) => segsOf(ps.anchors).forEach((bz, k) => { for (let q = 1; q < 40; q++) { const dd = nrm(sub(bzAt(bz, q / 40), m)); if (dd < bd) { bd = dd; best = [i, k, q / 40]; } } }));
+  if (best) insertAnchor(best[0], best[1], best[2]);
+});
+function insertAnchor(i, k, bt) {
+  const ps = design[i], A = ps.anchors, bz = [A[k].p, A[k].h2, A[k + 1].h1, A[k + 1].p];
+  pushUndo();
+  const [L, R] = split(bz, bt);
+  A[k].h2 = L[1]; A[k + 1].h1 = R[2];
+  A.splice(k + 1, 0, { p: L[3], h1: L[2], h2: R[1] });
+  if (ps.x0 > k) ps.x0++;
+  render();
+}
+function removeAnchor(i, k) {
+  const ps = design[i], A = ps.anchors; if (k === 0 || k === A.length - 1 || k === ps.x0) return;
+  pushUndo(); A.splice(k, 1); if (ps.x0 > k) ps.x0--; render();
+}
+
+// ---------- the 17 designs
+function restoreLocal(d) {
+  try { const s = localStorage.getItem(lsKey(d)) || (d.legacy ? localStorage.getItem('spectre-tile-design') : null); if (!s) return null; const pss = JSON.parse(s); if (Array.isArray(pss) && pss.length === d.passages.length && pss.every((p, i) => p.from === d.passages[i].from && p.to === d.passages[i].to) && JSON.stringify(pss) !== JSON.stringify(d.passages)) { pss.forEach((ps, i) => enforceAgainst(ps, d.passages[i])); return pss; } } catch (e) {}
+  return null;
+}
+function enforceAgainst(ps, auto) { const A = ps.anchors, n = A.length; A[0].p = auto.anchors[0].p.slice(); A[n - 1].p = auto.anchors[auto.anchors.length - 1].p.slice(); }
+function describe(d) {
+  const ci = d.states.indexOf(0), wi = 1 - ci;
+  const aka = [d.legacy ? d.id : null].concat(d.aliases || []).filter(Boolean);
+  return { name: d.legacy || d.id, what: `crossing on spoke ${d.spokes[ci]}, turn-back on spoke ${d.spokes[wi]} · crossing strands span ${d.crow.toFixed(2)} edge lengths` + (aka.length ? ` · the same knot as ${aka.join(', ')}` : '') };
+}
+function selectDesign(id) {
+  const d = DESIGNS.find((q) => q.id === id); if (!d || d === cur) return;
+  work[cur.id] = Object.assign(work[cur.id] || {}, { design, undo: undoStack, redo: redoStack });
+  cur = d; AUTO = clone(d.passages); COL = colouring(AUTO);
+  if (work[d.id]) { design = work[d.id].design; undoStack = work[d.id].undo || []; redoStack = work[d.id].redo || []; }
+  else { const r = restoreLocal(d); design = r || clone(AUTO); undoStack = []; redoStack = []; if (r) dirty.add(d.id); if (r) say('Restored this browser\'s unsaved edits for ' + d.id + '.'); else say(''); }
+  design.forEach(enforce);
+  try { localStorage.setItem('spectre-tile-last', d.id); } catch (e) {}
+  updateButtons(); renderStrip(); render();
+}
+function thumb(d, P) {
+  let minx = 1e9, miny = 1e9, maxx = -1e9, maxy = -1e9; for (const [x, y] of PTS) { minx = Math.min(minx, x); maxx = Math.max(maxx, x); miny = Math.min(miny, y); maxy = Math.max(maxy, y); }
+  const s = el('svg', { viewBox: `${X(minx - 0.1)} ${Y(maxy + 0.1)} ${(maxx - minx + 0.2) * SC} ${(maxy - miny + 0.2) * SC}`, class: 'tb', 'aria-hidden': 'true' });
+  el('path', { d: 'M' + PTS.map((p) => `${X(p[0])} ${Y(p[1])}`).join('L') + 'Z', class: 't' }, s);
+  d.spokes.forEach((v, k) => { if (d.states[k] === 1) el('path', { d: `M${X(KERNEL[0])} ${Y(KERNEL[1])}L${X(PTS[v][0])} ${Y(PTS[v][1])}`, class: 'sp' }, s); });
+  const col = colouring(d.passages);
+  P.forEach((ps, i) => el('path', { d: chainStr(segsOf(ps.anchors)), class: 'r' + col[i] }, s));
+  return s;
+}
+function isEdited(d) { return dirty.has(d.id); }
+function renderStrip() {
+  const box = document.getElementById('designs'); box.textContent = '';
+  for (const d of DESIGNS) {
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'dcard'; b.setAttribute('aria-pressed', d === cur ? 'true' : 'false');
+    const P = d === cur ? design : (work[d.id] && work[d.id].design) || d.passages;
+    b.appendChild(thumb(d, P));
+    const ds = describe(d);
+    const nm = document.createElement('span'); nm.className = 'nm'; nm.textContent = ds.name; b.appendChild(nm);
+    const sb = document.createElement('span'); sb.className = 'sb'; sb.textContent = `span ${d.crow.toFixed(2)} · cross ${d.spokes[d.states.indexOf(0)]}, turn ${d.spokes[d.states.indexOf(1)]}`; b.appendChild(sb);
+    const tags = document.createElement('span'); tags.className = 'tags';
+    const p1 = document.createElement('span'); p1.className = 'pill' + (d.proved ? ' proved' : ''); p1.textContent = d.proved ? 'Proved' : 'Not proved'; tags.appendChild(p1);
+    if (savedIds.has(d.id)) { const p2 = document.createElement('span'); p2.className = 'pill edited'; p2.textContent = 'Saved'; tags.appendChild(p2); }
+    else if (isEdited(d)) { const p2 = document.createElement('span'); p2.className = 'pill edited'; p2.textContent = 'Edited'; tags.appendChild(p2); }
+    b.appendChild(tags);
+    b.addEventListener('click', () => selectDesign(d.id));
+    box.appendChild(b);
+  }
+  const ds = describe(cur);
+  document.getElementById('dName').textContent = ds.name;
+  document.getElementById('dWhat').textContent = ds.what;
+  const bn = document.getElementById('dBanner');
+  bn.className = 'banner ' + (cur.proved ? 'proved' : 'unproved');
+  bn.innerHTML = cur.featured
+    ? '<b>Proved: one endless strand, no loops.</b> This is the design the explainer proves, by induction over all supertile levels.'
+    : cur.proved ? '<b>Proved: one endless strand, no loops.</b> The first design proved, by the same induction the explainer now runs on 0.1:01.'
+    : '<b>Not proved.</b> No closed loops in any supertile up to level 7 (about 4.7 million tiles), which is strong evidence, but the single-strand proof has not been run on this design.';
+}
+let stripTimer = null;
+function markEdited() { clearTimeout(stripTimer); stripTimer = setTimeout(renderStrip, 250); }
+
+// ---------- buttons, keys, persistence
+const status = document.getElementById('status');
+const say = (html) => { status.innerHTML = html; };
+function updateButtons() { document.getElementById('undo').disabled = !undoStack.length; document.getElementById('redo').disabled = !redoStack.length; }
+document.getElementById('undo').addEventListener('click', () => { if (!undoStack.length) return; redoStack.push(JSON.stringify(design)); design = JSON.parse(undoStack.pop()); updateButtons(); render(); });
+document.getElementById('redo').addEventListener('click', () => { if (!redoStack.length) return; undoStack.push(JSON.stringify(design)); design = JSON.parse(redoStack.pop()); updateButtons(); render(); });
+document.getElementById('reset').addEventListener('click', () => { pushUndo(); design = clone(AUTO); dirty.delete(cur.id); render(); say('Back to the automatic routing for ' + cur.id + '.'); });
+document.getElementById('load').addEventListener('click', () => { try { importJSON(document.getElementById('json').value); say('Loaded the pasted design.'); } catch (e) { say('<b>Could not load:</b> ' + e.message); } });
+document.getElementById('copy').addEventListener('click', () => {
+  const ta = document.getElementById('json'); ta.value = exportJSON();
+  const fallback = () => { ta.closest('details').open = true; ta.focus(); ta.select(); say('Select-all in the box and copy.'); };
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(ta.value).then(() => say('Design JSON copied.'), fallback); else fallback();
+});
+document.addEventListener('keydown', (ev) => {
+  if ((ev.ctrlKey || ev.metaKey) && ev.key.toLowerCase() === 'z') { ev.preventDefault(); document.getElementById(ev.shiftKey ? 'redo' : 'undo').click(); }
+});
+for (const [id, key] of [['showHandles', 'handles'], ['showLabels', 'labels'], ['showSpokes', 'spokes']]) document.getElementById(id).addEventListener('change', (ev) => { ui[key] = ev.target.checked; render(); });
+document.getElementById('width').addEventListener('input', (ev) => { ui.W = +ev.target.value; render(); });
+{ const sl = document.getElementById('offset'); let armed = false;
+  const setOff = (v) => { for (const ps of design) ps.shift = v; design.forEach(enforce); render(); };
+  sl.addEventListener('input', () => { if (!armed) { pushUndo(); armed = true; } setOff(+sl.value); });
+  sl.addEventListener('change', () => { armed = false; });
+  sl.addEventListener('dblclick', () => { pushUndo(); sl.value = 0; setOff(0); }); }
+try { const last = localStorage.getItem('spectre-tile-last'); const d = last && DESIGNS.find((q) => q.id === last || (q.aliases || []).includes(last)); if (d && d !== cur) { cur = d; AUTO = clone(d.passages); COL = colouring(AUTO); design = clone(AUTO); } } catch (e) {}
+updateButtons();
+renderStrip();
+render();
+
+// saved design: the page's own store first (shared with Claude), then this browser's copy
+let db = null;
+const saveBtn = document.getElementById('save');
+saveBtn.addEventListener('click', async () => {
+  if (!db) { say('Saving to the page is not available here; use Copy JSON instead.'); return; }
+  saveBtn.disabled = true;
+  try { await db.doc('designs/' + docIdOf(cur)).set({ id: cur.id, json: exportJSON(), savedAt: new Date().toISOString() }); savedIds.add(cur.id); renderStrip(); say('Saved ' + cur.id + '. Claude can read it from the page.'); }
+  catch (e) { say('<b>Save failed</b> (' + (e && e.code ? e.code : 'error') + '). Copy JSON still works.'); }
+  saveBtn.disabled = false;
+});
+(async () => {
+  let loaded = false;
+  try {
+    db = window.claude && window.claude.use ? await window.claude.use('db') : null;
+    if (!db) saveBtn.style.display = 'none';   // off claude.ai (e.g. the website): edits still persist in this browser; Copy JSON exports them
+    if (db) {
+      const snap = await db.collection('designs').get();
+      for (const doc of snap.docs) {
+        const v = doc.data(); if (!v || !v.json) continue;
+        const d = doc.id === 'current' ? DESIGNS.find((q) => q.legacy) : DESIGNS.find((q) => docIdOf(q) === doc.id || (q.aliases || []).some((a) => 'd_' + a.replace(':', '_') === doc.id));
+        if (!d) continue;
+        savedIds.add(d.id);
+        const obj = JSON.parse(v.json), pss = obj.passages;
+        const base = d.passages;
+        const merged = base.map((auto) => { const ps = pss.find((q) => q.from === auto.from && q.to === auto.to); return ps ? Object.assign({}, auto, { anchors: clone(ps.anchors), x0: ps.x0, shift: obj.edgeOffset || 0 }) : clone(auto); });
+        work[d.id] = { design: merged, undo: [], redo: [], savedAt: v.savedAt };
+      }
+      if (work[cur.id]) { design = work[cur.id].design; design.forEach(enforce); loaded = true; say('Loaded ' + cur.id + ', saved on ' + new Date(work[cur.id].savedAt).toLocaleString() + '.'); }
+      renderStrip(); render();
+    }
+  } catch (e) { db = null; saveBtn.style.display = 'none'; }
+  if (!loaded) { const r = restoreLocal(cur); if (r) { dirty.add(cur.id); undoStack.push(JSON.stringify(design)); design = r; updateButtons(); render(); say('Restored this browser\'s unsaved edits.'); } }
+  if (!db) saveBtn.title = 'Saving to the page is unavailable in this view';
+})();
+</script>
