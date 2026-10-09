@@ -19,3 +19,5 @@ This repository is the published website (GitHub Pages). It is generated; the so
 The spectre tile is due to David Smith, Joseph Samuel Myers, Craig S. Kaplan and Chaim Goodman-Strauss ([*A chiral aperiodic monotile*](https://arxiv.org/abs/2305.17743), Combinatorial Theory 4(2), 2024). Justin Roughley came up with the original idea of looking for a mono-stranded aperiodic knot, and then used AI to search for it (2026).
 
 Fonts: Figtree in `assets/fonts/` (SIL Open Font License, `assets/fonts/Figtree-OFL.txt`); the handout and tile embed TeX Gyre Pagella (GUST Font License).
+
+Licence: the text, pictures, handout and paper are CC BY 4.0 (`LICENSE-CONTENT.md`); the code is MIT (`LICENSE`).
