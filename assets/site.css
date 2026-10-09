@@ -203,8 +203,23 @@ ol.howto { margin: 0; padding-left: 1.3em; color: var(--mut); display: grid; gap
 .depth button { border: 0; background: none; color: var(--mut); padding: 6px 13px; border-radius: 999px; font-weight: 650; font-size: .9rem; display: inline-flex; gap: 7px; align-items: center; }
 .depth button b { display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid currentColor; font-size: .72rem; }
 .depth button[aria-pressed="true"] { background: var(--mint); color: #062018; }
+.hclaims { display: grid; gap: 10px; }
+.hclaims p { margin: 0; padding: 9px 14px 10px; border-left: 3px solid var(--mint); background: rgba(127,214,176,.06); border-radius: 0 var(--r-s) var(--r-s) 0; color: var(--ink); font-size: 1.02rem; max-width: 62ch; }
+.hclaims b { display: block; font-size: .74rem; letter-spacing: .13em; text-transform: uppercase; color: var(--mint); }
+.hclaims .c2 { border-left-color: var(--amber); background: rgba(230,159,0,.06); }
+.hclaims .c2 b { color: var(--amber); }
 .claim { background: linear-gradient(135deg, #15302a, var(--surf)); border: 1px solid color-mix(in srgb, var(--mint) 40%, var(--line)); border-radius: var(--r); padding: 22px 24px; display: grid; gap: 10px; }
 .claim h2 { font-size: 1.35rem; }
+.claims { display: grid; gap: 14px; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 760px) { .claims { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
+.claim.c2 { background: linear-gradient(135deg, #2a2310, var(--surf)); border-color: color-mix(in srgb, var(--amber) 55%, var(--line)); }
+.claim.c2 .kick { color: var(--amber); }
+.claimnotes { display: grid; gap: 10px; }
+.pgroup { margin-top: 12px; }
+.pgroup span { font-size: .78rem; letter-spacing: .14em; text-transform: uppercase; color: var(--mint); font-weight: 700; }
+.pgroup[data-group="The Ariadne Theorem"] span { color: var(--amber); }
+.pgroup[data-group="Groundwork"] span, .pgroup[data-group="Scope"] span { color: var(--mut); }
+.toc .tg { flex-basis: 100%; font-size: .72rem; letter-spacing: .12em; text-transform: uppercase; color: var(--faint); font-weight: 700; margin-top: 4px; }
 .toc { display: flex; flex-wrap: wrap; gap: 8px; counter-reset: t; }
 .toc a { text-decoration: none; color: var(--mut); border: 1px solid var(--line); border-radius: 999px; padding: 5px 13px 5px 6px; font-size: .9rem; display: inline-flex; gap: 8px; align-items: center; background: var(--surf); }
 .toc a:hover { color: var(--ink); border-color: var(--mint); }

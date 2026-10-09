@@ -34,6 +34,29 @@
     s.push('</svg>'); return s.join('');
   }
 
+  /* the 14 places the crossing could go, one per edge (the crossover at corners v_j, v_{j+1} is next to edge j).
+     Computed with viewer/research/places.js: edges 11, 12, 13, 0, 1, 2 give no loop in any supertile to level 6;
+     the other eight give loops at level 2 or 3. The design drawn here has its crossing at edge 0. */
+  var PLACE_OK = [1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1];
+  function places(o) {
+    o = o || {}; var R = T.rim, n = R.length, b = bbox(R, 0.3), F = frame(b, o.width || 460), id = 'tp' + (++uid);
+    var s = ['<svg viewBox="0 0 ' + F.W + ' ' + (F.H + 16) + '" role="img" aria-label="' + (o.label || 'The fourteen places the crossing could go') + '"><defs><clipPath id="' + id + '"><path d="' + polyD(R) + '"/></clipPath></defs><g transform="' + F.g + '">',
+      '<path d="' + polyD(R) + '" fill="#12211c"/>', '<g clip-path="url(#' + id + ')" fill="none" opacity=".45">'];
+    T.strands.forEach(function (st) { s.push('<path d="' + st.d + '" stroke="#06100d" stroke-width="0.188"/><path d="' + st.d + '" stroke="#7fd6b0" stroke-width="0.1"/>'); });
+    T.strands.forEach(function (st) { st.ov.forEach(function (v) { s.push('<path d="' + v[0] + '" stroke="#06100d" stroke-width="0.188"/><path d="' + v[1] + '" stroke="#7fd6b0" stroke-width="0.1"/>'); }); });
+    s.push('</g>');
+    for (var j = 0; j < n; j++) {
+      var A = R[j], B = R[(j + 1) % n], ok = PLACE_OK[j], k = 0.07;
+      var P = [A[0] + k * (B[0] - A[0]), A[1] + k * (B[1] - A[1])], Q = [B[0] - k * (B[0] - A[0]), B[1] - k * (B[1] - A[1])];
+      s.push('<path d="M' + P + 'L' + Q + '" stroke="' + (ok ? '#56B4E9' : '#E69F00') + '" stroke-width="' + (j === 0 ? 0.14 : 0.09) + '" stroke-linecap="round"' + (ok ? '' : ' stroke-dasharray="0.12 0.1"') + '/>');
+    }
+    s.push('</g>');
+    var c = T.cross[0], cx = F.x(c[0]), cy = F.y(c[1]), r = 0.3 * F.sc;
+    s.push('<circle cx="' + cx.toFixed(1) + '" cy="' + cy.toFixed(1) + '" r="' + r.toFixed(1) + '" fill="none" stroke="#e8f1ec" stroke-width="2" stroke-dasharray="5 4"/>');
+    s.push('<text x="' + F.x((R[0][0] + R[1][0]) / 2).toFixed(1) + '" y="' + (F.y(R[0][1]) + 30).toFixed(1) + '" fill="#e8f1ec" font-size="19" font-weight="700" text-anchor="middle" paint-order="stroke" stroke="#0d1a16" stroke-width="5">the crossing drawn here</text>');
+    s.push('</svg>'); return s.join('');
+  }
+
   /* straight-edged Tile(1,1) beside a curved-edge spectre (each edge replaced by the same S-curve) */
   function curved(o) {
     o = o || {}; var R = T.rim, n = R.length, b = bbox(R, 0.45), w = b[2] - b[0], gap = 0.6;
@@ -210,41 +233,58 @@
   /* the map of the proof: what rests on what. Each box links to its step. */
   var STAT = { computed: ['#56B4E9', 'computed'], cited: ['#E69F00', 'cited'], proved: ['#7fd6b0', 'argued'] };
   function proofMap(o) {
-    o = o || {}; var W = 920, bw = 200, bh = 64, cx = [20, 245, 470, 695], rowy = [16, 120, 224, 328, 432, 536], H = 618;
+    /* shared groundwork at the top; below, two branches, each ending in one of the two theorems */
+    o = o || {}; var W = 940, bw = 200, bh = 64, rowy = [16, 120, 224, 328, 470, 586], H = 668;
     var N = {
       tile: [0, 0, 'The tile’s drawing', '12 hooks, 1 crossover', 'computed', 'p3'],
       hier: [3, 0, 'Supertiles, for ever', 'same pattern at every level', 'cited', 'p1'],
       L1: [0, 1, 'Black box', 'only rim ports matter', 'proved', 'p2'],
-      L2: [1, 1, 'Zigzag', 'a run: only even or odd', 'proved', 'p4'],
+      L2: [1, 1, 'Zigzag Lemma', 'a run: only even or odd', 'proved', 'p4'],
       sig: [2, 1, 'Signature, levels 1–9', 'every kind, no loop', 'computed', 'p3'],
       sides: [3, 1, 'Side lengths', 'one matrix; parities fixed', 'computed', 'p5'],
       L3: [0.5, 2, 'Small-map walk', 'equals the exact gluing', 'proved', 'p5'],
       L5: [3, 2, 'Small map alternates', 'for ever', 'proved', 'p5'],
-      T6: [1.5, 3, 'Every supertile', 'signature, no closed loop', 'proved', 'p5'],
-      L7: [3, 3, 'Nest covers the plane', 'every tile is in some block', 'proved', 'p6'],
-      L8: [2.2, 4, 'Every block merges', 'one strand 3 or 4 levels up', 'computed', 'p6'],
-      T9: [1.2, 5, 'One endless strand', 'in the nest tiling', 'proved', 'p6'],
-      TA: [0, 4, 'No loops, any tiling', 'faults: where 2 or 3 meet', 'computed', 'p7']
+      T6: [1.5, 3, 'Signature Theorem', 'every supertile, every level', 'proved', 'p5'],
+      LOC: [0, 4, 'Localisation Lemma', 'a loop needs ≤ 3 supertiles', 'proved', 'p6'],
+      MEET: [1, 4, 'Where supertiles meet', 'every meeting checked', 'computed', 'p6'],
+      L8: [2, 4, 'Every block merges', 'one strand 3 or 4 levels up', 'computed', 'p7'],
+      L7: [3, 4, 'Grandparent Lemma', 'the nest covers the plane', 'proved', 'p7'],
+      ERT: [0, 5, 'Endless Ribbon Theorem', 'no loop, in any tiling', 'proved', 'p6', 'goal1'],
+      G3: [1, 5, 'Three Gammas Lemma', 'the one bad corner can’t occur', 'proved', 'p6'],
+      AT: [2.5, 5, 'Ariadne Theorem', 'one strand, in the nest tiling', 'proved', 'p7', 'goal2']
     };
-    var E = [['tile', 'sig'], ['L1', 'L3'], ['L2', 'L3'], ['hier', 'sides'], ['sides', 'L5'], ['L3', 'T6'], ['sig', 'T6'], ['L5', 'T6'], ['hier', 'L7'], ['T6', 'L8'], ['L5', 'L8'], ['T6', 'T9'], ['L7', 'T9'], ['L8', 'T9'], ['T6', 'TA']];
+    var E = [['tile', 'sig'], ['L1', 'L3'], ['L2', 'L3'], ['hier', 'sides'], ['sides', 'L5'], ['L3', 'T6'], ['sig', 'T6'], ['L5', 'T6'], ['hier', 'L7'],
+      ['T6', 'LOC'], ['T6', 'MEET'], ['T6', 'L8'], ['L5', 'L8'], ['LOC', 'ERT'], ['MEET', 'ERT'], ['G3', 'ERT', 'side'], ['L8', 'AT'], ['L7', 'AT']];
     function pos(k) { var n = N[k], x = 20 + n[0] * 225; return { x: x, y: rowy[n[1]] }; }
-    var s = ['<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="The map of the proof: what each step rests on">',
+    var s = ['<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="The map of the proof: shared groundwork, then one branch for each of the two theorems">',
       '<defs><marker id="pm-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10z" fill="#6f877c"/></marker></defs>'];
+    // the two branches, each in its own band
+    var yb = rowy[4] - 30, hb = H - yb - 4;
+    s.push('<rect x="8" y="' + yb + '' + '" width="452" height="' + hb + '" rx="16" fill="#7fd6b0" fill-opacity=".05" stroke="#7fd6b0" stroke-opacity=".35"/>');
+    s.push('<text x="22" y="' + (yb + 19) + '" fill="#7fd6b0" font-size="11.5" font-weight="700" letter-spacing="1.2">CLAIM 1</text>');
+    s.push('<rect x="468" y="' + yb + '" width="444" height="' + hb + '" rx="16" fill="#E69F00" fill-opacity=".05" stroke="#E69F00" stroke-opacity=".35"/>');
+    s.push('<text x="482" y="' + (yb + 19) + '" fill="#E69F00" font-size="11.5" font-weight="700" letter-spacing="1.2">CLAIM 2</text>');
     E.forEach(function (e) {
       var a = pos(e[0]), b = pos(e[1]), x0 = a.x + bw / 2, y0 = a.y + bh, x1 = b.x + bw / 2, y1 = b.y;
+      if (e[2] === 'side') {   // from the left side of the source to the right side of the target, same row
+        var yy = a.y + bh / 2;
+        s.push('<path d="M' + a.x + ',' + yy + 'L' + (b.x + bw + 2) + ',' + yy + '" fill="none" stroke="#6f877c" stroke-width="1.6" marker-end="url(#pm-a)"/>');
+        return;
+      }
       if (e[0] === 'hier' && e[1] === 'L7') {   // round the right-hand side, clear of the boxes in between
-        var xr = a.x + bw, xm = W - 6, ya = a.y + bh / 2, yb = b.y + bh / 2;
-        s.push('<path d="M' + xr + ',' + ya + 'C' + xm + ',' + ya + ' ' + xm + ',' + ya + ' ' + xm + ',' + (ya + 20) + 'L' + xm + ',' + (yb - 20) + 'C' + xm + ',' + yb + ' ' + xm + ',' + yb + ' ' + (xr + 2) + ',' + yb + '" fill="none" stroke="#6f877c" stroke-width="1.6" marker-end="url(#pm-a)"/>');
+        var xr = a.x + bw, xm = W - 12, ya = a.y + bh / 2, yb2 = b.y + bh / 2;
+        s.push('<path d="M' + xr + ',' + ya + 'C' + xm + ',' + ya + ' ' + xm + ',' + ya + ' ' + xm + ',' + (ya + 20) + 'L' + xm + ',' + (yb2 - 20) + 'C' + xm + ',' + yb2 + ' ' + xm + ',' + yb2 + ' ' + (xr + 2) + ',' + yb2 + '" fill="none" stroke="#6f877c" stroke-width="1.6" marker-end="url(#pm-a)"/>');
         return;
       }
       s.push('<path d="M' + x0 + ',' + y0 + 'C' + x0 + ',' + (y0 + 34) + ' ' + x1 + ',' + (y1 - 34) + ' ' + x1 + ',' + (y1 - 2) + '" fill="none" stroke="#6f877c" stroke-width="1.6" marker-end="url(#pm-a)"/>');
     });
     Object.keys(N).forEach(function (k) {
-      var n = N[k], p = pos(k), st = STAT[n[4]], fin = k === 'T9';
-      s.push('<a href="#' + n[5] + '" data-step="' + n[5] + '"><g class="pm-node"><rect x="' + p.x + '" y="' + p.y + '" width="' + bw + '" height="' + bh + '" rx="12" fill="' + (fin ? '#2a2310' : '#12211c') + '" stroke="' + (fin ? '#E69F00' : st[0]) + '" stroke-width="' + (fin ? 3 : 2) + '"' + (n[4] === 'argued' ? ' stroke-dasharray="6 4"' : '') + '/>' +
-        '<text x="' + (p.x + 12) + '" y="' + (p.y + 23) + '" fill="#e8f1ec" font-size="15" font-weight="700">' + n[2] + '</text>' +
+      var n = N[k], p = pos(k), st = STAT[n[4]], goal = n[6];
+      var fill = goal === 'goal1' ? '#10302a' : goal === 'goal2' ? '#2a2310' : '#12211c', edge = goal === 'goal1' ? '#7fd6b0' : goal === 'goal2' ? '#E69F00' : st[0];
+      s.push('<a href="#' + n[5] + '" data-step="' + n[5] + '"><g class="pm-node"><rect x="' + p.x + '" y="' + p.y + '" width="' + bw + '" height="' + bh + '" rx="12" fill="' + fill + '" stroke="' + edge + '" stroke-width="' + (goal ? 3 : 2) + '"/>' +
+        '<text x="' + (p.x + 12) + '" y="' + (p.y + 23) + '" fill="#e8f1ec" font-size="' + (goal ? 15.5 : 15) + '" font-weight="700">' + n[2] + '</text>' +
         '<text x="' + (p.x + 12) + '" y="' + (p.y + 41) + '" fill="#a3b8ae" font-size="12.5">' + n[3] + '</text>' +
-        '<text x="' + (p.x + 12) + '" y="' + (p.y + 57) + '" fill="' + st[0] + '" font-size="10.5" font-weight="700" letter-spacing="1">' + st[1].toUpperCase() + '</text></g></a>');
+        '<text x="' + (p.x + 12) + '" y="' + (p.y + 57) + '" fill="' + (goal ? edge : st[0]) + '" font-size="10.5" font-weight="700" letter-spacing="1">' + (goal ? 'THEOREM · ' + st[1].toUpperCase() : st[1].toUpperCase()) + '</text></g></a>');
     });
     s.push('</svg>'); return s.join('');
   }
@@ -330,5 +370,5 @@
     }
     return '';
   }
-  window.SKF = { tile: tile, curved: curved, tree: tree, periodic: periodic, signature: signature, ports: ports, zigzag: zigzag, nest: nest, period: period, scope: scope, proofMap: proofMap, lengthBar: lengthBar, parityTable: parityTable, gloss: gloss };
+  window.SKF = { tile: tile, places: places, curved: curved, tree: tree, periodic: periodic, signature: signature, ports: ports, zigzag: zigzag, nest: nest, period: period, scope: scope, proofMap: proofMap, lengthBar: lengthBar, parityTable: parityTable, gloss: gloss };
 })();

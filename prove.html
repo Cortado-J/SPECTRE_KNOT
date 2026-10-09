@@ -4,12 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Prove · The Spectre Knot</title>
-<meta name="description" content="Why the Spectre Knot is one endless strand: the argument in seven steps, at four depths, with diagrams.">
+<meta name="description" content="Two theorems: the Endless Ribbon Theorem (no loop in any spectre tiling) and the Ariadne Theorem (one strand in the nest tiling), in eight steps at four depths, with diagrams.">
 <link rel="canonical" href="https://cortado-j.github.io/SPECTRE_KNOT/prove.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="The Spectre Knot">
 <meta property="og:title" content="Prove · The Spectre Knot">
-<meta property="og:description" content="Why the Spectre Knot is one endless strand: the argument in seven steps, at four depths, with diagrams.">
+<meta property="og:description" content="Two theorems: the Endless Ribbon Theorem (no loop in any spectre tiling) and the Ariadne Theorem (one strand in the nest tiling), in eight steps at four depths, with diagrams.">
 <meta property="og:url" content="https://cortado-j.github.io/SPECTRE_KNOT/prove.html">
 <meta property="og:image" content="https://cortado-j.github.io/SPECTRE_KNOT/img/og-card.png">
 <meta property="og:image:width" content="1200">
@@ -25,8 +25,8 @@
 <main id="main">
   <section class="wrap page-head">
     <div class="kick">Prove</div>
-    <h1>Why it is one strand</h1>
-    <p class="lede">Seven steps. Read them as a few easy sentences, or open any step for an explanation, the details, or the rigorous version. Choose a depth for the whole page below, or go deeper one step at a time. The full argument is in <a href="downloads/The-Spectre-Knot-paper.pdf">the write-up of the proof</a> (PDF), with <a href="downloads/The-Spectre-Knot-proof-code.zip">its programs</a> (zip).</p>
+    <h1>Two theorems, and why they hold</h1>
+    <p class="lede">Eight steps: five of groundwork shared by both theorems, one for each theorem, and one on exactly what is covered. Read them as a few easy sentences, or open any step for an explanation, the details, or the rigorous version. Choose a depth for the whole page below, or go deeper one step at a time. The full argument is in <a href="downloads/The-Spectre-Knot-paper.pdf">the write-up of the proof</a> (PDF), with <a href="downloads/The-Spectre-Knot-proof-code.zip">its programs</a> (zip).</p>
   </section>
 
   <div class="depthbar"><div class="wrap">
@@ -44,13 +44,23 @@
       <h2>Status: an AI-written proof, not checked by a mathematician</h2>
       <p>The argument below was developed and written by an AI system. I haven&rsquo;t verified all of it, and no mathematician has reviewed it. So it is a claim, not an established result. <a href="made.html">How this was made</a>.</p>
     </div>
-    <div class="claim">
-      <div class="kick">What is claimed</div>
-      <h2 id="claim-text">In every spectre tiling the ribbon never closes into a loop. In the nest tiling, drawn on this site, the ribbon pieces of all the tiles join into one endless strand.</h2>
-      <p class="mut small">Each step is marked by what supports it: <span class="st cited">cited</span> from the spectre paper, <span class="st computed">computed</span> by machine, or <span class="st proved">argued</span> in words. Step 7 says exactly which tilings are covered.</p>
-      <p class="mut small"><b style="color:var(--ink)">Status.</b> Everything finite is computed exactly, up to 133 million tiles. The step that carries it to every size, that a small finite map repeats with period two for ever, is now shown: it follows from the spectre paper&rsquo;s Theorems 4.1 and 5.1 (every level is assembled by the same combinatorial pattern) together with exact computation (<a href="#p5">step 5</a>). The last link, that the strands of every block of the nest merge, follows from the same pattern and is checked by machine for every block, not only the six computed outright (<a href="#p6">step 6</a>). What the whole argument still takes on citation is the spectre paper&rsquo;s description of how supertiles are assembled; that, and exactly which tilings each claim covers, is in <a href="#p7">step 7</a>.</p>
+    <div class="claims">
+      <div class="claim c1">
+        <div class="kick">Claim 1 &middot; the Endless Ribbon Theorem</div>
+        <h2>In every spectre tiling, the ribbon never closes into a loop.</h2>
+        <p class="mut small">However the tiles cover the plane, every strand runs on for ever in both directions. Groundwork, then <a href="#p6">step 6</a>.</p>
+      </div>
+      <div class="claim c2">
+        <div class="kick">Claim 2 &middot; the Ariadne Theorem</div>
+        <h2>In the nest tiling, all the pieces join into one endless strand.</h2>
+        <p class="mut small">The nest tiling, drawn on this site, grows outwards from a single tile, each block in the same place inside the next. Groundwork, then <a href="#p7">step 7</a>.</p>
+      </div>
     </div>
-    <nav class="toc" aria-label="The seven steps" id="toc"></nav>
+    <div class="claimnotes">
+      <p class="mut small">Each step is marked by what supports it: <span class="st cited">cited</span> from the spectre paper, <span class="st computed">computed</span> by machine, or <span class="st proved">argued</span> in words. Step 8 says exactly which tilings each theorem covers.</p>
+      <p class="mut small"><b style="color:var(--ink)">Status.</b> Everything finite is computed exactly, up to 133 million tiles. The step that carries it to every size, that a small finite map repeats with period two for ever, is now shown: it follows from the spectre paper&rsquo;s Theorems 4.1 and 5.1 (every level is assembled by the same combinatorial pattern) together with exact computation (<a href="#p5">step 5</a>). The last link, that the strands of every block of the nest merge, follows from the same pattern and is checked by machine for every block, not only the six computed outright (<a href="#p7">step 7</a>). What the whole argument still takes on citation is the spectre paper&rsquo;s description of how supertiles are assembled; that, and exactly which tilings each theorem covers, is in <a href="#p8">step 8</a>.</p>
+    </div>
+    <nav class="toc" aria-label="The eight steps" id="toc"></nav>
     <details class="pmap" id="map">
       <summary>Map of the proof: what rests on what</summary>
       <p class="mut small">Each box is one fact; an arrow means &lsquo;is used to prove&rsquo;. The border says what supports it: <span class="st computed">computed</span> by machine, <span class="st cited">cited</span> from the spectre paper, <span class="st proved">argued</span> in words. Click a box to open that step.</p>
@@ -60,6 +70,7 @@
 
   <section class="wrap" style="display:grid;gap:16px;padding-bottom:20px" id="steps">
 
+    <div class="pgroup" data-group="Groundwork"><span>Groundwork, shared by both theorems</span></div>
     <article class="pstep" id="p1">
       <div class="ph"><span class="pn">1</span><h2>Tiles come in families, for ever</h2><span class="st cited">cited</span></div>
       <div class="lvl l1"><div class="lin"><div class="pad">
@@ -163,8 +174,28 @@
       <div class="pctl"></div>
     </article>
 
+    <div class="pgroup" data-group="The Endless Ribbon Theorem"><span>Claim 1 &middot; the Endless Ribbon Theorem</span></div>
     <article class="pstep" id="p6">
-      <div class="ph"><span class="pn">6</span><h2>Grow a nest, and everything joins</h2><span class="st computed">computed</span><span class="st cited">cited: Thms 4.1, 5.1</span></div>
+      <div class="ph"><span class="pn">6</span><h2>No loop, in any tiling: the Endless Ribbon Theorem</h2><span class="st proved">argued</span><span class="st computed">computed</span></div>
+      <div class="lvl l1"><div class="lin"><div class="pad">
+        <p>A loop is finite, so it would have to fit somewhere. In most tilings it would fit inside one big supertile, and step 3 says no supertile has a loop inside. A few rare tilings have &lsquo;fault lines&rsquo;, where two or three never-ending supertiles meet. There a loop could only sit right where they meet, and every way they can meet has been checked. So in every spectre tiling, every ribbon runs on for ever in both directions.</p>
+      </div></div></div>
+      <div class="lvl l2"><div class="lin"><div class="pad">
+        <span class="lvtag">An explanation</span>
+        <p>Suppose some ribbon did close up, into a loop of r pieces. Pick a level of supertiles whose sides are all longer than r tile edges. Follow the loop: inside a supertile it can only travel along a hook or the crossover (step 3), so each time it passes into the next supertile it has moved along the rim by just one corner of a tile. All the places where it crosses between supertiles are therefore strung together along the outlines, in a stretch shorter than any side, and that stretch can touch at most one point where supertiles meet. So the loop lies inside one supertile (impossible, step 3), or in two supertiles side by side, or in three around a corner. That is the <b>Localisation Lemma</b>.</p>
+        <p>The spectre&rsquo;s matching rules allow 264 ways for two supertiles to sit side by side and 489 ways for three to meet at a corner. The computer checked them all, for every level at once. None closes a loop, except one: three &Gamma; supertiles meeting at a corner like a three-bladed pinwheel. That arrangement never happens, by the <b>Three Gammas Lemma</b>: a &Gamma; is always the last child of its parent, so three of them have three different parents, and the corner they would share sits in the middle of a side of each parent, where three parents can never meet.</p>
+      </div></div></div>
+      <div class="lvl l3"><div class="lin"><div class="pad">
+        <span class="lvtag">In detail</span>
+        <p>The check is symbolic: the side lengths are carried as unknowns, every comparison the program makes is recorded, and each recorded inequality is proved for every level, using the Fibonacci formulas for the side lengths (step 5). It was also run with the actual lengths for levels 1 to 14, taking exactly the same branches. As a sanity check, the same program finds no loop in any whole supertile, as step 3 requires, and it does find loops when supertiles are glued against the signs of the matching rules, so it is not blind to them.</p>
+        <p>The theorem is about tilings of the whole plane. A patch laid by hand that cannot be continued for ever is not covered. And it is for this design: the earlier design 0222221 has only its proof for the nest tiling.</p>
+      </div></div></div>
+      <div class="lvl l4"><div class="lin"><div class="pad" data-rig="6"></div></div></div>
+      <div class="pctl"></div>
+    </article>
+    <div class="pgroup" data-group="The Ariadne Theorem"><span>Claim 2 &middot; the Ariadne Theorem</span></div>
+    <article class="pstep" id="p7">
+      <div class="ph"><span class="pn">7</span><h2>Grow a nest, and everything joins: the Ariadne Theorem</h2><span class="st computed">computed</span><span class="st cited">cited: Thms 4.1, 5.1</span></div>
       <div class="lvl l1"><div class="lin"><div class="pad">
         <p>Take a block, the block around it, the block around that, and so on. Each time, the pieces of the small block lie on fewer strands, until they lie on one. The blocks grow to cover the whole plane, so any two tiles end up on the same strand.</p>
         <div class="pfig"><figure><div class="wide" data-fig="treeb"></div><figcaption>The 46 pieces of the 9-tile block lie on 10 strands in 71 tiles, on 2 in 559 and 4,401, and on 1 in 34,649.</figcaption></figure></div>
@@ -187,29 +218,30 @@
       <div class="lvl l3"><div class="lin"><div class="pad">
         <span class="lvtag">In detail</span>
         <p>This was computed two ways, exactly (following every ribbon one by one, for the first six blocks of the nest) and with the small map; they agree. Then for <b>every</b> block: every input the small-map version reads is fixed by the assembly pattern, the parities and which way the crossover points. A separate program rebuilds those inputs from that data alone, and they match the real ones for blocks 1 to 6 at every level up to 9. A third program follows the side lengths as exact formulas instead of numbers, and checks every comparison of lengths the computation makes, 2,106 in all; each holds for the real lengths at every level. So block b and block b+2 get identical inputs, for every b. The result: for an even-numbered block, its pieces lie on one strand three levels up; for an odd-numbered one, four.</p>
-        <p><b>The nest covers the plane.</b> Each block shares no corner with the rim of its grandparent: in the fixed assembly pattern, the only side of the small block on its parent&rsquo;s rim lies inside a side of the parent that faces a sibling one level up. So every tile next to block N<sub>b</sub> is inside N<sub>b+2</sub>, and the blocks swallow every tile eventually. (Also measured directly for the first five blocks.)</p>
+        <p><b>The Grandparent Lemma: the nest covers the plane.</b> Each block shares no corner with the rim of its grandparent: in the fixed assembly pattern, the only side of the small block on its parent&rsquo;s rim lies inside a side of the parent that faces a sibling one level up. So every tile next to block N<sub>b</sub> is inside N<sub>b+2</sub>, and the blocks swallow every tile eventually. (Also measured directly for the first five blocks.)</p>
         <p><b>The finish.</b> Take any two tiles. Both lie inside some block N<sub>b</sub> of the nest. Every ribbon piece in them is part of a piece of N<sub>b</sub>, because nothing closes up inside, and all pieces of N<sub>b</sub> lie on one ribbon of N<sub>b+4</sub>. So the two tiles are on the same ribbon. And there is no ring: a ring is finite, so the smallest supertile containing it would have found it when assembled from its children, and the count is zero at every assembly.</p>
         <div class="pfig"><figure><div class="wide" data-fig="nest5"></div><figcaption>The nest from 1 tile to 34,649. Each block sits well inside its grandparent.</figcaption></figure></div>
       </div></div></div>
-      <div class="lvl l4"><div class="lin"><div class="pad" data-rig="6"></div></div></div>
+      <div class="lvl l4"><div class="lin"><div class="pad" data-rig="7"></div></div></div>
       <div class="pctl"></div>
     </article>
 
-    <article class="pstep" id="p7">
-      <div class="ph"><span class="pn">7</span><h2>Exactly what is covered</h2></div>
+    <div class="pgroup" data-group="Scope"><span>Scope</span></div>
+    <article class="pstep" id="p8">
+      <div class="ph"><span class="pn">8</span><h2>Exactly what is covered</h2></div>
       <div class="lvl l1"><div class="lin"><div class="pad">
-        <p><b>No closed loops:</b> in every spectre tiling, however the tiles cover the plane, including the rare tilings with &lsquo;fault lines&rsquo;. <b>One strand:</b> only in the nest tiling, drawn on this site. Other tilings may have more than one strand: computer checks suggest that some have three.</p>
+        <p><b>The Endless Ribbon Theorem</b> (no loops) holds in every spectre tiling, however the tiles cover the plane, including the rare tilings with &lsquo;fault lines&rsquo;. <b>The Ariadne Theorem</b> (one strand) is proved only for the nest tiling, drawn on this site. Other tilings may have more than one strand: computer checks suggest that some have three.</p>
         <div class="pfig"><figure><div data-fig="scope"></div><figcaption>No loops in all three; one strand proved only in the first.</figcaption></figure></div>
       </div></div></div>
       <div class="lvl l2"><div class="lin"><div class="pad">
         <span class="lvtag">An explanation</span>
-        <p>A spectre tiling is determined by its chain of ancestors. The tiling here grows by always taking child number 1 (the nest). Other tilings grow from a different chain of ancestors. For all of them whose supertiles fill the plane, the &ldquo;no closed loops&rdquo; part of the argument applies unchanged. The &ldquo;one strand&rdquo; part depends on the chain, and it appears not to hold for every chain: along one chain, with &Theta; and &Gamma; supertiles alternating (child 2, then child 7), the computer finds three strands that do not join, followed exactly to level 8 and by the label method to level 20. That is evidence, not a proof, and the site claims nothing about it. A few special tilings contain two or more infinite supertiles meeting along lines or at a point (fault tilings). A loop there could only sit where two or three supertiles meet, because each supertile turns the ribbon back at every corner of its rim but two; and every way two or three supertiles can meet was checked by computer, for every level at once: none closes a loop, apart from one arrangement of three &Gamma; supertiles that the spectre&rsquo;s assembly rules never produce. So fault tilings have no loops either.</p>
+        <p>A spectre tiling is determined by its chain of ancestors. The tiling here grows by always taking child number 1 (the nest). Other tilings grow from a different chain of ancestors. The Endless Ribbon Theorem holds for all of them (step 6). The Ariadne Theorem depends on the chain, and it appears not to hold for every chain: along one chain, with &Theta; and &Gamma; supertiles alternating (child 2, then child 7), the computer finds three strands that do not join, followed exactly to level 8 and by the label method to level 20. That is evidence, not a proof, and the site claims nothing about it. A few special tilings contain two or more infinite supertiles meeting along lines or at a point (fault tilings): they have no loops either (step 6), and nothing is claimed about their number of strands.</p>
       </div></div></div>
       <div class="lvl l3"><div class="lin"><div class="pad">
         <span class="lvtag">In detail</span>
         <p>The design is the same on every tile in the strict sense: the nest tiling uses only one handedness of the spectre, so it is one drawing, turned and slid, never flipped. Over and under is a separate question: any drawing of this kind can be given a weave that alternates along every ribbon. The single-strand result is about which pieces join.</p>
       </div></div></div>
-      <div class="lvl l4"><div class="lin"><div class="pad" data-rig="7"></div></div></div>
+      <div class="lvl l4"><div class="lin"><div class="pad" data-rig="8"></div></div></div>
       <div class="pctl"></div>
     </article>
   </section>
@@ -221,30 +253,31 @@
       <div class="tablewrap"><table class="nums risk">
         <thead><tr><th>If&hellip;</th><th>then</th><th>ruled out by</th></tr></thead>
         <tbody>
-          <tr><td>a ribbon closed up into a ring somewhere</td><td>there would be a second strand</td><td>a ring is finite, so the smallest supertile around it would show it when assembled; no ring at any assembly, levels 1&ndash;9 computed, all levels by the domino step (<a href="#p5">5</a>) <span class="st computed">computed</span> <span class="st proved">argued</span></td></tr>
+          <tr><td>a ribbon closed up into a ring somewhere</td><td>there would be a second strand</td><td>a ring is finite, so the smallest supertile around it would show it when assembled; no ring at any assembly, levels 1&ndash;9 computed, all levels by the domino step (<a href="#p5">5</a>); where supertiles meet, as in tilings with fault lines, step <a href="#p6">6</a> <span class="st computed">computed</span> <span class="st proved">argued</span></td></tr>
           <tr><td>some big supertile looked different from outside</td><td>the finite check would say nothing about it</td><td>the signature passes up level by level (<a href="#p3">3</a>, <a href="#p5">5</a>) <span class="st proved">argued</span></td></tr>
           <tr><td>the small map changed at some huge level</td><td>the dominoes could stop falling</td><td>it is a function of side parities, which never change, and of a side that alternates (<a href="#p5">5</a>) <span class="st cited">cited</span> <span class="st computed">computed</span></td></tr>
-          <tr><td>two strands ran side by side for ever</td><td>two strands, no ring</td><td>every block of the nest merges into one strand three or four levels up, checked for every block (<a href="#p6">6</a>) <span class="st computed">computed</span> <span class="st cited">cited</span></td></tr>
-          <tr><td>part of the plane were never reached by the nest</td><td>tiles outside could be on another strand</td><td>each block is strictly inside its grandparent, so the nest covers everything (<a href="#p6">6</a>) <span class="st proved">argued</span></td></tr>
+          <tr><td>two strands ran side by side for ever</td><td>two strands, no ring</td><td>every block of the nest merges into one strand three or four levels up, checked for every block (<a href="#p7">7</a>) <span class="st computed">computed</span> <span class="st cited">cited</span></td></tr>
+          <tr><td>part of the plane were never reached by the nest</td><td>tiles outside could be on another strand</td><td>each block is strictly inside its grandparent, so the nest covers everything (<a href="#p7">7</a>) <span class="st proved">argued</span></td></tr>
           <tr><td>the computer&rsquo;s supertiles were not the paper&rsquo;s, or its tiles overlapped</td><td>the computations would be about the wrong thing</td><td>compared by script with all nine panels of the paper&rsquo;s Fig. 5.1; tiles checked to fill each supertile exactly, without overlap, up to 2 million tiles (<a href="#p1">1</a>) <span class="st computed">computed</span></td></tr>
-          <tr><td>a loop closed up across a fault line, where two or three infinite supertiles meet</td><td>a closed loop in that tiling</td><td>ruled out: such a loop would lie where two or three supertiles meet, and every way they can meet was checked for every level (<a href="#p7">7</a>) <span class="st computed">computed</span> <span class="st proved">argued</span></td></tr>
-          <tr><td>the tiling were a different one</td><td>it might have more than one strand</td><td>not ruled out, and computer checks suggest some tilings have three: the claim is only for the tiling drawn here (<a href="#p7">7</a>)</td></tr>
+          <tr><td>a loop closed up across a fault line, where two or three infinite supertiles meet</td><td>a closed loop in that tiling</td><td>ruled out: such a loop would lie where two or three supertiles meet, and every way they can meet was checked for every level (<a href="#p6">6</a>) <span class="st computed">computed</span> <span class="st proved">argued</span></td></tr>
+          <tr><td>the tiling were a different one</td><td>it might have more than one strand</td><td>not ruled out, and computer checks suggest some tilings have three: the claim is only for the tiling drawn here (<a href="#p8">8</a>)</td></tr>
         </tbody>
       </table></div>
     </details>
     <details id="check">
       <summary>The write-up, the programs, and how to re-run them</summary>
-      <p><a href="downloads/The-Spectre-Knot-paper.pdf">The write-up of the proof</a> (PDF, 29 pages) gives the argument in full. <a href="downloads/The-Spectre-Knot-proof-code.zip">Its programs</a> (zip) unpack into a folder <code>code/</code>, with the logs of a full run. One command, <code>./run_all.sh</code>, re-runs everything the proof needs (about 12 minutes on four cores); <code>./run_all.sh --all</code> adds the corroborating runs up to level 9 (about an hour). They run from the <code>code</code> folder, with Node 18 or later and Python 3.</p>
+      <p><a href="downloads/The-Spectre-Knot-paper.pdf">The write-up of the proof</a> (PDF, 30 pages) gives the argument in full. <a href="downloads/The-Spectre-Knot-proof-code.zip">Its programs</a> (zip) unpack into a folder <code>code/</code>, with the logs of a full run. One command, <code>./run_all.sh</code>, re-runs everything the proof needs (about 12 minutes on four cores); <code>./run_all.sh --all</code> adds the corroborating runs up to level 9 (about an hour). They run from the <code>code</code> folder, with Node 18 or later and Python 3.</p>
       <div class="tablewrap"><table class="nums cmd">
         <thead><tr><th>What it checks</th><th>Command</th></tr></thead>
         <tbody>
           <tr><td>signature of every kind, levels 1&ndash;9, no rings, and the small map at each level, level n equal to level n+2 (steps 3, 5)</td><td><code>FAM=fan21 node --max-old-space-size=6500 core/reduce.js 01222222222222 9</code></td></tr>
           <tr><td>same pattern at every level, side lengths, the 54&times;54 matrix, parities (step 5)</td><td>in <code>hierarchy/</code>: <code>vertices.js 4 3</code>, <code>vertices.js 6 2</code>, <code>combin.js 8 vertices_4_3.json vertices_6_2.json</code>, <code>recur.js combin_8.json</code>, <code>synth.js combin_8.json 9</code>, <code>synthown.js 9</code> (each with <code>node --max-old-space-size=6500</code>)</td></tr>
           <tr><td>the induction step, all nine kinds, both parities (step 5)</td><td><code>node hierarchy/induction.js</code></td></tr>
-          <tr><td>merging up the nest, blocks 1&ndash;6 (step 6)</td><td><code>FAM=fan21 node --max-old-space-size=6500 core/nest.js 01222222222222 9 1,2,3,4,5,6</code></td></tr>
-          <tr><td>the same merging, following every ribbon exactly, blocks 1&ndash;6 (step 6); and again by a second, separate program in exact arithmetic (also written by the AI)</td><td><code>node --max-old-space-size=6500 core/hier2.js fan21 01222222222222 9 1,2,3,4,5,6</code>; <code>python3 exact/exact.py 4 --nest 1,2,3 --nestL 7</code></td></tr>
-          <tr><td>merging for every block: every length comparison certified exactly (step 6)</td><td><code>node hierarchy/certnest.js 8</code>, <code>python3 hierarchy/certify.py</code>, <code>python3 hierarchy/certify_fib.py</code></td></tr>
-          <tr><td>the same, done again by a second, separate program in Python, written from the write-up (also by the AI), with its own certificates and deliberate-error checks (step 6)</td><td><code>python3 second/nest2.py</code></td></tr>
+          <tr><td>merging up the nest, blocks 1&ndash;6 (step 7)</td><td><code>FAM=fan21 node --max-old-space-size=6500 core/nest.js 01222222222222 9 1,2,3,4,5,6</code></td></tr>
+          <tr><td>the same merging, following every ribbon exactly, blocks 1&ndash;6 (step 7); and again by a second, separate program in exact arithmetic (also written by the AI)</td><td><code>node --max-old-space-size=6500 core/hier2.js fan21 01222222222222 9 1,2,3,4,5,6</code>; <code>python3 exact/exact.py 4 --nest 1,2,3 --nestL 7</code></td></tr>
+          <tr><td>merging for every block: every length comparison certified exactly (step 7)</td><td><code>node hierarchy/certnest.js 8</code>, <code>python3 hierarchy/certify.py</code>, <code>python3 hierarchy/certify_fib.py</code></td></tr>
+          <tr><td>the same, done again by a second, separate program in Python, written from the write-up (also by the AI), with its own certificates and deliberate-error checks (step 7)</td><td><code>python3 second/nest2.py</code></td></tr>
+          <tr><td>no loop where supertiles meet: every way two or three supertiles can meet, every level, certified exactly (step 6, the Endless Ribbon Theorem)</td><td><code>python3 faults/faults.py</code></td></tr>
         </tbody>
       </table></div>
       <p class="small mut">The logs are in <code>code/logs/</code>; <code>code/README.md</code> says what each step establishes.</p>
@@ -307,7 +340,11 @@
   // depth: one for the page, overridable per step
   var steps = Array.prototype.slice.call(document.querySelectorAll('.pstep'));
   var toc = document.getElementById('toc');
-  steps.forEach(function (st, i) { var a = document.createElement('a'); a.href = '#' + st.id; a.innerHTML = '<span>' + (i + 1) + '</span>' + st.querySelector('h2').textContent; toc.appendChild(a); });
+  steps.forEach(function (st, i) {
+    var g = st.previousElementSibling;
+    if (g && g.classList.contains('pgroup')) { var l = document.createElement('span'); l.className = 'tg'; l.textContent = g.textContent; toc.appendChild(l); }
+    var a = document.createElement('a'); a.href = '#' + st.id; a.innerHTML = '<span>' + (i + 1) + '</span>' + st.querySelector('h2').textContent; toc.appendChild(a);
+  });
   // changing depth adds or removes text above the reader; keep the place they were reading still (Safari has no
   // native scroll anchoring, and Chrome's can pick the wrong anchor here)
   document.body.style.overflowAnchor = 'none';

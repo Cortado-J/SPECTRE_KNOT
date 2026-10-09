@@ -4,12 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Understand · The Spectre Knot</title>
-<meta name="description" content="Questions and answers about the Spectre Knot: the spectre tile, the drawing on each tile, and why it is one strand.">
+<meta name="description" content="Questions and answers about the Spectre Knot: the spectre tile, the drawing on each tile, why the ribbon never closes into a loop, and why it is one strand.">
 <link rel="canonical" href="https://cortado-j.github.io/SPECTRE_KNOT/understand.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="The Spectre Knot">
 <meta property="og:title" content="Understand · The Spectre Knot">
-<meta property="og:description" content="Questions and answers about the Spectre Knot: the spectre tile, the drawing on each tile, and why it is one strand.">
+<meta property="og:description" content="Questions and answers about the Spectre Knot: the spectre tile, the drawing on each tile, why the ribbon never closes into a loop, and why it is one strand.">
 <meta property="og:url" content="https://cortado-j.github.io/SPECTRE_KNOT/understand.html">
 <meta property="og:image" content="https://cortado-j.github.io/SPECTRE_KNOT/img/og-card.png">
 <meta property="og:image:width" content="1200">
@@ -36,7 +36,7 @@
         <div class="body withfig">
           <div class="stack" style="gap:12px">
             <p>It is a Celtic knot drawn on a tile. Every tile carries the same small drawing of ribbon, and when the tiles are laid together the ribbons meet across the edges and carry on, weaving over and under.</p>
-            <p>The tile is the spectre, a shape that covers the whole plane but only in patterns that never repeat. The surprise is twofold. However the tiles are laid across the plane, the ribbon <b>never closes into a loop</b>. And in the nest tiling drawn on this site, grown outwards from a single tile, all the pieces join into <b>one endless strand</b>: no second strand.</p>
+            <p>The tile is the spectre, a shape that covers the whole plane but only in patterns that never repeat. The surprise is twofold, and each half is a theorem. The <b>Endless Ribbon Theorem</b>: however the tiles cover the plane, the ribbon never closes into a loop. The <b>Ariadne Theorem</b>: in the nest tiling drawn on this site, grown outwards from a single tile, all the pieces join into one endless strand, with no second strand. (Ariadne gave Theseus the one thread that led him through the whole labyrinth.)</p>
             <div class="row"><a class="btn small" href="see.html">Watch it join up &rarr;</a></div>
           </div>
           <figure class="fig" id="f-what"><figcaption>Nine tiles, printed as on the handout. Follow any ribbon: it never closes up.</figcaption></figure>
@@ -83,10 +83,23 @@
         <summary>How do the ribbons meet when tiles touch?</summary>
         <div class="body withfig">
           <div class="stack" style="gap:12px">
-            <p>The port on each edge sits 0.15 of the edge&rsquo;s length off the midpoint, to one side or the other depending on the edge. Around the tile the sides alternate, edge by edge.</p>
+            <p>The port on each edge sits 0.15 of the edge&rsquo;s length off the midpoint, to one side or the other depending on the edge. Around the tile the sides alternate, edge by edge. The offset is there only for looks: it makes the curves more pleasing. With every port at the midpoint, the ribbons would join up in exactly the same way.</p>
             <p>When two spectres meet along an edge, one edge is always an &lsquo;even&rsquo; edge and the other an &lsquo;odd&rsquo; one, so their ports land on exactly the same point. The ribbon leaving one tile carries straight on into the next.</p>
           </div>
           <figure class="fig" id="f-edges"><figcaption>The outlined tile and its neighbours. Every ribbon crosses an edge at a port and carries on.</figcaption></figure>
+        </div>
+      </details>
+
+      <details id="one-crossing">
+        <summary>Why just one crossing, and does it matter where it is?</summary>
+        <div class="body withfig">
+          <div class="stack" style="gap:12px">
+            <p>The plainest Celtic recipe has no crossing inside the tile at all: every ribbon just turns back round a corner. On the spectre that fails at once: in every one of the first supertiles, of 8 or 9 tiles, a ribbon closes into a loop.</p>
+            <p>So change one thing: two ribbons that would have turned round two neighbouring corners cross each other instead. That one crossing is enough. It gives the design a pattern that copies itself: seen from outside, every supertile, however big, looks like the tile again, with a hook round every corner but two and a crossing at those two. That repetition is what the proof runs on (<a href="prove.html#p3">Prove, step 3</a>). The AI search turned up 34 candidate designs; Justin Roughley chose this one and drew its ribbons by hand.</p>
+            <p>Where the crossing goes matters a great deal. There are 14 places it could go, one beside each edge. With it at 8 of them, closed loops appear in supertiles of at most 559 tiles. At the other 6, this one among them, the computer found no loop in any supertile up to 272,791 tiles. Only the design drawn here has been proved.</p>
+            <p>What does not matter is the exact drawing: where precisely inside the tile the two ribbons cross, and how the curves bend. All that counts is which port each piece joins to which. Any drawing with the same joins gives exactly the same strands. Over and under don&rsquo;t change the strands either; they only make the weave alternate.</p>
+          </div>
+          <figure class="fig" id="f-places"><figcaption>The 14 places the crossing could go, one beside each edge. Solid blue: no loop found, up to 272,791 tiles. Dashed orange: loops in supertiles of at most 559 tiles. The six blue places form one unbroken run.</figcaption></figure>
         </div>
       </details>
 
@@ -94,7 +107,7 @@
         <summary>So how many strands does the whole tiling make?</summary>
         <div class="body withfig">
           <div class="stack" style="gap:12px">
-            <p><b>One</b>, in the nest tiling drawn here. (The spectre tiles the plane in infinitely many ways, and the answer may differ: computer checks suggest that some other spectre tilings have three strands. That is evidence, not a proof. In every one of them, though, each strand is endless: none closes up.) Look at a small patch and you see many separate pieces, because each piece soon runs out of the patch. Look at a bigger patch and the pieces join up.</p>
+            <p><b>One</b>, in the nest tiling drawn here: that is the Ariadne Theorem. (The spectre tiles the plane in infinitely many ways, and the answer may differ: computer checks suggest that some other spectre tilings have three strands. That is evidence, not a proof. In every one of them, though, each strand is endless, by the Endless Ribbon Theorem: none closes up.) Look at a small patch and you see many separate pieces, because each piece soon runs out of the patch. Look at a bigger patch and the pieces join up.</p>
             <p>Follow the 14 pieces of one tile: in a block of 9 tiles they lie on 5 strands, in 71 tiles on 2, and from 559 tiles on they are one strand. In every block computed, up to 133 million tiles, every tile&rsquo;s pieces join up like this within a few levels. Why it goes on for ever is on the <a href="prove.html">Prove</a> page.</p>
             <div class="row"><a class="btn small" href="see.html">See it happen &rarr;</a></div>
           </div>
@@ -130,8 +143,8 @@
         <summary>Could a closed loop appear somewhere far away?</summary>
         <div class="body">
           <div class="stack" style="gap:12px">
-            <p>No, in any spectre tiling at all. Every supertile, of every kind, was assembled by computer up to level 9 (about 133 million tiles) without a single closed loop, and the argument on the <a href="prove.html">Prove</a> page carries this to every level, using the spectre paper&rsquo;s theorems. It marks what is computed, what is quoted and what is argued.</p>
-            <p>That even covers the rare tilings with &lsquo;fault lines&rsquo;, where two or three infinite supertiles meet: a loop there would have to sit where the supertiles meet, and every way they can meet was checked. But no closed loop is not the same as one strand: one strand is proved only for the nest tiling drawn here.</p>
+            <p>No, in any spectre tiling at all: that is the Endless Ribbon Theorem. Every supertile, of every kind, was assembled by computer up to level 9 (about 133 million tiles) without a single closed loop, and the argument on the <a href="prove.html">Prove</a> page carries this to every level, using the spectre paper&rsquo;s theorems. It marks what is computed, what is quoted and what is argued.</p>
+            <p>That even covers the rare tilings with &lsquo;fault lines&rsquo;, where two or three infinite supertiles meet: a loop there would have to sit where the supertiles meet, and every way they can meet was checked. But no closed loop is not the same as one strand: one strand, the Ariadne Theorem, is proved only for the nest tiling drawn here.</p>
           </div>
         </div>
       </details>
@@ -168,6 +181,7 @@
   var D = window.SKDATA, ob = D.boxes[0], cx = (ob[0] + ob[2]) / 2, cy = (ob[1] + ob[3]) / 2, r = 3.3;
   put('f-edges', SK.snapshot({ level: 1, box: [cx - r, cy - r * 0.75, cx + r, cy + r * 0.75], width: 520, mode: null, markTile: true, markW: 0.06, rimStroke: false, rib: '#7fd6b0', tileEdge: 'rgba(205,235,220,0.5)', tileW: 0.03, label: 'The middle tile and its neighbours' }));
   put('f-tree', SKF.tree('t', { width: 560 }));
+  put('f-places', SKF.places({ width: 460, label: 'The fourteen places the crossing could go, coloured by whether loops appear' }));
   var strip = [0, 1, 2].map(function (k) { return '<div style="flex:1;min-width:0">' + SK.snapshot({ level: k, box: SK.boxOf(k, 0.06), width: 300, mode: 't', markTile: k > 0, markW: k === 2 ? 0.12 : 0.06, tileEdge: 'rgba(205,235,220,0.3)', label: SK.LV[k] }) + '<div class="small mut" style="text-align:center">' + SK.LV[k] + ': ' + [14, 5, 2][k] + (k ? ' strands' : ' pieces') + '</div></div>'; }).join('');
   put('f-why', '<div style="display:flex;gap:8px;align-items:end;width:100%">' + strip + '</div>');
   put('f-periodic', SKF.periodic({ width: 520 }));
