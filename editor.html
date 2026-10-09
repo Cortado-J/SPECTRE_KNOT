@@ -88,7 +88,7 @@ kbd { font: 11px var(--font-mono); border: 1px solid var(--line); border-radius:
 <div class="wrap">
   <header>
     <h1>Spectre Tile Editor</h1>
-    <p>17 one-tile designs that may make a single endless ribbon on the spectre tiling, in order of how far the two strands through the internal crossing travel (port to port, as the crow flies). Pick one, drag its anchors and handles; the rim ports stay fixed and the strands always cross at right angles. The nine-tile supertile follows every edit.</p>
+    <p>17 one-tile designs that may make a single endless ribbon on the spectre tiling drawn here (the nest tiling), in order of how far the two strands through the internal crossing travel (port to port, as the crow flies). Pick one, drag its anchors and handles; the rim ports stay fixed and the strands always cross at right angles. The nine-tile supertile follows every edit.</p>
   </header>
   <div class="panel" style="user-select:none">
     <h2>Designs: one crossing spoke and one turn-back spoke, 9 grid points per tile · shortest crossing strands first</h2>
@@ -505,8 +505,8 @@ function renderStrip() {
   const bn = document.getElementById('dBanner');
   bn.className = 'banner ' + (cur.proved ? 'proved' : 'unproved');
   bn.innerHTML = cur.featured
-    ? '<b>Proved: one endless strand, no loops.</b> This is the design the explainer proves, by induction over all supertile levels.'
-    : cur.proved ? '<b>Proved: one endless strand, no loops.</b> The first design proved, by the same induction the explainer now runs on 0.1:01.'
+    ? '<b>Proved: one endless strand, no loops,</b> in the tiling drawn here (the nest tiling). This is the design proved on the website and in the paper, by induction over all supertile levels. The proof was written by AI and has not been checked by a mathematician.'
+    : cur.proved ? '<b>Proved: one endless strand, no loops,</b> in the tiling drawn here (the nest tiling). The first design proved, by the same induction now run on 0.1:01 (also AI-written, not checked by a mathematician).'
     : '<b>Not proved.</b> No closed loops in any supertile up to level 7 (about 4.7 million tiles), which is strong evidence, but the single-strand proof has not been run on this design.';
 }
 let stripTimer = null;

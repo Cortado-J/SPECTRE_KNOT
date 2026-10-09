@@ -1,15 +1,21 @@
 # The Spectre Knot
 
-A single-strand Celtic knot on the spectre aperiodic monotile: one tile, one ribbon design, and across the whole infinite tiling the pieces join into one endless strand.
+A single-strand Celtic knot on the spectre aperiodic monotile: one tile, one ribbon design, and across the spectre tiling drawn on the site (the nest tiling) the pieces join into one endless strand.
 
-This repository is the published website (GitHub Pages). It is generated; the sources live in a separate development repository.
+Made with AI: the search, the proof and this site were produced with an AI system (Claude, by Anthropic), and the proof has not been checked by a mathematician. See `made.html`.
 
-- `index.html`: landing page
-- `explainer.html`: *One Thread Through the Spectre*, the construction and the proof
-- `viewer.html`: interactive viewer
-- `editor.html`: tile editor
-- `downloads/`: the A4 handout, the explainer as a PDF, and the tile as a large PNG
+This repository is the published website (GitHub Pages). It is generated; the sources live in a separate development repository (`site/src`, built by `publish_site.sh`).
 
-The spectre tile is due to David Smith, Joseph Samuel Myers, Craig S. Kaplan and Chaim Goodman-Strauss ([*A chiral aperiodic monotile*](https://arxiv.org/abs/2305.17743), Combinatorial Theory 4(2), 2024). The knot is by Justin Roughley, 2026.
+- `index.html`: home, with the zoom from one tile out to 34,649 tiles
+- `see.html`: watch the strands join, one block at a time
+- `understand.html`: questions and answers, with diagrams
+- `make.html`: the fold-up tile and the downloads
+- `prove.html`: the proof, at four depths
+- `about.html`: how it was made, credits, citing
+- `viewer.html`: the original research viewer; `editor.html`: the tile editor (unlisted)
+- `downloads/`: the A4 handout, the cut-out page, and the tile as a large PNG
+- `assets/`, `data/`, `img/`: styles, scripts, drawing data and pictures
 
-Fonts in `fonts/` are TeX Gyre Pagella, under the GUST Font License (`fonts/GUST-FONT-LICENSE.txt`).
+The spectre tile is due to David Smith, Joseph Samuel Myers, Craig S. Kaplan and Chaim Goodman-Strauss ([*A chiral aperiodic monotile*](https://arxiv.org/abs/2305.17743), Combinatorial Theory 4(2), 2024). Justin Roughley came up with the original idea of looking for a mono-stranded aperiodic knot, and then used AI to search for it (2026).
+
+Fonts: Figtree in `assets/fonts/` (SIL Open Font License, `assets/fonts/Figtree-OFL.txt`); the handout and tile embed TeX Gyre Pagella (GUST Font License).
