@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Spectre Knotwork</title>
+<title>Knot viewer · The Spectre Knot</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
@@ -58,6 +58,9 @@ h2 { font-family: var(--font-display); font-weight: 600; font-size: 26px; margin
 h3 { font-size: 13px; text-transform: uppercase; letter-spacing: .08em; font-weight: 600; color: var(--muted); margin: 0; }
 p { margin: 0; }
 .lede { color: var(--muted); font-size: 16px; }
+.home { margin: 0 0 4px; font-size: 15px; }
+.home a { color: var(--accent); text-decoration: none; }
+.home a:hover { text-decoration: underline; }
 .bench { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 24px; align-items: start; }
 @media (max-width: 860px) { .bench { grid-template-columns: minmax(0, 1fr); } }
 .stage { display: grid; gap: 10px; min-width: 0; }
@@ -147,8 +150,9 @@ td.num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; whit
 
 <div class="wrap">
   <header>
-    <h1>Spectre Knotwork</h1>
-    <p class="lede">An alternating interlace drawn on the spectre, the one-piece tile that covers the plane without ever repeating, discovered in 2023 by David Smith, Joseph Samuel Myers, Craig S. Kaplan and Chaim Goodman-Strauss. Change how many grid points each tile carries, zoom out to see that nothing repeats, and fill the spaces between the strands.</p>
+    <p class="home"><a href="index.html">&larr; The Spectre Knot</a></p>
+    <h1>Knot viewer</h1>
+    <p class="lede">The Spectre Knot, design 0.1:01, drawn on the spectre, the one-piece tile that covers the plane without ever repeating, discovered in 2023 by David Smith, Joseph Samuel Myers, Craig S. Kaplan and Chaim Goodman-Strauss. This is the research viewer used to explore designs: change the design or how many grid points each tile carries, zoom out to see that nothing repeats, and fill the spaces between the strands.</p>
   </header>
 
   <section class="bench" aria-label="Knot viewer">
@@ -170,11 +174,11 @@ td.num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; whit
       <fieldset>
         <legend>Grid points per spectre</legend>
         <div class="seg seg-grid">
-          <input type="radio" name="grid" id="grid-21" value="21"><label for="grid-21">21</label>
+          <input type="radio" name="grid" id="grid-21" value="21" checked><label for="grid-21">21</label>
           <input type="radio" name="grid" id="grid-14" value="14"><label for="grid-14">14</label>
           <input type="radio" name="grid" id="grid-10" value="10"><label for="grid-10">10</label>
           <input type="radio" name="grid" id="grid-7" value="7"><label for="grid-7">7</label>
-          <input type="radio" name="grid" id="grid-2" value="2.8" checked><label for="grid-2">2.8</label>
+          <input type="radio" name="grid" id="grid-2" value="2.8"><label for="grid-2">2.8</label>
           <input type="radio" name="grid" id="grid-034" value="0.34"><label for="grid-034">.34</label>
           <input type="radio" name="grid" id="grid-004" value="0.04"><label for="grid-004">.04</label>
         </div>
@@ -2368,6 +2372,8 @@ var SpectreEngine = (function () {
   for (const r of document.querySelectorAll('input[name=thread]')) if (r.checked) state.thread = r.value;
   state.outlines = document.getElementById('outlines').checked;
   state.single = document.getElementById('single').checked;
+  // open on the Spectre Knot, design 0.1:01 (21 grid points, fan digits 01222222222222)
+  SpectreEngine.FAN.fan21.forEach((i, k) => { state.design.fan21.spokes['s' + i] = +'01222222222222'[k]; });
   zoomTo(2);
   changed();
 })();
