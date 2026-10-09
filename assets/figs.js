@@ -189,21 +189,21 @@
     return s.join('');
   }
 
-  /* what is covered: the nest tiling (one strand); other single-chain tilings (no loops, one strand not claimed); two chains meeting along a line (nothing) */
+  /* what is covered: the nest tiling (no loops, one strand); other single-chain tilings and fault tilings (no loops; one strand not claimed) */
   function scope(o) {
     o = o || {}; var W = o.width || 640, H = 210, pw = W / 3, s = ['<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Three kinds of spectre tiling and what is covered">'];
     function blob(cx, cy, r, c, op) { return '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="' + c + '" fill-opacity="' + op + '" stroke="' + c + '" stroke-width="1.5"/>'; }
     var y = 95;
     // 1: the nest, growing from a centre
     for (var i = 4; i >= 1; i--) s.push(blob(pw * 0.5, y, i * 17, '#7fd6b0', 0.08));
-    s.push('<text x="' + pw * 0.5 + '" y="185" fill="#e8f1ec" font-size="14" font-weight="700" text-anchor="middle">✓ the nest tiling</text><text x="' + pw * 0.5 + '" y="203" fill="#a3b8ae" font-size="12" text-anchor="middle">covered: drawn on this site</text>');
+    s.push('<text x="' + pw * 0.5 + '" y="185" fill="#e8f1ec" font-size="14" font-weight="700" text-anchor="middle">✓ the nest tiling</text><text x="' + pw * 0.5 + '" y="203" fill="#a3b8ae" font-size="12" text-anchor="middle">no loops, one strand</text>');
     // 2: a different chain, growing off-centre
     for (i = 4; i >= 1; i--) s.push(blob(pw * 1.5 + (4 - i) * 9, y - (4 - i) * 6, i * 17, '#56B4E9', 0.08));
     s.push('<text x="' + pw * 1.5 + '" y="185" fill="#e8f1ec" font-size="14" font-weight="700" text-anchor="middle">~ another single chain</text><text x="' + pw * 1.5 + '" y="203" fill="#a3b8ae" font-size="12" text-anchor="middle">no loops; may have 3 strands</text>');
     // 3: two infinite chains meeting along a line
     s.push('<rect x="' + (pw * 2 + 20) + '" y="25" width="' + (pw / 2 - 20) + '" height="140" fill="#CC79A7" fill-opacity=".12" stroke="#CC79A7"/><rect x="' + (pw * 2.5) + '" y="25" width="' + (pw / 2 - 20) + '" height="140" fill="#E69F00" fill-opacity=".12" stroke="#E69F00"/>');
     s.push('<path d="M' + pw * 2.5 + ',18V172" stroke="#e8f1ec" stroke-width="2.5" stroke-dasharray="6 4"/>');
-    s.push('<text x="' + pw * 2.5 + '" y="185" fill="#e8f1ec" font-size="14" font-weight="700" text-anchor="middle">✕ two chains, one line</text><text x="' + pw * 2.5 + '" y="203" fill="#a3b8ae" font-size="12" text-anchor="middle">not covered</text></svg>');
+    s.push('<text x="' + pw * 2.5 + '" y="185" fill="#e8f1ec" font-size="14" font-weight="700" text-anchor="middle">~ a fault tiling</text><text x="' + pw * 2.5 + '" y="203" fill="#a3b8ae" font-size="12" text-anchor="middle">no loops; strands not counted</text></svg>');
     return s.join('');
   }
 
@@ -223,9 +223,10 @@
       T6: [1.5, 3, 'Every supertile', 'signature, no closed loop', 'proved', 'p5'],
       L7: [3, 3, 'Nest covers the plane', 'every tile is in some block', 'proved', 'p6'],
       L8: [2.2, 4, 'Every block merges', 'one strand 3 or 4 levels up', 'computed', 'p6'],
-      T9: [1.2, 5, 'One endless strand', 'in the tiling drawn here', 'proved', 'p6']
+      T9: [1.2, 5, 'One endless strand', 'in the nest tiling', 'proved', 'p6'],
+      TA: [0, 4, 'No loops, any tiling', 'faults: where 2 or 3 meet', 'computed', 'p7']
     };
-    var E = [['tile', 'sig'], ['L1', 'L3'], ['L2', 'L3'], ['hier', 'sides'], ['sides', 'L5'], ['L3', 'T6'], ['sig', 'T6'], ['L5', 'T6'], ['hier', 'L7'], ['T6', 'L8'], ['L5', 'L8'], ['T6', 'T9'], ['L7', 'T9'], ['L8', 'T9']];
+    var E = [['tile', 'sig'], ['L1', 'L3'], ['L2', 'L3'], ['hier', 'sides'], ['sides', 'L5'], ['L3', 'T6'], ['sig', 'T6'], ['L5', 'T6'], ['hier', 'L7'], ['T6', 'L8'], ['L5', 'L8'], ['T6', 'T9'], ['L7', 'T9'], ['L8', 'T9'], ['T6', 'TA']];
     function pos(k) { var n = N[k], x = 20 + n[0] * 225; return { x: x, y: rowy[n[1]] }; }
     var s = ['<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="The map of the proof: what each step rests on">',
       '<defs><marker id="pm-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10z" fill="#6f877c"/></marker></defs>'];
