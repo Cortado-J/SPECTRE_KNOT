@@ -243,6 +243,7 @@
           <tr><td>merging up the nest, blocks 1&ndash;6 (step 6)</td><td><code>FAM=fan21 node --max-old-space-size=6500 core/nest.js 01222222222222 9 1,2,3,4,5,6</code></td></tr>
           <tr><td>the same merging, following every ribbon exactly, blocks 1&ndash;6 (step 6); and again by a second, separate program in exact arithmetic (also written by the AI)</td><td><code>node --max-old-space-size=6500 core/hier2.js fan21 01222222222222 9 1,2,3,4,5,6</code>; <code>python3 exact/exact.py 4 --nest 1,2,3 --nestL 7</code></td></tr>
           <tr><td>merging for every block: every length comparison certified exactly (step 6)</td><td><code>node hierarchy/certnest.js 8</code>, <code>python3 hierarchy/certify.py</code>, <code>python3 hierarchy/certify_fib.py</code></td></tr>
+          <tr><td>the same, done again by a second, separate program in Python, written from the write-up (also by the AI), with its own certificates and deliberate-error checks (step 6)</td><td><code>python3 second/nest2.py</code></td></tr>
         </tbody>
       </table></div>
       <p class="small mut">The logs are in <code>code/logs/</code>; <code>code/README.md</code> says what each step establishes.</p>
