@@ -14,6 +14,49 @@
   }
   document.addEventListener('DOMContentLoaded', pad);
   window.addEventListener('resize', pad);
+  // where a page opens. A new visit starts at the top. Back and Forward (and a reload) return to where the reader was,
+  // with the same sections open: the browser's own restoring runs before this page has drawn its figures and opened its
+  // sections, so it lands short; the site saves the place when the reader leaves and puts it back once the page is
+  // built. A link to a place in a page puts that place at the top, under the header (openHash, below).
+  // scrollIntoView rather than scrollTo alone, so that the top also works when the site is shown inside a frame that its
+  // host stretches to full height and scrolls from outside.
+  var nav = ((performance.getEntriesByType && performance.getEntriesByType('navigation')[0]) || {}).type;
+  var KEY = null, store = null;
+  try { store = window.sessionStorage; if ('scrollRestoration' in history) history.scrollRestoration = 'manual'; } catch (e) { store = null; }
+  try {
+    KEY = history.state && history.state.skk;
+    if (!KEY) { KEY = 'sk:' + location.pathname + ':' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); history.replaceState({ skk: KEY }, ''); }
+  } catch (e) { KEY = null; }
+  function save() {
+    if (!store || !KEY) return;
+    var st = { y: Math.round(scrollY), open: [], shut: [], steps: {} };
+    document.querySelectorAll('details[id]').forEach(function (d) { (d.open ? st.open : st.shut).push(d.id); });
+    document.querySelectorAll('.pstep[id]').forEach(function (a) { if (a.dataset.depth) st.steps[a.id] = +a.dataset.depth; });
+    try { store.setItem(KEY, JSON.stringify(st)); } catch (e) {}
+  }
+  var saveT = 0;
+  window.addEventListener('scroll', function () { clearTimeout(saveT); saveT = setTimeout(save, 150); }, { passive: true });
+  window.addEventListener('pagehide', save);
+  function toTop() {
+    var root = document.documentElement, pad0 = root.style.scrollPaddingTop;
+    root.style.scrollPaddingTop = '0px'; window.scrollTo(0, 0);
+    try { document.body.scrollIntoView({ block: 'start' }); } catch (e) {}
+    root.style.scrollPaddingTop = pad0;
+  }
+  var saved = null;
+  if ((nav === 'back_forward' || nav === 'reload') && store && KEY) { try { saved = JSON.parse(store.getItem(KEY) || 'null'); } catch (e) {} }
+  if (saved) {
+    var moved = false; ['wheel', 'touchstart', 'keydown', 'mousedown'].forEach(function (ev) { window.addEventListener(ev, function () { moved = true; }, { passive: true, once: true }); });
+    window.addEventListener('load', function () {
+      saved.open.forEach(function (id) { var d = document.getElementById(id); if (d && d.tagName === 'DETAILS') d.open = true; });
+      saved.shut.forEach(function (id) { var d = document.getElementById(id); if (d && d.tagName === 'DETAILS') d.open = false; });
+      document.dispatchEvent(new CustomEvent('sk:restore', { detail: saved }));   // the Prove page reopens its steps
+      requestAnimationFrame(function () { requestAnimationFrame(function () {
+        window.scrollTo(0, saved.y);
+        setTimeout(function () { if (!moved && Math.abs(scrollY - saved.y) > 2) window.scrollTo(0, saved.y); }, 400);   // late images
+      }); });
+    });
+  } else if (!location.hash) document.addEventListener('DOMContentLoaded', toTop);
   // open a <details> named in the URL hash, scroll to it and flash it, so a link never lands somewhere unclear
   function openHash() {
     var id = location.hash.slice(1); if (!id) return;
@@ -29,7 +72,7 @@
     if (el && landed !== null && Math.abs(scrollY - landed) < 2) el.scrollIntoView({ block: 'start' });
   });
   window.addEventListener('hashchange', openHash);
-  document.addEventListener('DOMContentLoaded', openHash);
+  document.addEventListener('DOMContentLoaded', function () { if (!saved) openHash(); });   // Back to a #link: the saved place wins
 
   var TRAIL = { t: [14, 5, 2, 1, 1, 1], b: [null, 46, 10, 2, 2, 1] };
   function stepper(el, scene, onPick) {

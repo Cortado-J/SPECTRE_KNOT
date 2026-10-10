@@ -135,9 +135,18 @@
       function inward(e) { var P = pts[e % n], Q = pts[(e + 1) % n], dx = Q[0] - P[0], dy = Q[1] - P[1], l = Math.hypot(dx, dy); return [-dy / l * sgn, dx / l * sgn]; }
       var dep = 0.42, w = k === 1 ? 3 : 1.8;
       S.forEach(function (p) {
-        var A = p[4], B = p[5], na = inward(p[0]), nb = inward(p[1]), hook = p[2] === p[3];
-        var d = hook ? dep : dep * 2.2;
-        s.push('<path d="M' + F.x(A[0]) + ',' + F.y(A[1]) + 'C' + F.x(A[0] + na[0] * d) + ',' + F.y(A[1] + na[1] * d) + ' ' + F.x(B[0] + nb[0] * d) + ',' + F.y(B[1] + nb[1] * d) + ' ' + F.x(B[0]) + ',' + F.y(B[1]) + '" fill="none" stroke="' + (hook ? (p[2] % 2 ? '#56B4E9' : '#b3dcf5') : '#E69F00') + '" stroke-width="' + (hook ? w : w + 1) + '" stroke-linecap="round"/>');
+        var A = p[4], B = p[5], na = inward(p[0]), nb = inward(p[1]), hook = p[2] === p[3], d;
+        if (hook) {
+          d = 'M' + F.x(A[0]) + ',' + F.y(A[1]) + 'C' + F.x(A[0] + na[0] * dep) + ',' + F.y(A[1] + na[1] * dep) + ' ' + F.x(B[0] + nb[0] * dep) + ',' + F.y(B[1] + nb[1] * dep) + ' ' + F.x(B[0]) + ',' + F.y(B[1]);
+        } else {
+          // as on the tile: each end leaves its port at 45 degrees, heading inwards and towards the corner it belongs to
+          // (A's end towards corner p[2], B's towards p[3]); the two crossover pieces share the port on the edge between
+          // the two corners, leave it in opposite directions, and so cross once
+          var dirTo = function (X, c, nX) { var C = pts[c % n], ux = C[0] - X[0], uy = C[1] - X[1], ul = Math.hypot(ux, uy) || 1, vx = ux / ul + nX[0], vy = uy / ul + nX[1], vl = Math.hypot(vx, vy) || 1; return [vx / vl, vy / vl]; };
+          var da = dirTo(A, p[2], na), db = dirTo(B, p[3], nb), a = Math.max(0.55, Math.hypot(B[0] - A[0], B[1] - A[1]) * 0.9);
+          d = 'M' + F.x(A[0]) + ',' + F.y(A[1]) + 'C' + F.x(A[0] + da[0] * a) + ',' + F.y(A[1] + da[1] * a) + ' ' + F.x(B[0] + db[0] * a) + ',' + F.y(B[1] + db[1] * a) + ' ' + F.x(B[0]) + ',' + F.y(B[1]);
+        }
+        s.push('<path d="' + d + '" fill="none" stroke="' + (hook ? (p[2] % 2 ? '#56B4E9' : '#b3dcf5') : '#E69F00') + '" stroke-width="' + (hook ? w : w + 1) + '" stroke-linecap="round"/>');
       });
     }
     var cs = {}; S.forEach(function (p) { if (p[2] !== p[3]) { cs[p[2]] = 1; cs[p[3]] = 1; } });
@@ -167,17 +176,16 @@
     s.push('<text x="10" y="24" fill="#a3b8ae" font-size="13">block A</text><text x="10" y="' + (H - 10) + '" fill="#a3b8ae" font-size="13">block B</text>');
     s.push('<path d="M' + m + ',' + mid + 'H' + (W - m) + '" stroke="#e8f1ec" stroke-width="2.5"/>');
     for (var i = 0; i <= n; i++) s.push('<circle cx="' + (m + i * step) + '" cy="' + mid + '" r="' + (i === 0 || i === n ? 6 : 4) + '" fill="' + (i === 0 || i === n ? '#E69F00' : '#e8f1ec') + '"/>');
-    // ribbon starting in A near the first corner; each edge: cross on a slant; each corner: hook back in the other block
+    // ribbon starting in A beyond the first corner. It crosses the run at the port in the middle of each edge, at 45
+    // degrees, and between two ports it hooks round the corner between them in one block: a quarter-circle arc
     function ribbon(startTop, col, dash) {
-      var d = '', side = startTop ? -1 : 1, y = function (sd) { return mid + sd * 34; };
-      d = 'M' + (m - 26) + ',' + y(side);
-      for (var j = 0; j < n; j++) {
-        var x0 = m + j * step, x1 = x0 + step;
-        d += ' C' + (x0 + step * 0.35) + ',' + y(side) + ' ' + (x0 + step * 0.65) + ',' + y(-side) + ' ' + (x1 - step * 0.12) + ',' + y(-side);
-        side = -side;
-        if (j < n - 1) d += ' Q' + (x1 + step * 0.05) + ',' + y(side * 1.9) + ' ' + (x1 + step * 0.12) + ',' + y(side);
-      }
-      d += ' L' + (W - m + 26) + ',' + y(side);
+      var side = startTop ? -1 : 1, r = step / Math.SQRT2, px = function (j) { return m + (j + 0.5) * step; };
+      var h0 = Math.min(34, step * 0.3), x0 = m - 26, b0 = Math.min(h0, (px(0) - x0) * 0.45);
+      var d = 'M' + x0 + ',' + (mid + side * h0) + ' C' + (x0 + (px(0) - x0) * 0.45) + ',' + (mid + side * h0) + ' ' + (px(0) - b0) + ',' + (mid + side * b0) + ' ' + px(0) + ',' + mid;
+      side = -side;
+      for (var j = 1; j < n; j++) d += ' A' + r + ',' + r + ' 0 0 ' + (side < 0 ? 1 : 0) + ' ' + px(j) + ',' + mid, side = -side;
+      var x1 = W - m + 26, b1 = Math.min(h0, (x1 - px(n - 1)) * 0.45);
+      d += ' C' + (px(n - 1) + b1) + ',' + (mid + side * b1) + ' ' + (x1 - (x1 - px(n - 1)) * 0.45) + ',' + (mid + side * h0) + ' ' + x1 + ',' + (mid + side * h0);
       s.push('<path d="' + d + '" fill="none" stroke="' + col + '" stroke-width="5" stroke-linecap="round"' + (dash ? ' stroke-dasharray="10 7"' : '') + ' class="zz"/>');
       return side;
     }
@@ -232,27 +240,30 @@
 
   /* the map of the proof: what rests on what. Each box links to its step. */
   var STAT = { computed: ['#56B4E9', 'computed'], cited: ['#E69F00', 'cited'], proved: ['#7fd6b0', 'argued'] };
+  var PM_NODES = null;
   function proofMap(o) {
     /* shared groundwork at the top; below, two branches, each ending in one of the two theorems */
     o = o || {}; var W = 940, bw = 200, bh = 64, rowy = [16, 120, 224, 328, 470, 586], H = 668;
-    var N = {
-      tile: [0, 0, 'The tile’s drawing', '12 hooks, 1 crossover', 'computed', 'p3'],
-      hier: [3, 0, 'Supertiles, for ever', 'same pattern at every level', 'cited', 'p1'],
-      L1: [0, 1, 'Black box', 'only rim ports matter', 'proved', 'p2'],
-      L2: [1, 1, 'Zigzag Lemma', 'a run: only even or odd', 'proved', 'p4'],
-      sig: [2, 1, 'Signature, levels 1–9', 'every kind, no loop', 'computed', 'p3'],
-      sides: [3, 1, 'Side lengths', 'one matrix; parities fixed', 'computed', 'p5'],
-      L3: [0.5, 2, 'Small-map walk', 'equals the exact gluing', 'proved', 'p5'],
-      L5: [3, 2, 'Small map alternates', 'for ever', 'proved', 'p5'],
-      T6: [1.5, 3, 'Signature Theorem', 'every supertile, every level', 'proved', 'p5'],
-      LOC: [0, 4, 'Localisation Lemma', 'a loop needs ≤ 3 supertiles', 'proved', 'p6'],
-      MEET: [1, 4, 'Where supertiles meet', 'every meeting checked', 'computed', 'p6'],
-      L8: [2, 4, 'Every block merges', 'one strand 3 or 4 levels up', 'computed', 'p7'],
-      L7: [3, 4, 'Grandparent Lemma', 'the nest covers the plane', 'proved', 'p7'],
-      ERT: [0, 5, 'Endless Ribbon Theorem', 'no loop, in any tiling', 'proved', 'p6', 'goal1'],
-      G3: [1, 5, 'Three Gammas Lemma', 'the one bad corner can’t occur', 'proved', 'p6'],
-      AT: [2.5, 5, 'Ariadne Theorem', 'one strand, in the nest tiling', 'proved', 'p7', 'goal2']
+    var N = {   // [column, row, title, subtitle, support, step, label in the step (on the box, the step's chips and the rigorous notes),
+    //  where it is in the write-up, goal]
+      tile: [0, 0, 'The tile’s drawing', '12 hooks, 1 crossover', 'computed', 'p3', '3a', 'Lemma 4.4'],
+      hier: [3, 0, 'Supertiles, for ever', 'same pattern at every level', 'cited', 'p1', '1a', 'Thm 2.1, Prop. 2.4'],
+      L1: [0, 1, 'Black box', 'only rim ports matter', 'proved', 'p2', '2a', 'Lemmas 4.1, 4.2'],
+      L2: [1, 1, 'Zigzag Lemma', 'a run: only even or odd', 'proved', 'p4', '4a', 'Lemma 5.1'],
+      sig: [2, 1, 'Signature, levels 1–9', 'every kind, no loop', 'computed', 'p3', '3b', 'Computation 7.2, App. A'],
+      sides: [3, 1, 'Side lengths', 'one matrix; parities fixed', 'computed', 'p5', '5b', 'Props 6.1, 6.2, Cor. 6.3'],
+      L3: [0.5, 2, 'Small-map walk', 'equals the exact gluing', 'proved', 'p5', '5a', 'Prop. 5.4'],
+      L5: [3, 2, 'Small map alternates', 'for ever', 'proved', 'p5', '5c', 'Lemma 7.1'],
+      T6: [1.5, 3, 'Signature Theorem', 'every supertile, every level', 'proved', 'p5', '5d', 'Thm 7.3'],
+      LOC: [0, 4, 'Localisation Lemma', 'a loop needs ≤ 3 supertiles', 'proved', 'p6', '6a', 'Lemma 7.6'],
+      MEET: [1, 4, 'Where supertiles meet', 'every meeting checked', 'computed', 'p6', '6b', 'Computation 7.7'],
+      L8: [2, 4, 'Every block merges', 'one strand 3 or 4 levels up', 'computed', 'p7', '7a', 'Thm 8.5, Lemma 8.8'],
+      L7: [3, 4, 'Grandparent Lemma', 'the nest covers the plane', 'proved', 'p7', '7b', 'Lemma 8.3'],
+      ERT: [0, 5, 'Endless Strand Theorem', 'no loop, in any tiling', 'proved', 'p6', '6d', '§7.3', 'goal1'],
+      G3: [1, 5, 'Three Gammas Lemma', 'the one bad corner can’t occur', 'proved', 'p6', '6c', 'Lemma 7.8'],
+      AT: [2.5, 5, 'Ariadne Theorem', 'one strand, in the nest tiling', 'proved', 'p7', '7c', '§8.3', 'goal2']
     };
+    PM_NODES = N;
     var E = [['tile', 'sig'], ['L1', 'L3'], ['L2', 'L3'], ['hier', 'sides'], ['sides', 'L5'], ['L3', 'T6'], ['sig', 'T6'], ['L5', 'T6'], ['hier', 'L7'],
       ['T6', 'LOC'], ['T6', 'MEET'], ['T6', 'L8'], ['L5', 'L8'], ['LOC', 'ERT'], ['MEET', 'ERT'], ['G3', 'ERT', 'side'], ['L8', 'AT'], ['L7', 'AT']];
     function pos(k) { var n = N[k], x = 20 + n[0] * 225; return { x: x, y: rowy[n[1]] }; }
@@ -279,12 +290,14 @@
       s.push('<path d="M' + x0 + ',' + y0 + 'C' + x0 + ',' + (y0 + 34) + ' ' + x1 + ',' + (y1 - 34) + ' ' + x1 + ',' + (y1 - 2) + '" fill="none" stroke="#6f877c" stroke-width="1.6" marker-end="url(#pm-a)"/>');
     });
     Object.keys(N).forEach(function (k) {
-      var n = N[k], p = pos(k), st = STAT[n[4]], goal = n[6];
+      var n = N[k], p = pos(k), st = STAT[n[4]], goal = n[8], fid = 'f' + n[6];
       var fill = goal === 'goal1' ? '#10302a' : goal === 'goal2' ? '#2a2310' : '#12211c', edge = goal === 'goal1' ? '#7fd6b0' : goal === 'goal2' ? '#E69F00' : st[0];
-      s.push('<a href="#' + n[5] + '" data-step="' + n[5] + '"><g class="pm-node"><rect x="' + p.x + '" y="' + p.y + '" width="' + bw + '" height="' + bh + '" rx="12" fill="' + fill + '" stroke="' + edge + '" stroke-width="' + (goal ? 3 : 2) + '"/>' +
+      s.push('<a href="#' + n[5] + '" data-step="' + n[5] + '" data-fact="' + fid + '"><g class="pm-node"><rect x="' + p.x + '" y="' + p.y + '" width="' + bw + '" height="' + bh + '" rx="12" fill="' + fill + '" stroke="' + edge + '" stroke-width="' + (goal ? 3 : 2) + '"/>' +
         '<text x="' + (p.x + 12) + '" y="' + (p.y + 23) + '" fill="#e8f1ec" font-size="' + (goal ? 15.5 : 15) + '" font-weight="700">' + n[2] + '</text>' +
         '<text x="' + (p.x + 12) + '" y="' + (p.y + 41) + '" fill="#a3b8ae" font-size="12.5">' + n[3] + '</text>' +
-        '<text x="' + (p.x + 12) + '" y="' + (p.y + 57) + '" fill="' + (goal ? edge : st[0]) + '" font-size="10.5" font-weight="700" letter-spacing="1">' + (goal ? 'THEOREM · ' + st[1].toUpperCase() : st[1].toUpperCase()) + '</text></g></a>');
+        '<text x="' + (p.x + 12) + '" y="' + (p.y + 57) + '" fill="' + (goal ? edge : st[0]) + '" font-size="10.5" font-weight="700" letter-spacing="1">' + (goal ? 'THEOREM · ' + st[1].toUpperCase() : st[1].toUpperCase()) + '</text>' +
+        '<rect x="' + (p.x + bw - 50) + '" y="' + (p.y - 11) + '" width="40" height="22" rx="11" fill="' + edge + '"/>' +
+        '<text x="' + (p.x + bw - 30) + '" y="' + (p.y + 5) + '" fill="#0a1411" font-size="13" font-weight="800" text-anchor="middle">' + n[6] + '</text></g></a>');
     });
     s.push('</svg>'); return s.join('');
   }
@@ -370,5 +383,5 @@
     }
     return '';
   }
-  window.SKF = { tile: tile, places: places, curved: curved, tree: tree, periodic: periodic, signature: signature, ports: ports, zigzag: zigzag, nest: nest, period: period, scope: scope, proofMap: proofMap, lengthBar: lengthBar, parityTable: parityTable, gloss: gloss };
+  window.SKF = { tile: tile, places: places, curved: curved, tree: tree, periodic: periodic, signature: signature, ports: ports, zigzag: zigzag, nest: nest, period: period, scope: scope, proofMap: proofMap, proofNodes: function () { if (!PM_NODES) proofMap(); return PM_NODES; }, STAT: STAT, lengthBar: lengthBar, parityTable: parityTable, gloss: gloss };
 })();

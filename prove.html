@@ -4,12 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Prove · The Spectre Knot</title>
-<meta name="description" content="Two theorems: the Endless Ribbon Theorem (no loop in any spectre tiling) and the Ariadne Theorem (one strand in the nest tiling), in eight steps at four depths, with diagrams.">
+<meta name="description" content="Two theorems about the Spectre Knot, one ribbon design drawn on every spectre tile: the Endless Strand Theorem (no strand ever closes into a loop, in any spectre tiling) and the Ariadne Theorem (it is one strand in the nest tiling), in eight steps at four depths, with diagrams.">
 <link rel="canonical" href="https://cortado-j.github.io/SPECTRE_KNOT/prove.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="The Spectre Knot">
 <meta property="og:title" content="Prove · The Spectre Knot">
-<meta property="og:description" content="Two theorems: the Endless Ribbon Theorem (no loop in any spectre tiling) and the Ariadne Theorem (one strand in the nest tiling), in eight steps at four depths, with diagrams.">
+<meta property="og:description" content="Two theorems about the Spectre Knot, one ribbon design drawn on every spectre tile: the Endless Strand Theorem (no strand ever closes into a loop, in any spectre tiling) and the Ariadne Theorem (it is one strand in the nest tiling), in eight steps at four depths, with diagrams.">
 <meta property="og:url" content="https://cortado-j.github.io/SPECTRE_KNOT/prove.html">
 <meta property="og:image" content="https://cortado-j.github.io/SPECTRE_KNOT/img/og-card.png">
 <meta property="og:image:width" content="1200">
@@ -46,13 +46,13 @@
     </div>
     <div class="claims">
       <div class="claim c1">
-        <div class="kick">Claim 1 &middot; the Endless Ribbon Theorem</div>
-        <h2>In every spectre tiling, the ribbon never closes into a loop.</h2>
+        <div class="kick">Claim 1 &middot; the Endless Strand Theorem</div>
+        <h2>In every spectre tiling with the Spectre Knot design on each tile, no strand ever closes into a loop.</h2>
         <p class="mut small">However the tiles cover the plane, every strand runs on for ever in both directions. Groundwork, then <a href="#p6">step 6</a>.</p>
       </div>
       <div class="claim c2">
         <div class="kick">Claim 2 &middot; the Ariadne Theorem</div>
-        <h2>In the nest tiling, all the pieces join into one endless strand.</h2>
+        <h2>In the nest tiling with the Spectre Knot design on each tile, all the ribbon pieces join into one endless strand.</h2>
         <p class="mut small">The nest tiling, drawn on this site, grows outwards from a single tile, each block in the same place inside the next. Groundwork, then <a href="#p7">step 7</a>.</p>
       </div>
     </div>
@@ -63,7 +63,7 @@
     <nav class="toc" aria-label="The eight steps" id="toc"></nav>
     <details class="pmap" id="map">
       <summary>Map of the proof: what rests on what</summary>
-      <p class="mut small">Each box is one fact; an arrow means &lsquo;is used to prove&rsquo;. The border says what supports it: <span class="st computed">computed</span> by machine, <span class="st cited">cited</span> from the spectre paper, <span class="st proved">argued</span> in words. Click a box to open that step.</p>
+      <p class="mut small">Each box is one fact; an arrow means &lsquo;is used to prove&rsquo;. The border says what supports it: <span class="st computed">computed</span> by machine, <span class="st cited">cited</span> from the spectre paper, <span class="st proved">argued</span> in words. The label on a box gives its step and its place in that step: 5c is the third fact of step 5. Each step lists its boxes under its heading, and its rigorous version states them under the same labels, each with its place in the write-up. Click a box to go to its step.</p>
       <div class="scrollx"><div data-fig="pmap" style="min-width:640px"></div></div>
     </details>
   </section>
@@ -174,9 +174,9 @@
       <div class="pctl"></div>
     </article>
 
-    <div class="pgroup" data-group="The Endless Ribbon Theorem"><span>Claim 1 &middot; the Endless Ribbon Theorem</span></div>
+    <div class="pgroup" data-group="The Endless Strand Theorem"><span>Claim 1 &middot; the Endless Strand Theorem</span></div>
     <article class="pstep" id="p6">
-      <div class="ph"><span class="pn">6</span><h2>No loop, in any tiling: the Endless Ribbon Theorem</h2><span class="st proved">argued</span><span class="st computed">computed</span></div>
+      <div class="ph"><span class="pn">6</span><h2>No loop, in any tiling: the Endless Strand Theorem</h2><span class="st proved">argued</span><span class="st computed">computed</span></div>
       <div class="lvl l1"><div class="lin"><div class="pad">
         <p>A loop is finite, so it would have to fit somewhere. In most tilings it would fit inside one big supertile, and step 3 says no supertile has a loop inside. A few rare tilings have &lsquo;fault lines&rsquo;, where two or three never-ending supertiles meet. There a loop could only sit right where they meet, and every way they can meet has been checked. So in every spectre tiling, every ribbon runs on for ever in both directions.</p>
       </div></div></div>
@@ -230,12 +230,12 @@
     <article class="pstep" id="p8">
       <div class="ph"><span class="pn">8</span><h2>Exactly what is covered</h2></div>
       <div class="lvl l1"><div class="lin"><div class="pad">
-        <p><b>The Endless Ribbon Theorem</b> (no loops) holds in every spectre tiling, however the tiles cover the plane, including the rare tilings with &lsquo;fault lines&rsquo;. <b>The Ariadne Theorem</b> (one strand) is proved only for the nest tiling, drawn on this site. Other tilings may have more than one strand: computer checks suggest that some have three.</p>
+        <p><b>The Endless Strand Theorem</b> (no loops) holds in every spectre tiling, however the tiles cover the plane, including the rare tilings with &lsquo;fault lines&rsquo;. <b>The Ariadne Theorem</b> (one strand) is proved only for the nest tiling, drawn on this site. Other tilings may have more than one strand: computer checks suggest that some have three.</p>
         <div class="pfig"><figure><div data-fig="scope"></div><figcaption>No loops in all three; one strand proved only in the first.</figcaption></figure></div>
       </div></div></div>
       <div class="lvl l2"><div class="lin"><div class="pad">
         <span class="lvtag">An explanation</span>
-        <p>A spectre tiling is determined by its chain of ancestors. The tiling here grows by always taking child number 1 (the nest). Other tilings grow from a different chain of ancestors. The Endless Ribbon Theorem holds for all of them (step 6). The Ariadne Theorem depends on the chain, and it appears not to hold for every chain: along one chain, with &Theta; and &Gamma; supertiles alternating (child 2, then child 7), the computer finds three strands that do not join, followed exactly to level 8 and by the label method to level 20. That is evidence, not a proof, and the site claims nothing about it. A few special tilings contain two or more infinite supertiles meeting along lines or at a point (fault tilings): they have no loops either (step 6), and nothing is claimed about their number of strands.</p>
+        <p>A spectre tiling is determined by its chain of ancestors. The tiling here grows by always taking child number 1 (the nest). Other tilings grow from a different chain of ancestors. The Endless Strand Theorem holds for all of them (step 6). The Ariadne Theorem depends on the chain, and it appears not to hold for every chain: along one chain, with &Theta; and &Gamma; supertiles alternating (child 2, then child 7), the computer finds three strands that do not join, followed exactly to level 8 and by the label method to level 20. That is evidence, not a proof, and the site claims nothing about it. A few special tilings contain two or more infinite supertiles meeting along lines or at a point (fault tilings): they have no loops either (step 6), and nothing is claimed about their number of strands.</p>
       </div></div></div>
       <div class="lvl l3"><div class="lin"><div class="pad">
         <span class="lvtag">In detail</span>
@@ -266,7 +266,7 @@
     </details>
     <details id="check">
       <summary>The write-up, the programs, and how to re-run them</summary>
-      <p><a href="downloads/The-Spectre-Knot-paper.pdf">The write-up of the proof</a> (PDF, 30 pages) gives the argument in full. <a href="downloads/The-Spectre-Knot-proof-code.zip">Its programs</a> (zip) unpack into a folder <code>code/</code>, with the logs of a full run. One command, <code>./run_all.sh</code>, re-runs everything the proof needs (about 12 minutes on four cores); <code>./run_all.sh --all</code> adds the corroborating runs up to level 9 (about an hour). They run from the <code>code</code> folder, with Node 18 or later and Python 3.</p>
+      <p><a href="downloads/The-Spectre-Knot-paper.pdf">The write-up of the proof</a> (PDF, 31 pages) gives the argument in full. <a href="downloads/The-Spectre-Knot-proof-code.zip">Its programs</a> (zip) unpack into a folder <code>code/</code>, with the logs of a full run. One command, <code>./run_all.sh</code>, re-runs everything the proof needs (about 12 minutes on four cores); <code>./run_all.sh --all</code> adds the corroborating runs up to level 9 (about an hour). They run from the <code>code</code> folder, with Node 18 or later and Python 3.</p>
       <div class="tablewrap"><table class="nums cmd">
         <thead><tr><th>What it checks</th><th>Command</th></tr></thead>
         <tbody>
@@ -277,7 +277,7 @@
           <tr><td>the same merging, following every ribbon exactly, blocks 1&ndash;6 (step 7); and again by a second, separate program in exact arithmetic (also written by the AI)</td><td><code>node --max-old-space-size=6500 core/hier2.js fan21 01222222222222 9 1,2,3,4,5,6</code>; <code>python3 exact/exact.py 4 --nest 1,2,3 --nestL 7</code></td></tr>
           <tr><td>merging for every block: every length comparison certified exactly (step 7)</td><td><code>node hierarchy/certnest.js 8</code>, <code>python3 hierarchy/certify.py</code>, <code>python3 hierarchy/certify_fib.py</code></td></tr>
           <tr><td>the same, done again by a second, separate program in Python, written from the write-up (also by the AI), with its own certificates and deliberate-error checks (step 7)</td><td><code>python3 second/nest2.py</code></td></tr>
-          <tr><td>no loop where supertiles meet: every way two or three supertiles can meet, every level, certified exactly (step 6, the Endless Ribbon Theorem)</td><td><code>python3 faults/faults.py</code></td></tr>
+          <tr><td>no loop where supertiles meet: every way two or three supertiles can meet, every level, certified exactly (step 6, the Endless Strand Theorem)</td><td><code>python3 faults/faults.py</code></td></tr>
         </tbody>
       </table></div>
       <p class="small mut">The logs are in <code>code/logs/</code>; <code>code/README.md</code> says what each step establishes.</p>
@@ -326,7 +326,30 @@
   fig('treeb', SKF.tree('b', { width: 700 }));
   fig('scope', SKF.scope({ width: 640 }));
   fig('pmap', SKF.proofMap());
-  document.querySelectorAll('[data-fig="pmap"] a').forEach(function (a) { a.addEventListener('click', function () { var st = document.getElementById(a.dataset.step); if (st && +st.dataset.depth < 2) setStep(st, 2); }); });
+  // each step lists its boxes from the map, as numbered chips; a chip opens the rigorous version at that fact
+  var PMN = SKF.proofNodes(), byStep = {};
+  Object.keys(PMN).forEach(function (k) { var n = PMN[k]; (byStep[n[5]] = byStep[n[5]] || []).push(n); });
+  function flash(el) { if (!el) return; el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash'); }
+  function goFact(fid, st) {
+    var go = function () { var el = document.getElementById(fid); if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'start' }); flash(el); } };
+    if (+st.dataset.depth < 4) { setStep(st, 4); setTimeout(go, 520); } else go();
+  }
+  Object.keys(byStep).forEach(function (sid) {
+    var st = document.getElementById(sid); if (!st) return;
+    var row = document.createElement('div'); row.className = 'pmchips';
+    row.innerHTML = '<span class="lab">On the map</span>' + byStep[sid].sort(function (a, b) { return a[6] < b[6] ? -1 : 1; }).map(function (n) {
+      var fid = 'f' + n[6];
+      return '<a class="pmchip ' + (n[8] ? n[8] : n[4]) + '" href="#' + fid + '" data-fact="' + fid + '"><b>' + n[6] + '</b>' + n[2] + '</a>';
+    }).join('');
+    st.querySelector('.ph').insertAdjacentElement('afterend', row);
+    row.querySelectorAll('a').forEach(function (a) { a.addEventListener('click', function (e) { e.preventDefault(); goFact(a.dataset.fact, st); }); });
+  });
+  document.querySelectorAll('[data-fig="pmap"] a').forEach(function (a) { a.addEventListener('click', function (e) {
+    var st = document.getElementById(a.dataset.step); if (!st) return;
+    if (+st.dataset.depth === 4) { e.preventDefault(); goFact(a.dataset.fact, st); return; }
+    if (+st.dataset.depth < 2) setStep(st, 2);
+    setTimeout(function () { flash(st.querySelector('.pmchip[data-fact="' + a.dataset.fact + '"]')); }, 300);
+  }); });
   fig('lenbar', SKF.lengthBar({ width: 760 }));
   fig('partab', SKF.parityTable('Delta'));
   document.querySelectorAll('[data-gloss]').forEach(function (el) { el.querySelector('.gfig').innerHTML = SKF.gloss(el.dataset.gloss); });
@@ -336,6 +359,13 @@
   zz();
   // rigorous texts, kept in their own file
   document.querySelectorAll('[data-rig]').forEach(function (el) { var r = (window.SKRIG || {})[el.dataset.rig]; el.innerHTML = '<span class="lvtag">Rigorous</span>' + (r || '<p>To follow.</p>'); });
+  // the numbered facts of the rigorous texts carry the same tab as their box on the map
+  Object.keys(PMN).forEach(function (k) {
+    var n = PMN[k], el = document.getElementById('f' + n[6]); if (!el) return;
+    var h = el.querySelector('h4') || el; h.insertAdjacentHTML('afterbegin', '<span class="fn ' + (n[8] ? n[8] : n[4]) + '">' + n[6] + '</span>');
+    if (el.querySelector('h4')) h.insertAdjacentHTML('beforeend', ' <span class="wref">write-up: ' + n[7] + '</span>');
+    else el.insertAdjacentHTML('beforeend', ' <span class="wref">write-up: ' + n[7] + '</span>');
+  });
 
   // depth: one for the page, overridable per step
   var steps = Array.prototype.slice.call(document.querySelectorAll('.pstep'));
@@ -382,6 +412,13 @@
   // the starting depth is applied without the opening animation, so a link to a step (prove.html#p5) lands on it
   document.body.classList.add('noanim');
   setAll(Math.max(1, Math.min(4, d0)), true);
+  // Back or reload: reopen each step at the depth the reader left it (site.js restores the scroll position after this)
+  document.addEventListener('sk:restore', function (e) {
+    var sd = (e.detail && e.detail.steps) || {};
+    document.body.classList.add('noanim');
+    steps.forEach(function (st) { if (sd[st.id]) setStep(st, Math.max(1, Math.min(4, sd[st.id]))); });
+    requestAnimationFrame(function () { requestAnimationFrame(function () { document.body.classList.remove('noanim'); }); });
+  });
   requestAnimationFrame(function () { requestAnimationFrame(function () { document.body.classList.remove('noanim'); }); });
 })();
 </script>
