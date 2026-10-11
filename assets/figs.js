@@ -207,7 +207,7 @@
     s.push('</svg>'); return s.join('');
   }
 
-  /* the small map repeats with period 2: levels 2 = 4 = 6 = 8 and 3 = 5 = 7 = 9 (mirror images of each other) */
+  /* the small map repeats with period 2: levels 2 = 4 = 6 = 8 and 3 = 5 = 7 = 9 (two different maps) */
   function period(o) {
     o = o || {}; var W = o.width || 620, H = 150, n = 8, gx = (W - 40) / n, s = ['<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="The small map at levels 2 to 9: two shapes, alternating">'];
     for (var i = 0; i < n; i++) {
@@ -250,22 +250,24 @@
       hier: [3, 0, 'Supertiles, for ever', 'same pattern at every level', 'cited', 'p1', '1a', 'Thm 2.1, Prop. 2.4'],
       L1: [0, 1, 'Black box', 'only rim ports matter', 'proved', 'p2', '2a', 'Lemmas 4.1, 4.2'],
       L2: [1, 1, 'Zigzag Lemma', 'a run: only even or odd', 'proved', 'p4', '4a', 'Lemma 5.1'],
-      sig: [2, 1, 'Signature, levels 1–9', 'every kind, no loop', 'computed', 'p3', '3b', 'Computation 7.2, App. A'],
+      sig: [2, 1, 'Signature at level 1', 'every kind, no loop', 'computed', 'p3', '3b', 'Computation 7.2(a)'],
       sides: [3, 1, 'Side lengths', 'one matrix; parities fixed', 'computed', 'p5', '5b', 'Props 6.1, 6.2, Cor. 6.3'],
       L3: [0.5, 2, 'Small-map walk', 'equals the exact gluing', 'proved', 'p5', '5a', 'Prop. 5.4'],
       L5: [3, 2, 'Small map alternates', 'for ever', 'proved', 'p5', '5c', 'Lemma 7.1'],
+      WALK: [0, 3, 'The 18 walks', 'nine kinds, two parities', 'computed', 'p5', '5e', 'Computation 7.2(b)'],
       T6: [1.5, 3, 'Signature Theorem', 'every supertile, every level', 'proved', 'p5', '5d', 'Thm 7.3'],
       LOC: [0, 4, 'Localisation Lemma', 'a loop needs ≤ 3 supertiles', 'proved', 'p6', '6a', 'Lemma 7.6'],
-      MEET: [1, 4, 'Where supertiles meet', 'every meeting checked', 'computed', 'p6', '6b', 'Computation 7.7'],
+      TURN: [1, 4, 'Hairpin Lemma', 'loops turn only at crossovers', 'proved', 'p6', '6c', 'Lemma 7.8'],
       L8: [2, 4, 'Every block merges', 'one strand 3 or 4 levels up', 'computed', 'p7', '7a', 'Thm 8.5, Lemma 8.8'],
       L7: [3, 4, 'Grandparent Lemma', 'the nest covers the plane', 'proved', 'p7', '7b', 'Lemma 8.3'],
       ERT: [0, 5, 'Endless Strand Theorem', 'no loop, in any tiling', 'proved', 'p6', '6d', '§7.3', 'goal1'],
-      G3: [1, 5, 'Three Gammas Lemma', 'the one bad corner can’t occur', 'proved', 'p6', '6c', 'Lemma 7.8'],
+      FAR: [1, 5, 'Lonely Crossover Lemma', 'crossovers a side apart', 'proved', 'p6', '6b', 'Lemma 7.7'],
       AT: [2.5, 5, 'Ariadne Theorem', 'one strand, in the nest tiling', 'proved', 'p7', '7c', '§8.3', 'goal2']
     };
     PM_NODES = N;
     var E = [['tile', 'sig'], ['L1', 'L3'], ['L2', 'L3'], ['hier', 'sides'], ['sides', 'L5'], ['L3', 'T6'], ['sig', 'T6'], ['L5', 'T6'], ['hier', 'L7'],
-      ['T6', 'LOC'], ['T6', 'MEET'], ['T6', 'L8'], ['L5', 'L8'], ['LOC', 'ERT'], ['MEET', 'ERT'], ['G3', 'ERT', 'side'], ['L8', 'AT'], ['L7', 'AT']];
+      ['L3', 'WALK'], ['WALK', 'T6', 'right'],
+      ['T6', 'LOC'], ['T6', 'TURN'], ['LOC', 'TURN', 'right'], ['T6', 'L8'], ['L5', 'L8'], ['LOC', 'ERT'], ['TURN', 'ERT'], ['FAR', 'ERT', 'side'], ['L8', 'AT'], ['L7', 'AT']];
     function pos(k) { var n = N[k], x = 20 + n[0] * 225; return { x: x, y: rowy[n[1]] }; }
     var s = ['<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="The map of the proof: shared groundwork, then one branch for each of the two theorems">',
       '<defs><marker id="pm-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10z" fill="#6f877c"/></marker></defs>'];
@@ -280,6 +282,11 @@
       if (e[2] === 'side') {   // from the left side of the source to the right side of the target, same row
         var yy = a.y + bh / 2;
         s.push('<path d="M' + a.x + ',' + yy + 'L' + (b.x + bw + 2) + ',' + yy + '" fill="none" stroke="#6f877c" stroke-width="1.6" marker-end="url(#pm-a)"/>');
+        return;
+      }
+      if (e[2] === 'right') {   // from the right side of the source to the left side of the target, same row
+        var yr = a.y + bh / 2;
+        s.push('<path d="M' + (a.x + bw) + ',' + yr + 'L' + (b.x - 2) + ',' + yr + '" fill="none" stroke="#6f877c" stroke-width="1.6" marker-end="url(#pm-a)"/>');
         return;
       }
       if (e[0] === 'hier' && e[1] === 'L7') {   // round the right-hand side, clear of the boxes in between
