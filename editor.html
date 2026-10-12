@@ -88,7 +88,7 @@ kbd { font: 11px var(--font-mono); border: 1px solid var(--line); border-radius:
 <div class="wrap">
   <header>
     <h1>Spectre Tile Editor</h1>
-    <p>17 one-tile designs that may make a single endless ribbon on the nest tiling drawn here (grown outwards from one tile, each block child 1 of the next), in order of how far the two strands through the internal crossing travel (port to port, as the crow flies). Pick one, drag its anchors and handles; the rim ports stay fixed and the strands always cross at right angles. The nine-tile supertile follows every edit.</p>
+    <p>17 one-tile designs that may make a single endless ribbon on the nest tiling drawn here (grown outwards from a single tile, each block sitting in the same place (child number 1) inside the next), in order of how far the two strands through the internal crossing travel (port to port, as the crow flies). Pick one, drag its anchors and handles; the rim ports stay fixed and the strands always cross at right angles. The nine-tile supertile follows every edit.</p>
   </header>
   <div class="panel" style="user-select:none">
     <h2>Designs: one crossing spoke and one turn-back spoke, 9 grid points per tile · shortest crossing strands first</h2>
@@ -505,8 +505,8 @@ function renderStrip() {
   const bn = document.getElementById('dBanner');
   bn.className = 'banner ' + (cur.proved ? 'proved' : 'unproved');
   bn.innerHTML = cur.featured
-    ? '<b>Proved: one endless strand</b> in the nest tiling drawn here (the Ariadne Theorem), and <b>no loops in any spectre tiling</b> (the Endless Strand Theorem). This is the design proved on the website and in the paper, by induction over all supertile levels. The proof was written by AI and has not been checked by a mathematician.'
-    : cur.proved ? '<b>Proved: one endless strand, no loops,</b> in the nest tiling drawn here. The first design proved, by the same induction now run on 0.1:01 (also AI-written, not checked by a mathematician).'
+    ? '<b>Proved: one endless strand</b> in the nest tiling drawn here (the Ariadne Theorem), and <b>no loops in every spectre tiling whose supertiles fill the plane</b> (the Endless Strand Theorem). This is the design proved on the website and in the write-up of the proof, by induction over all supertile levels. The proof was written by AI and has not been checked by a mathematician.'
+    : cur.proved ? '<b>Proved: one endless strand, no loops,</b> in the nest tiling drawn here. The first design proved, by an earlier version of the method used for 0.1:01 (also AI-written, not checked by a mathematician).'
     : '<b>Not proved.</b> No closed loops in any supertile up to level 7 (about 2.1 million tiles), which is strong evidence, but the single-strand proof has not been run on this design.';
 }
 let stripTimer = null;

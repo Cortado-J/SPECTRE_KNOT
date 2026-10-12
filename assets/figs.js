@@ -251,7 +251,7 @@
     });
     Object.keys(N).forEach(function (k) {
       var n = N[k], p = pos(k), st = STAT[n[4]], fin = k === 'T9';
-      s.push('<a href="#' + n[5] + '" data-step="' + n[5] + '"><g class="pm-node"><rect x="' + p.x + '" y="' + p.y + '" width="' + bw + '" height="' + bh + '" rx="12" fill="' + (fin ? '#2a2310' : '#12211c') + '" stroke="' + (fin ? '#E69F00' : st[0]) + '" stroke-width="' + (fin ? 3 : 2) + '"' + (n[4] === 'argued' ? ' stroke-dasharray="6 4"' : '') + '/>' +
+      s.push('<a href="#' + n[5] + '" data-step="' + n[5] + '"><g class="pm-node"><rect x="' + p.x + '" y="' + p.y + '" width="' + bw + '" height="' + bh + '" rx="12" fill="' + (fin ? '#2a2310' : '#12211c') + '" stroke="' + (fin ? '#E69F00' : st[0]) + '" stroke-width="' + (fin ? 3 : 2) + '"' + '/>' +
         '<text x="' + (p.x + 12) + '" y="' + (p.y + 23) + '" fill="#e8f1ec" font-size="15" font-weight="700">' + n[2] + '</text>' +
         '<text x="' + (p.x + 12) + '" y="' + (p.y + 41) + '" fill="#a3b8ae" font-size="12.5">' + n[3] + '</text>' +
         '<text x="' + (p.x + 12) + '" y="' + (p.y + 57) + '" fill="' + st[0] + '" font-size="10.5" font-weight="700" letter-spacing="1">' + st[1].toUpperCase() + '</text>' +

@@ -295,6 +295,12 @@ table.nums td.one { color: var(--amber); font-weight: 800; }
 .flash { animation: flash 1.6s ease-out; }
 @keyframes flash { 0%, 30% { box-shadow: 0 0 0 3px var(--amber); } 100% { box-shadow: 0 0 0 3px transparent; } }
 .st.argued { color: #CC79A7; border-color: #CC79A7; border-style: dashed; }
+.st.lean.part { border-style: dashed; }   /* the Lean checks part of the result (proof map) */
+.pmres ul { list-style: none; margin: 6px 0 0; padding: 0; display: grid; gap: 7px; }
+.pmres li { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; }
+.pmres li > a { color: var(--ink); text-decoration-color: var(--faint); }
+.pmres li > a b { color: var(--mint); font-weight: 700; }
+.pmres .chips { display: inline-flex; gap: 6px; flex-wrap: wrap; }
 table.par td.even { color: var(--mint); }
 table.par td.odd { color: var(--amber); background: rgba(230,159,0,.08); outline: 1px dashed rgba(230,159,0,.55); outline-offset: -3px; }
 table.risk td, table.cmd td { text-align: left; vertical-align: top; }

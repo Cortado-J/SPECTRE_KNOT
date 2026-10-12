@@ -4,12 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Prove · The Spectre Knot</title>
-<meta name="description" content="Why the Spectre Knot is one endless strand: the argument in seven steps, at four depths, with diagrams.">
+<meta name="description" content="Why the Spectre Knot never closes into a loop, and why in the nest tiling drawn here it is one endless strand: the argument in seven steps, at four depths, with diagrams.">
 <link rel="canonical" href="https://cortado-j.github.io/SPECTRE_KNOT/prove.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="The Spectre Knot">
 <meta property="og:title" content="Prove · The Spectre Knot">
-<meta property="og:description" content="Why the Spectre Knot is one endless strand: the argument in seven steps, at four depths, with diagrams.">
+<meta property="og:description" content="Why the Spectre Knot never closes into a loop, and why in the nest tiling drawn here it is one endless strand: the argument in seven steps, at four depths, with diagrams.">
 <meta property="og:url" content="https://cortado-j.github.io/SPECTRE_KNOT/prove.html">
 <meta property="og:image" content="https://cortado-j.github.io/SPECTRE_KNOT/img/og-card.png">
 <meta property="og:image:width" content="1200">
@@ -52,12 +52,12 @@
       </div>
       <div class="claim c2">
         <div class="kick">Claim 2 &middot; the Ariadne Theorem</div>
-        <h2 id="claim-text">On the nest tiling drawn on this site, the ribbon pieces of all the tiles join into one endless strand.</h2>
-        <p class="mut small">The nest tiling grows outwards from a single tile, each block child 1 of the next. The write-up&rsquo;s Theorem B; <a href="#p6">step 6</a>.</p>
+        <h2 id="claim-text">In the nest tiling drawn on this site, with the Spectre Knot design on each tile, the ribbon pieces of all the tiles join into one endless strand.</h2>
+        <p class="mut small">The nest tiling is grown outwards from a single tile, each block sitting in the same place (child number 1) inside the next. The write-up&rsquo;s Theorem B; <a href="#p6">step 6</a>.</p>
       </div>
     </div>
     <div class="claimnotes">
-      <p class="mut small"><b style="color:var(--ink)">The full write-up:</b> <a href="downloads/The-Spectre-Knot-paper.pdf">the paper (PDF)</a>, with <a href="downloads/The-Spectre-Knot-proof-code.zip">its programs and logs</a>. The rigorous level below follows it, and gives its numbers.</p>
+      <p class="mut small"><b style="color:var(--ink)">The full write-up:</b> <a href="https://cortado-j.github.io/SPECTRE_KNOT_PROOF/downloads/The-Spectre-Knot-paper.pdf">the write-up of the proof (PDF)</a>, with <a href="https://cortado-j.github.io/SPECTRE_KNOT_PROOF/downloads/The-Spectre-Knot-proof-code.zip">its programs and logs</a>. The rigorous level below follows it, and gives its numbers. <a href="https://cortado-j.github.io/SPECTRE_KNOT_PROOF/">The proof site</a> shows every numbered result of the write-up, what it rests on, and its Lean.</p>
       <p class="mut small">Each step is marked by what supports it: <span class="st cited">cited</span> from the spectre paper, <span class="st computed">computed</span> by machine, or <span class="st proved">argued</span> in words. <span class="st lean">Lean</span> marks a step that has also been checked by the Lean proof assistant, a program that verifies every step of a proof: the version for Lean was written by the AI too, and it takes as given that supertiles are assembled as the spectre paper describes, and the geometry that links the assemblies to the plane. Step 7 says exactly which tilings are covered.</p>
       <p class="mut small"><b style="color:var(--ink)">Status.</b> The computations the proof uses are finite and exact, on the level-1 supertiles. As a further check, real supertiles were followed up to level 9 (about 133 million tiles), in ordinary floating-point arithmetic. The step that carries it to every size is short: two extra edges in a shared run change nothing (<a href="#p4">step 4</a>), and the sides at any level are the level-1 sides made longer by even amounts, so one computation at level 1 covers every level (<a href="#p5">step 5</a>). The merging of every block of the nest goes the same way (<a href="#p6">step 6</a>). The combinatorial part of the argument has also been written out for the Lean proof assistant, a program that checks every step of a proof; that formal version was written by the AI too. What the whole argument takes on citation is the spectre paper&rsquo;s description of how supertiles are assembled; that, and what is not covered, is in <a href="#p7">step 7</a>.</p>
     </div>
@@ -152,7 +152,7 @@
     </article>
 
     <article class="pstep" id="p5">
-      <div class="ph"><span class="pn">5</span><h2>Two more edges change nothing: from level 1 to every level</h2><span class="st computed">computed</span><span class="st proved">argued</span><span class="st cited">cited: Thms 4.1, 5.1</span><span class="st lean">Lean</span></div>
+      <div class="ph"><span class="pn">5</span><h2>Two more edges change nothing: from level 1 to every level</h2><span class="st computed">computed</span><span class="st proved">argued</span><span class="st cited">cited: Thms 2.2, 3.1, 4.1, 5.1</span><span class="st lean">Lean</span></div>
       <div class="lvl l1"><div class="lin"><div class="pad">
         <p>Make a shared run two edges longer and the ribbons come out exactly where they did before: they just zigzag round two more corners. A big supertile is built like a small one, only with every side longer by an even number of edges. So checking the smallest supertiles once settles every size: the signature passes up like falling dominoes.</p>
         <div class="pfig"><figure><div style="display:flex;gap:12px;flex-wrap:wrap"><div data-fig="zz3" style="flex:1 1 260px"></div><div data-fig="zz5" style="flex:1 1 260px"></div></div><figcaption>A run of 3 edges and a run of 5. The two extra corners add a zigzag, but each ribbon comes out at the same end, on the same side.</figcaption></figure></div>
@@ -177,7 +177,7 @@
     </article>
 
     <article class="pstep" id="p6">
-      <div class="ph"><span class="pn">6</span><h2>Grow a nest, and everything joins: the Ariadne Theorem</h2><span class="st computed">computed</span><span class="st proved">argued</span><span class="st cited">cited: Thms 4.1, 5.1</span><span class="st lean">Lean</span></div>
+      <div class="ph"><span class="pn">6</span><h2>Grow a nest, and everything joins: the Ariadne Theorem</h2><span class="st computed">computed</span><span class="st proved">argued</span><span class="st cited">cited: Thms 2.2, 3.1, 4.1, 5.1</span><span class="st lean">Lean</span></div>
       <div class="lvl l1"><div class="lin"><div class="pad">
         <p>Take a block, the block around it, the block around that, and so on. Each time, the pieces of the small block lie on fewer strands, until they lie on one. The blocks grow to cover the whole plane, so any two tiles end up on the same strand.</p>
         <div class="pfig"><figure><div class="wide" data-fig="treeb"></div><figcaption>The 46 pieces of the 9-tile block lie on 10 strands in 71 tiles, on 2 in 559 and 4,401, and on 1 in 34,649.</figcaption></figure></div>
@@ -200,11 +200,11 @@
       </div></div></div>
       <div class="lvl l3"><div class="lin"><div class="pad">
         <span class="lvtag">In detail</span>
-        <p>Number the pieces of the bigger block&rsquo;s outline (each a side of one of its children) 0 to 21. The five hooks are at the corners where pieces 9, 12, 16, 17 and 21 start; call them junctions. Junctions 16 and 17 are the two ends of the small block&rsquo;s side 2, the side on the outline. For an even-numbered small block, ribbons leaving its sides 0 and 1 go to junction 17, side 3 to 16, side 4 to 12, side 5 to 9; for an odd-numbered one, side 0 to 21, side 1 to 17, sides 3, 4 and 5 to 16. Junction 9 lies on side 2 of the bigger block, 12 on side 3, 16 and 17 on side 4, 21 on side 5.</p>
+        <p>Number the stretches of the bigger block&rsquo;s outline (each a side of one of its children) 0 to 21. The five hooks are at the corners where stretches 9, 12, 16, 17 and 21 start; call them junctions. Junctions 16 and 17 are the two ends of the small block&rsquo;s side 2, the side on the outline. For an even-numbered small block, ribbons leaving its sides 0 and 1 go to junction 17, side 3 to 16, side 4 to 12, side 5 to 9; for an odd-numbered one, side 0 to 21, side 1 to 17, sides 3, 4 and 5 to 16. Junction 9 lies on side 2 of the bigger block, 12 on side 3, 16 and 17 on side 4, 21 on side 5.</p>
         <p>So for an even-numbered block every ribbon is, one level up, on a hook inside side 2, 3 or 4; two levels up, inside side 4; three levels up, on junction 12. For an odd-numbered block: inside side 4 or 5; then 3 or 2; then 4; then junction 12, four levels up. This gives exactly the counts in the last columns of the table, for every block N1, N2, N3, &hellip; The rule was computed twice at level 1, by a program and by the Lean proof assistant, and checked directly at the sizes of levels 2 to 4.</p>
         <p>It was also checked the long way: following every ribbon one by one, for the first six blocks of the nest, up to 133 million tiles; and by an earlier, longer method that carries labels up the nest and checks 2,106 comparisons of side lengths for every block from the second on (1,980 hold because every side is at least 5 edges long; the other 126 were certified exactly, twice; the first block was computed directly). Both agree.</p>
         <p><b>The nest covers the plane.</b> Each block shares no corner with the rim of its grandparent: in the fixed assembly pattern, the only side of the small block on its parent&rsquo;s rim lies inside a side of the parent that faces a sibling one level up. So every tile next to block N<sub>b</sub> is inside N<sub>b+2</sub>, and the blocks swallow every tile eventually (the write-up&rsquo;s Lemma 8.3 and Proposition 8.4).</p>
-        <p><b>The finish.</b> Take any two tiles. Both lie inside some block N<sub>b</sub> of the nest. Every ribbon piece in them is part of a piece of N<sub>b</sub>, because nothing closes up inside, and all pieces of N<sub>b</sub> lie on one ribbon of N<sub>b+4</sub>. So the two tiles are on the same ribbon. And there is no ring: a ring is finite, so the smallest supertile containing it would contain a ring, and no supertile does (step 5).</p>
+        <p><b>The finish.</b> Take any two tiles. Both lie inside some block N<sub>b</sub> of the nest. Every ribbon piece in them is part of an arc of N<sub>b</sub> (a stretch of strand inside the block), because nothing closes up inside, and all arcs of N<sub>b</sub> lie on one arc of N<sub>b+4</sub>. So the two tiles are on the same strand. And there is no ring: a ring is finite, so the smallest supertile containing it would contain a ring, and no supertile does (step 5).</p>
         <div class="pfig"><figure><div class="wide" data-fig="nest5"></div><figcaption>The nest from 1 tile to 34,649. Each block sits well inside its grandparent.</figcaption></figure></div>
       </div></div></div>
       <div class="lvl l4"><div class="lin"><div class="pad" data-rig="6"></div></div></div>
@@ -219,7 +219,7 @@
       </div></div></div>
       <div class="lvl l2"><div class="lin"><div class="pad">
         <span class="lvtag">An explanation</span>
-        <p>A spectre tiling is determined by its chain of ancestors. The tiling here grows by always taking child number 1 (the nest). Other tilings grow from a different chain of ancestors. For all of them whose supertiles fill the plane, the &ldquo;no closed loops&rdquo; part of the argument applies unchanged, so every strand runs on for ever in both directions; this part has also been checked in Lean, for any chain of supertiles. The &ldquo;one strand&rdquo; part depends on the chain, and it appears not to hold for every chain: along one chain, with &Theta; and &Gamma; supertiles alternating (child 2, then child 7), the computer finds three strands that do not join, followed exactly to level 8 and by the label method to level 20. That is evidence, not a proof, and the site claims nothing about it. A few special tilings contain two or more infinite supertiles meeting along lines or at a point (fault tilings); those are not covered at all.</p>
+        <p>A spectre tiling is determined by its chain of ancestors. The tiling here grows by always taking child number 1 (the nest). Other tilings grow from a different chain of ancestors. For all of them whose supertiles fill the plane, the &ldquo;no closed loops&rdquo; part of the argument applies unchanged, so every strand runs on for ever in both directions; this part has also been checked in Lean, for any chain of supertiles. The &ldquo;one strand&rdquo; part depends on the chain, and it appears not to hold for every chain: along one chain, with &Theta; and &Gamma; supertiles alternating (child 2, then child 7), the computer finds three strands that do not join, followed exactly to level 8 and by the label method to level 20. That is evidence, not a proof, and the site claims nothing about it. A few special tilings contain two or more infinite supertiles meeting along lines of tile edges (fault tilings); those are not covered at all.</p>
       </div></div></div>
       <div class="lvl l3"><div class="lin"><div class="pad">
         <span class="lvtag">In detail</span>
@@ -249,7 +249,7 @@
     </details>
     <details id="check">
       <summary>The programs, and how to re-run them</summary>
-      <p>The programs that accompany <a href="downloads/The-Spectre-Knot-paper.pdf">the write-up of the proof</a> are in its folder <code>code/</code> (<a href="downloads/The-Spectre-Knot-proof-code.zip">download</a>), with the logs of a full run. One command, <code>./run_all.sh</code>, re-runs everything the proof needs, with the quicker second checks (about 12 minutes on four cores); <code>./run_all.sh --all</code> adds the corroborating runs up to level 9 (about an hour). They run from the <code>code</code> folder, with Node 18 or later and Python 3. The Lean version is in the folder <code>lean/</code>; its <code>build.sh</code> checks it (about 6 minutes).</p>
+      <p>The programs that accompany <a href="https://cortado-j.github.io/SPECTRE_KNOT_PROOF/downloads/The-Spectre-Knot-paper.pdf">the write-up of the proof</a> are in its folder <code>code/</code> (<a href="https://cortado-j.github.io/SPECTRE_KNOT_PROOF/downloads/The-Spectre-Knot-proof-code.zip">download</a>), with the logs of a full run. One command, <code>./run_all.sh</code>, re-runs everything the proof needs, with the quicker second checks (about 12 minutes on four cores); <code>./run_all.sh --all</code> adds the corroborating runs up to level 9 (about an hour). They run from the <code>code</code> folder, with Node 18 or later and Python 3. The Lean version is in the same download, in the folder <code>lean/</code>; its <code>build.sh</code> checks it (about 6 minutes).</p>
       <div class="tablewrap"><table class="nums cmd">
         <thead><tr><th>What it checks</th><th>Command</th></tr></thead>
         <tbody>
@@ -267,7 +267,7 @@
     <details id="glossary">
       <summary>Glossary</summary>
       <div class="gloss">
-        <div class="gcard" id="g-port" data-gloss="port"><div class="gfig"></div><div><b>Port</b><p>The one point on each tile edge where ribbons cross it, 0.15 of the edge off its middle. (In the rigorous text each tile has two ports there, one for each of its two ribbon ends: 28 per tile.)</p></div></div>
+        <div class="gcard" id="g-port" data-gloss="port"><div class="gfig"></div><div><b>Port</b><p>The one point on each tile edge where ribbons cross it, 0.15 of the edge off its middle. (From step 2 on, as in the write-up of the proof, the word means the two ribbon ends of a tile at that point, one heading towards each end of the edge: 28 per tile.)</p></div></div>
         <div class="gcard" id="g-supertile" data-gloss="supertile"><div class="gfig"></div><div><b>Supertile</b><p>A cluster of tiles (9, 71, 559, &hellip;) that behaves like one big tile. There are nine kinds, named by Greek letters, and every level is built from the one below by the same rule.</p></div></div>
         <div class="gcard" id="g-level" data-gloss="level"><div class="gfig"></div><div><b>Level</b><p>Level 0 is a single tile, level 1 a supertile of tiles, level 2 a supertile of level-1 supertiles, and so on.</p></div></div>
         <div class="gcard" id="g-rim" data-gloss="rim"><div class="gfig"></div><div><b>Rim</b><p>The outline of a supertile. Only the ports on the rim matter from outside.</p></div></div>
@@ -293,6 +293,7 @@
 <script src="assets/figs.js"></script>
 <script src="assets/site.js"></script>
 <script src="assets/prove-rigour.js"></script>
+<script src="assets/prove-results.js"></script>   <!-- written by proofmap/build.py when the site is built -->
 <script>
 (function () {
   'use strict';
@@ -319,7 +320,10 @@
   document.querySelectorAll('[data-zz]').forEach(function (b) { b.addEventListener('click', function () { zn = Math.max(1, Math.min(9, zn + +b.dataset.zz)); zz(); }); });
   zz();
   // rigorous texts, kept in their own file
-  document.querySelectorAll('[data-rig]').forEach(function (el) { var r = (window.SKRIG || {})[el.dataset.rig]; el.innerHTML = '<span class="lvtag">Rigorous</span>' + (r || '<p>To follow.</p>'); });
+  document.querySelectorAll('[data-rig]').forEach(function (el) {
+    var r = (window.SKRIG || {})[el.dataset.rig] || '', res = (window.SKRES || {})[el.dataset.rig] || '';
+    el.innerHTML = '<span class="lvtag">Rigorous</span>' + (r.indexOf('<!--results-->') >= 0 ? r.replace('<!--results-->', res) : res + r);
+  });
 
   // depth: one for the page, overridable per step
   var steps = Array.prototype.slice.call(document.querySelectorAll('.pstep'));
