@@ -26,7 +26,23 @@
   <section class="wrap page-head">
     <div class="kick">Prove</div>
     <h1>Why it is one strand</h1>
-    <p class="lede">Seven steps. Read them as a few easy sentences, or open any step for an explanation, the details, or the rigorous version. Choose a depth for the whole page below, or go deeper one step at a time.</p>
+    <p class="lede">Two claims, argued in seven steps. Each step opens deeper, from a few easy sentences down to the rigorous version.</p>
+  </section>
+
+  <section class="wrap" style="padding-block:0 18px;display:grid;gap:14px">
+    <div class="claims">
+      <div class="claim c1">
+        <div class="kick">Claim 1 &middot; the Endless Strand Theorem</div>
+        <h2>In every spectre tiling whose supertiles fill the plane, with the Spectre Knot design on each tile, no strand ever closes into a loop.</h2>
+        <p class="mut small">Every strand runs on for ever in both directions. Steps 1&ndash;5; scope in <a href="#p7">step 7</a>.</p>
+      </div>
+      <div class="claim c2">
+        <div class="kick">Claim 2 &middot; the Ariadne Theorem</div>
+        <h2 id="claim-text">In the nest tiling drawn on this site, with the Spectre Knot design on each tile, the ribbon pieces of all the tiles join into one endless strand.</h2>
+        <p class="mut small">The nest tiling is grown outwards from a single tile, each block sitting in the same place (child number 1) inside the next. <a href="#p6">Step 6</a>.</p>
+      </div>
+    </div>
+    <div class="status" style="padding:12px 18px"><p><b>Status: an AI-written proof, not checked by a mathematician.</b> The argument below was developed and written by an AI system. I haven&rsquo;t verified all of it, and no mathematician has reviewed it. <a href="made.html">How this was made</a>.</p></div>
   </section>
 
   <div class="depthbar"><div class="wrap">
@@ -39,35 +55,7 @@
     </div>
   </div></div>
 
-  <section class="wrap" style="padding-block:26px 10px;display:grid;gap:18px">
-    <div class="status">
-      <h2>Status: an AI-written proof, not checked by a mathematician</h2>
-      <p>The argument below was developed and written by an AI system. I haven&rsquo;t verified all of it, and no mathematician has reviewed it. So it is a claim, not an established result. <a href="made.html">How this was made</a>.</p>
-    </div>
-    <div class="claims">
-      <div class="claim c1">
-        <div class="kick">Claim 1 &middot; the Endless Strand Theorem</div>
-        <h2>In every spectre tiling whose supertiles fill the plane, with the Spectre Knot design on each tile, no strand ever closes into a loop.</h2>
-        <p class="mut small">Every strand runs on for ever in both directions. The write-up&rsquo;s Theorem A; groundwork in steps 1&ndash;5, scope in <a href="#p7">step 7</a>.</p>
-      </div>
-      <div class="claim c2">
-        <div class="kick">Claim 2 &middot; the Ariadne Theorem</div>
-        <h2 id="claim-text">In the nest tiling drawn on this site, with the Spectre Knot design on each tile, the ribbon pieces of all the tiles join into one endless strand.</h2>
-        <p class="mut small">The nest tiling is grown outwards from a single tile, each block sitting in the same place (child number 1) inside the next. The write-up&rsquo;s Theorem B; <a href="#p6">step 6</a>.</p>
-      </div>
-    </div>
-    <div class="claimnotes">
-      <p class="mut small"><b style="color:var(--ink)">The full write-up:</b> <a href="https://cortado-j.github.io/SPECTRE_KNOT_PROOF/downloads/The-Spectre-Knot-paper.pdf">the write-up of the proof (PDF)</a>, with <a href="https://cortado-j.github.io/SPECTRE_KNOT_PROOF/downloads/The-Spectre-Knot-proof-code.zip">its programs and logs</a>. The rigorous level below follows it, and gives its numbers. <a href="https://cortado-j.github.io/SPECTRE_KNOT_PROOF/">The proof site</a> shows every numbered result of the write-up, what it rests on, and its Lean.</p>
-      <p class="mut small">Each step is marked by what supports it: <span class="st cited">cited</span> from the spectre paper, <span class="st computed">computed</span> by machine, or <span class="st proved">argued</span> in words. <span class="st lean">Lean</span> marks a step that has also been checked by the Lean proof assistant, a program that verifies every step of a proof: the version for Lean was written by the AI too, and it takes as given that supertiles are assembled as the spectre paper describes, and the geometry that links the assemblies to the plane. Step 7 says exactly which tilings are covered.</p>
-      <p class="mut small"><b style="color:var(--ink)">Status.</b> The computations the proof uses are finite and exact, on the level-1 supertiles. As a further check, real supertiles were followed up to level 9 (about 133 million tiles), in ordinary floating-point arithmetic. The step that carries it to every size is short: two extra edges in a shared run change nothing (<a href="#p4">step 4</a>), and the sides at any level are the level-1 sides made longer by even amounts, so one computation at level 1 covers every level (<a href="#p5">step 5</a>). The merging of every block of the nest goes the same way (<a href="#p6">step 6</a>). The combinatorial part of the argument has also been written out for the Lean proof assistant, a program that checks every step of a proof; that formal version was written by the AI too. What the whole argument takes on citation is the spectre paper&rsquo;s description of how supertiles are assembled; that, and what is not covered, is in <a href="#p7">step 7</a>.</p>
-    </div>
-    <nav class="toc" aria-label="The seven steps" id="toc"></nav>
-    <details class="pmap" id="map">
-      <summary>Map of the proof: what rests on what</summary>
-      <p class="mut small">Each box is one fact; an arrow means &lsquo;is used to prove&rsquo;. The border says what supports it: <span class="st computed">computed</span> by machine, <span class="st cited">cited</span> from the spectre paper, <span class="st proved">argued</span> in words; a yellow <span class="st lean">Lean</span> tag means it has also been checked by Lean. Click a box to open that step.</p>
-      <div class="scrollx"><div data-fig="pmap" style="min-width:640px"></div></div>
-    </details>
-  </section>
+  <section class="wrap" style="padding-top:18px"><nav class="toc" aria-label="The seven steps" id="toc"></nav></section>
 
   <section class="wrap" style="display:grid;gap:16px;padding-bottom:20px" id="steps">
 
@@ -232,6 +220,12 @@
 
   <section class="wrap extras" style="display:grid;gap:14px;padding-bottom:24px">
     <h2>Going further</h2>
+    <p class="mut small">The rigorous version of every step is on <a href="https://cortado-j.github.io/SPECTRE_KNOT_PROOF/">the proof site</a>: each result of <a href="https://cortado-j.github.io/SPECTRE_KNOT_PROOF/downloads/The-Spectre-Knot-paper.pdf">the write-up of the proof</a> with its proof, what it rests on and its Lean.</p>
+    <details class="pmap" id="map">
+      <summary>Map of the proof, and what the marks mean</summary>
+      <p class="mut small">Each step is marked by what supports it: <span class="st cited">cited</span> from the spectre paper, <span class="st computed">computed</span> by machine, or <span class="st proved">argued</span> in words. A yellow <span class="st lean">Lean</span> tag means it has also been checked by the Lean proof assistant, in a version also written by the AI (<a href="made.html">what that covers</a>). In the map each box is one fact, an arrow means &lsquo;is used to prove&rsquo;, and the border gives its mark. Click a box to open that step.</p>
+      <div class="scrollx"><div data-fig="pmap" style="min-width:640px"></div></div>
+    </details>
     <details id="fail">
       <summary>How could it fail? Every way we could think of, and what rules it out</summary>
       <div class="tablewrap"><table class="nums risk">
@@ -292,8 +286,7 @@
 <script src="assets/knot.js"></script>
 <script src="assets/figs.js"></script>
 <script src="assets/site.js"></script>
-<script src="assets/prove-rigour.js"></script>
-<script src="assets/prove-results.js"></script>   <!-- written by proofmap/build.py when the site is built -->
+<script src="assets/prove-results.js"></script>   <!-- written by site/build_site.py from proof_addresses.json -->
 <script>
 (function () {
   'use strict';
@@ -319,11 +312,8 @@
   function zz() { var r = SKF.zigzag(zn, { width: 600 }); fig('zigzag', r.svg); zo.textContent = zn + (zn === 1 ? ' edge: ' : ' edges: ') + (zn % 2 ? 'odd, other side' : 'even, same side'); }
   document.querySelectorAll('[data-zz]').forEach(function (b) { b.addEventListener('click', function () { zn = Math.max(1, Math.min(9, zn + +b.dataset.zz)); zz(); }); });
   zz();
-  // rigorous texts, kept in their own file
-  document.querySelectorAll('[data-rig]').forEach(function (el) {
-    var r = (window.SKRIG || {})[el.dataset.rig] || '', res = (window.SKRES || {})[el.dataset.rig] || '';
-    el.innerHTML = '<span class="lvtag">Rigorous</span>' + (r.indexOf('<!--results-->') >= 0 ? r.replace('<!--results-->', res) : res + r);
-  });
+  // rigorous level: links to the proof site (assets/prove-results.js, written by build_site.py)
+  document.querySelectorAll('[data-rig]').forEach(function (el) { el.innerHTML = '<span class="lvtag">Rigorous</span>' + ((window.SKRES || {})[el.dataset.rig] || ''); });
 
   // depth: one for the page, overridable per step
   var steps = Array.prototype.slice.call(document.querySelectorAll('.pstep'));
