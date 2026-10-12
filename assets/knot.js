@@ -32,17 +32,33 @@
     return P;
   }
   /* N4 and N5 have too many ribbons to draw live: a picture of every tile and ribbon (site/render45.py) sits under the
-     highlighted strands. Loaded on first use; every scene that asked is redrawn when it arrives. */
+     highlighted strands. Loaded on first use; when it arrives, every scene that asked rebuilds that level's cached
+     picture and redraws, and anything waiting for it (an animation about to start, see goTo) goes ahead. */
   var IMG = {}, waiting = [];
-  function img45(k, scene) {
+  function load45(k) {
     var I = D.img45 && D.img45[k]; if (!I) return null;
     if (!IMG[k]) {
-      var im = new Image(); IMG[k] = { im: im, ok: false };
-      im.onload = function () { IMG[k].ok = true; var w = waiting; waiting = []; w.forEach(function (sc) { sc.caches = {}; sc.draw(); }); };
+      var im = new Image(); IMG[k] = { im: im, ok: false, done: false, then: [] };
+      im.onload = im.onerror = function (e) {
+        IMG[k].ok = e.type === 'load'; IMG[k].done = true;
+        var w = waiting; waiting = [];
+        w.forEach(function (sc) { if (sc.caches) delete sc.caches[k]; sc.draw(); });
+        var t = IMG[k].then; IMG[k].then = []; t.forEach(function (fn) { fn(); });
+      };
       im.src = I.src;
     }
-    if (!IMG[k].ok && waiting.indexOf(scene) < 0) waiting.push(scene);
-    return IMG[k].ok ? { im: IMG[k].im, box: I.box } : null;
+    return IMG[k];
+  }
+  function img45(k, scene) {
+    var G = load45(k); if (!G) return null;
+    if (!G.ok && !G.done && waiting.indexOf(scene) < 0) waiting.push(scene);
+    return G.ok ? { im: G.im, box: D.img45[k].box } : null;
+  }
+  /* run fn once the pictures for levels ks have arrived (or failed); at once if they already have */
+  function after45(ks, fn) {
+    var left = ks.map(load45).filter(function (G) { return G && !G.done; });
+    if (!left.length) return fn();
+    var n = left.length; left.forEach(function (G) { G.then.push(function () { if (--n === 0) fn(); }); });
   }
   function ease(f) { return f < 0.5 ? 4 * f * f * f : 1 - Math.pow(-2 * f + 2, 3) / 2; }
   var REDUCE = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -120,7 +136,7 @@
   Scene.prototype.warm = function () {   // build the cached pictures a little at a time, after the page has drawn
     var self = this, k = this.minLevel();
     function idle(fn, ms) { if (window.requestIdleCallback) requestIdleCallback(fn, { timeout: ms + 500 }); else setTimeout(fn, ms); }
-    function next() { if (k > 5) return; self.cache(k++); idle(next, 30); }
+    function next() { if (k > 5) return; if (k >= 4) load45(k); self.cache(k++); idle(next, 30); }
     idle(next, 300);
   };
   Scene.prototype.draw = function () {
@@ -208,10 +224,17 @@
     k = Math.max(this.minLevel(), Math.min(5, k)); this.hov = null;
     var from = this.L, dist = Math.abs(k - from);
     if (REDUCE || dist < 1e-3) { this.L = k; this.pan = { x: 0, y: 0, z: 1 }; this.draw(); if (done) done(); return; }
-    var p0 = { x: this.pan.x, y: this.pan.y, z: this.pan.z };
-    this.pan = { x: 0, y: 0, z: 1 };
-    this.anim = { from: from, to: k, t0: performance.now(), dur: 900 + 650 * Math.min(dist, 5), done: done };
-    this.loop();
+    // the animation blits every level it passes through: wait for the N4/N5 pictures it needs and build their cached
+    // pictures before the clock starts, so the zoom never jumps ahead while a picture loads
+    var self = this, seq = this.goSeq = (this.goSeq || 0) + 1, need = [];
+    for (var n = Math.max(4, Math.floor(Math.min(from, k))); n <= Math.ceil(Math.max(from, k)); n++) need.push(n);
+    after45(need, function () {
+      if (seq !== self.goSeq) return;                          // superseded by a later move
+      need.forEach(function (n) { self.cache(n); });
+      self.pan = { x: 0, y: 0, z: 1 };
+      self.anim = { from: from, to: k, t0: performance.now(), dur: 900 + 650 * Math.min(dist, 5), done: done };
+      self.loop();
+    });
   };
   Scene.prototype.setMode = function (m) { this.mode = m; this.hov = null; this.lastK = -1; if (this.L < this.minLevel()) this.L = this.minLevel(); this.draw(); };
   Scene.prototype.play = function () {
