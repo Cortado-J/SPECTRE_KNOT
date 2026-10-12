@@ -233,6 +233,7 @@ ol.howto { margin: 0; padding-left: 1.3em; color: var(--mut); display: grid; gap
 .st.computed { color: var(--sky); border-color: var(--sky); }
 .st.proved { color: var(--mint); border-color: var(--mint); }
 .st.gap { color: var(--pink); border-color: var(--pink); }
+.st.lean { color: #F0E442; border-color: #F0E442; }   /* also checked by the Lean proof assistant */
 .lvl { display: grid; grid-template-rows: 0fr; opacity: 0; transition: grid-template-rows .45s ease, opacity .35s ease; }
 .lvl > .lin { overflow: hidden; min-height: 0; }
 .lvl.show { grid-template-rows: 1fr; opacity: 1; }
@@ -256,6 +257,7 @@ ol.howto { margin: 0; padding-left: 1.3em; color: var(--mut); display: grid; gap
 .pctl button[disabled] { opacity: .35; cursor: default; }
 .mathbox { background: var(--bg2); border: 1px solid var(--line); border-radius: var(--r-s); padding: 14px 16px; display: grid; gap: 8px; }
 .mathbox h4 { font-size: .95rem; color: var(--ink); }
+.mathbox h4 small { color: var(--faint); font-weight: 500; font-size: .78rem; margin-left: 4px; }
 .mathbox p { font-size: .97rem; }
 .zzctl { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
 .zzctl output { font-weight: 700; color: var(--ink); min-width: 15ch; }

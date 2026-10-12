@@ -34,6 +34,7 @@
     s.push('</svg>'); return s.join('');
   }
 
+  /* straight-edged Tile(1,1) beside a curved-edge spectre (each edge replaced by the same S-curve) */
   /* the 14 places the crossing could go, one per edge (the crossover at corners v_j, v_{j+1} is next to edge j).
      Computed with viewer/research/places.js: edges 11, 12, 13, 0, 1, 2 give no loop in any supertile to level 6;
      the other eight give loops at level 2 or 3. The design drawn here has its crossing at edge 0. */
@@ -135,18 +136,9 @@
       function inward(e) { var P = pts[e % n], Q = pts[(e + 1) % n], dx = Q[0] - P[0], dy = Q[1] - P[1], l = Math.hypot(dx, dy); return [-dy / l * sgn, dx / l * sgn]; }
       var dep = 0.42, w = k === 1 ? 3 : 1.8;
       S.forEach(function (p) {
-        var A = p[4], B = p[5], na = inward(p[0]), nb = inward(p[1]), hook = p[2] === p[3], d;
-        if (hook) {
-          d = 'M' + F.x(A[0]) + ',' + F.y(A[1]) + 'C' + F.x(A[0] + na[0] * dep) + ',' + F.y(A[1] + na[1] * dep) + ' ' + F.x(B[0] + nb[0] * dep) + ',' + F.y(B[1] + nb[1] * dep) + ' ' + F.x(B[0]) + ',' + F.y(B[1]);
-        } else {
-          // as on the tile: each end leaves its port at 45 degrees, heading inwards and towards the corner it belongs to
-          // (A's end towards corner p[2], B's towards p[3]); the two crossover pieces share the port on the edge between
-          // the two corners, leave it in opposite directions, and so cross once
-          var dirTo = function (X, c, nX) { var C = pts[c % n], ux = C[0] - X[0], uy = C[1] - X[1], ul = Math.hypot(ux, uy) || 1, vx = ux / ul + nX[0], vy = uy / ul + nX[1], vl = Math.hypot(vx, vy) || 1; return [vx / vl, vy / vl]; };
-          var da = dirTo(A, p[2], na), db = dirTo(B, p[3], nb), a = Math.max(0.55, Math.hypot(B[0] - A[0], B[1] - A[1]) * 0.9);
-          d = 'M' + F.x(A[0]) + ',' + F.y(A[1]) + 'C' + F.x(A[0] + da[0] * a) + ',' + F.y(A[1] + da[1] * a) + ' ' + F.x(B[0] + db[0] * a) + ',' + F.y(B[1] + db[1] * a) + ' ' + F.x(B[0]) + ',' + F.y(B[1]);
-        }
-        s.push('<path d="' + d + '" fill="none" stroke="' + (hook ? (p[2] % 2 ? '#56B4E9' : '#b3dcf5') : '#E69F00') + '" stroke-width="' + (hook ? w : w + 1) + '" stroke-linecap="round"/>');
+        var A = p[4], B = p[5], na = inward(p[0]), nb = inward(p[1]), hook = p[2] === p[3];
+        var d = hook ? dep : dep * 2.2;
+        s.push('<path d="M' + F.x(A[0]) + ',' + F.y(A[1]) + 'C' + F.x(A[0] + na[0] * d) + ',' + F.y(A[1] + na[1] * d) + ' ' + F.x(B[0] + nb[0] * d) + ',' + F.y(B[1] + nb[1] * d) + ' ' + F.x(B[0]) + ',' + F.y(B[1]) + '" fill="none" stroke="' + (hook ? (p[2] % 2 ? '#56B4E9' : '#b3dcf5') : '#E69F00') + '" stroke-width="' + (hook ? w : w + 1) + '" stroke-linecap="round"/>');
       });
     }
     var cs = {}; S.forEach(function (p) { if (p[2] !== p[3]) { cs[p[2]] = 1; cs[p[3]] = 1; } });
@@ -176,16 +168,17 @@
     s.push('<text x="10" y="24" fill="#a3b8ae" font-size="13">block A</text><text x="10" y="' + (H - 10) + '" fill="#a3b8ae" font-size="13">block B</text>');
     s.push('<path d="M' + m + ',' + mid + 'H' + (W - m) + '" stroke="#e8f1ec" stroke-width="2.5"/>');
     for (var i = 0; i <= n; i++) s.push('<circle cx="' + (m + i * step) + '" cy="' + mid + '" r="' + (i === 0 || i === n ? 6 : 4) + '" fill="' + (i === 0 || i === n ? '#E69F00' : '#e8f1ec') + '"/>');
-    // ribbon starting in A beyond the first corner. It crosses the run at the port in the middle of each edge, at 45
-    // degrees, and between two ports it hooks round the corner between them in one block: a quarter-circle arc
+    // ribbon starting in A near the first corner; each edge: cross on a slant; each corner: hook back in the other block
     function ribbon(startTop, col, dash) {
-      var side = startTop ? -1 : 1, r = step / Math.SQRT2, px = function (j) { return m + (j + 0.5) * step; };
-      var h0 = Math.min(34, step * 0.3), x0 = m - 26, b0 = Math.min(h0, (px(0) - x0) * 0.45);
-      var d = 'M' + x0 + ',' + (mid + side * h0) + ' C' + (x0 + (px(0) - x0) * 0.45) + ',' + (mid + side * h0) + ' ' + (px(0) - b0) + ',' + (mid + side * b0) + ' ' + px(0) + ',' + mid;
-      side = -side;
-      for (var j = 1; j < n; j++) d += ' A' + r + ',' + r + ' 0 0 ' + (side < 0 ? 1 : 0) + ' ' + px(j) + ',' + mid, side = -side;
-      var x1 = W - m + 26, b1 = Math.min(h0, (x1 - px(n - 1)) * 0.45);
-      d += ' C' + (px(n - 1) + b1) + ',' + (mid + side * b1) + ' ' + (x1 - (x1 - px(n - 1)) * 0.45) + ',' + (mid + side * h0) + ' ' + x1 + ',' + (mid + side * h0);
+      var d = '', side = startTop ? -1 : 1, y = function (sd) { return mid + sd * 34; };
+      d = 'M' + (m - 26) + ',' + y(side);
+      for (var j = 0; j < n; j++) {
+        var x0 = m + j * step, x1 = x0 + step;
+        d += ' C' + (x0 + step * 0.35) + ',' + y(side) + ' ' + (x0 + step * 0.65) + ',' + y(-side) + ' ' + (x1 - step * 0.12) + ',' + y(-side);
+        side = -side;
+        if (j < n - 1) d += ' Q' + (x1 + step * 0.05) + ',' + y(side * 1.9) + ' ' + (x1 + step * 0.12) + ',' + y(side);
+      }
+      d += ' L' + (W - m + 26) + ',' + y(side);
       s.push('<path d="' + d + '" fill="none" stroke="' + col + '" stroke-width="5" stroke-linecap="round"' + (dash ? ' stroke-dasharray="10 7"' : '') + ' class="zz"/>');
       return side;
     }
@@ -207,105 +200,62 @@
     s.push('</svg>'); return s.join('');
   }
 
-  /* the small map repeats with period 2: levels 2 = 4 = 6 = 8 and 3 = 5 = 7 = 9 (two different maps) */
-  function period(o) {
-    o = o || {}; var W = o.width || 620, H = 150, n = 8, gx = (W - 40) / n, s = ['<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="The small map at levels 2 to 9: two shapes, alternating">'];
-    for (var i = 0; i < n; i++) {
-      var L = i + 2, x = 20 + i * gx + gx / 2, even = L % 2 === 0, c = even ? '#56B4E9' : '#CC79A7';
-      s.push('<g transform="translate(' + x + ',62)' + (even ? '' : ' scale(-1,1)') + '"><path d="M-18,-20 L10,-24 L22,-2 L8,22 L-16,16 L-24,-4 Z" fill="' + c + '" fill-opacity=".22" stroke="' + c + '" stroke-width="2.5"/><circle cx="6" cy="-8" r="4" fill="' + c + '"/></g>');
-      s.push('<text x="' + x + '" y="112" fill="#e8f1ec" font-size="14" font-weight="700" text-anchor="middle">' + L + '</text>');
-      if (i >= 2) s.push('<path d="M' + (x - 2 * gx + 8) + ',28 Q' + (x - gx) + ',' + (2 + (i % 2) * 8) + ' ' + (x - 8) + ',28" fill="none" stroke="' + c + '" stroke-width="1.6" stroke-dasharray="4 3"/>');
-    }
-    s.push('<text x="20" y="138" fill="#a3b8ae" font-size="13">level of the supertile being built</text><text x="' + (W - 20) + '" y="138" fill="#a3b8ae" font-size="13" text-anchor="end">… and so on for ever</text></svg>');
-    return s.join('');
-  }
-
-  /* what is covered: the nest tiling (no loops, one strand); other single-chain tilings and fault tilings (no loops; one strand not claimed) */
+  /* what is covered: the nest tiling (one strand); other single-chain tilings (no loops, one strand not claimed); two chains meeting along a line (nothing) */
   function scope(o) {
     o = o || {}; var W = o.width || 640, H = 210, pw = W / 3, s = ['<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Three kinds of spectre tiling and what is covered">'];
     function blob(cx, cy, r, c, op) { return '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="' + c + '" fill-opacity="' + op + '" stroke="' + c + '" stroke-width="1.5"/>'; }
     var y = 95;
     // 1: the nest, growing from a centre
     for (var i = 4; i >= 1; i--) s.push(blob(pw * 0.5, y, i * 17, '#7fd6b0', 0.08));
-    s.push('<text x="' + pw * 0.5 + '" y="185" fill="#e8f1ec" font-size="14" font-weight="700" text-anchor="middle">✓ the nest tiling</text><text x="' + pw * 0.5 + '" y="203" fill="#a3b8ae" font-size="12" text-anchor="middle">no loops, one strand</text>');
+    s.push('<text x="' + pw * 0.5 + '" y="185" fill="#e8f1ec" font-size="14" font-weight="700" text-anchor="middle">✓ the nest tiling</text><text x="' + pw * 0.5 + '" y="203" fill="#a3b8ae" font-size="12" text-anchor="middle">covered: drawn on this site</text>');
     // 2: a different chain, growing off-centre
     for (i = 4; i >= 1; i--) s.push(blob(pw * 1.5 + (4 - i) * 9, y - (4 - i) * 6, i * 17, '#56B4E9', 0.08));
     s.push('<text x="' + pw * 1.5 + '" y="185" fill="#e8f1ec" font-size="14" font-weight="700" text-anchor="middle">~ another single chain</text><text x="' + pw * 1.5 + '" y="203" fill="#a3b8ae" font-size="12" text-anchor="middle">no loops; may have 3 strands</text>');
     // 3: two infinite chains meeting along a line
     s.push('<rect x="' + (pw * 2 + 20) + '" y="25" width="' + (pw / 2 - 20) + '" height="140" fill="#CC79A7" fill-opacity=".12" stroke="#CC79A7"/><rect x="' + (pw * 2.5) + '" y="25" width="' + (pw / 2 - 20) + '" height="140" fill="#E69F00" fill-opacity=".12" stroke="#E69F00"/>');
     s.push('<path d="M' + pw * 2.5 + ',18V172" stroke="#e8f1ec" stroke-width="2.5" stroke-dasharray="6 4"/>');
-    s.push('<text x="' + pw * 2.5 + '" y="185" fill="#e8f1ec" font-size="14" font-weight="700" text-anchor="middle">~ a fault tiling</text><text x="' + pw * 2.5 + '" y="203" fill="#a3b8ae" font-size="12" text-anchor="middle">no loops; strands not counted</text></svg>');
+    s.push('<text x="' + pw * 2.5 + '" y="185" fill="#e8f1ec" font-size="14" font-weight="700" text-anchor="middle">✕ two chains, one line</text><text x="' + pw * 2.5 + '" y="203" fill="#a3b8ae" font-size="12" text-anchor="middle">not covered</text></svg>');
     return s.join('');
   }
 
   /* the map of the proof: what rests on what. Each box links to its step. */
   var STAT = { computed: ['#56B4E9', 'computed'], cited: ['#E69F00', 'cited'], proved: ['#7fd6b0', 'argued'] };
-  var PM_NODES = null;
   function proofMap(o) {
-    /* shared groundwork at the top; below, two branches, each ending in one of the two theorems */
-    o = o || {}; var W = 940, bw = 200, bh = 64, rowy = [16, 120, 224, 328, 470, 586], H = 668;
-    var N = {   // [column, row, title, subtitle, support, step, label in the step (on the box, the step's chips and the rigorous notes),
-    //  where it is in the write-up, goal]
-      tile: [0, 0, 'The tile’s drawing', '12 hooks, 1 crossover', 'computed', 'p3', '3a', 'Lemma 4.4'],
-      hier: [3, 0, 'Supertiles, for ever', 'same pattern at every level', 'cited', 'p1', '1a', 'Thm 2.1, Prop. 2.4'],
-      L1: [0, 1, 'Black box', 'only rim ports matter', 'proved', 'p2', '2a', 'Lemmas 4.1, 4.2'],
-      L2: [1, 1, 'Zigzag Lemma', 'a run: only even or odd', 'proved', 'p4', '4a', 'Lemma 5.1'],
-      sig: [2, 1, 'Signature at level 1', 'every kind, no loop', 'computed', 'p3', '3b', 'Computation 7.5'],
-      sides: [3, 1, 'Side lengths', 'grow; parities fixed', 'proved', 'p5', '5b', 'Props 6.1, 6.2, Cor. 6.3'],
-      L3: [0.5, 2, 'Lengthening Lemma', 'two more edges change nothing', 'proved', 'p5', '5a', 'Lemma 7.1'],
-      L5: [3, 2, 'Reachability Lemma', 'every level, two edges at a time', 'proved', 'p5', '5c', 'Lemma 7.2'],
-      WALK: [0, 3, 'The 18 assemblies', 'level 1, every port followed', 'computed', 'p5', '5e', 'Computation 7.3'],
-      T6: [1.5, 3, 'Signature Theorem', 'every supertile, every level', 'proved', 'p5', '5d', 'Prop. 7.4, Thm 7.6'],
-      JM: [2.5, 3, 'Junction map', 'where a block’s ribbons go', 'computed', 'p7', '7a', 'Computation 8.6, Lemma 8.7'],
-      LOC: [0, 4, 'Localisation Lemma', 'a loop needs ≤ 3 supertiles', 'proved', 'p6', '6a', 'Lemma 7.10'],
-      TURN: [1, 4, 'Hairpin Lemma', 'loops turn only at crossovers', 'proved', 'p6', '6c', 'Lemma 7.11'],
-      L8: [2, 4, 'Every block merges', 'one strand 3 or 4 levels up', 'proved', 'p7', '7b', 'Thm 8.5, Lemma 8.8'],
-      L7: [3, 4, 'Grandparent Lemma', 'the nest covers the plane', 'proved', 'p7', '7c', 'Lemma 8.3'],
-      ERT: [0, 5, 'Endless Strand Theorem', 'no loop, in any tiling', 'proved', 'p6', '6d', '§7.4', 'goal1'],
-      FAR: [1, 5, 'Lonely Crossover Lemma', 'crossovers a side apart', 'proved', 'p6', '6b', 'Lemma 7.12'],
-      AT: [2.5, 5, 'Ariadne Theorem', 'one strand, in the nest tiling', 'proved', 'p7', '7d', '§8.3', 'goal2']
+    o = o || {}; var W = 920, bw = 200, bh = 64, cx = [20, 245, 470, 695], rowy = [16, 120, 224, 328, 432, 536, 640], H = 722;
+    var N = {
+      tile: [0, 0, 'The tile’s drawing', '12 hooks, 1 crossover', 'computed', 'p3', 1],
+      hier: [3, 0, 'Supertiles, for ever', 'same pattern at every level', 'cited', 'p1'],
+      L1: [0, 1, 'Black box', 'only rim ports matter', 'proved', 'p2', 1],
+      L2: [1, 1, 'Zigzag', 'a run: only even or odd', 'proved', 'p4', 1],
+      sig: [2, 1, 'Level 1, computed', '18 assemblies, signature', 'computed', 'p5', 1],
+      sides: [3, 1, 'Side lengths', 'grow; parities fixed', 'proved', 'p5', 1],
+      L3: [0.5, 2, 'Two more edges', 'change nothing', 'proved', 'p5', 1],
+      L5: [1, 3, 'Every level', 'reached two edges at a time', 'proved', 'p5', 1],
+      L7: [3, 3, 'Nest covers the plane', 'every tile is in some block', 'proved', 'p6'],
+      T6: [1.5, 4, 'Every supertile', 'signature, no closed loop', 'proved', 'p5', 1],
+      L8: [2.5, 5, 'Every block merges', 'level 1 computed, then moves', 'proved', 'p6', 1],
+      T9: [1.2, 6, 'One endless strand', 'in the tiling drawn here', 'proved', 'p6', 1]
     };
-    PM_NODES = N;
-    var E = [['tile', 'sig'], ['L1', 'L3'], ['L2', 'L3'], ['hier', 'sides'], ['sides', 'L5'], ['L3', 'L5', 'right'], ['L3', 'T6'], ['sig', 'T6'], ['L5', 'T6'], ['hier', 'L7'],
-      ['WALK', 'T6', 'right'], ['L5', 'JM'], ['T6', 'JM', 'right'],
-      ['T6', 'LOC'], ['T6', 'TURN'], ['LOC', 'TURN', 'right'], ['JM', 'L8'], ['LOC', 'ERT'], ['TURN', 'ERT'], ['FAR', 'ERT', 'side'], ['L8', 'AT'], ['L7', 'AT']];
+    var E = [['tile', 'sig'], ['L1', 'L3'], ['L2', 'L3'], ['hier', 'sides'], ['sides', 'L5'], ['L3', 'L5'], ['sig', 'T6'], ['L5', 'T6'], ['hier', 'L7'], ['T6', 'L8'], ['L5', 'L8'], ['T6', 'T9'], ['L7', 'T9'], ['L8', 'T9']];
     function pos(k) { var n = N[k], x = 20 + n[0] * 225; return { x: x, y: rowy[n[1]] }; }
-    var s = ['<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="The map of the proof: shared groundwork, then one branch for each of the two theorems">',
+    var s = ['<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="The map of the proof: what each step rests on">',
       '<defs><marker id="pm-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10z" fill="#6f877c"/></marker></defs>'];
-    // the two branches, each in its own band
-    var yb = rowy[4] - 30, hb = H - yb - 4;
-    s.push('<rect x="8" y="' + yb + '' + '" width="452" height="' + hb + '" rx="16" fill="#7fd6b0" fill-opacity=".05" stroke="#7fd6b0" stroke-opacity=".35"/>');
-    s.push('<text x="22" y="' + (yb + 19) + '" fill="#7fd6b0" font-size="11.5" font-weight="700" letter-spacing="1.2">CLAIM 1</text>');
-    s.push('<rect x="468" y="' + yb + '" width="444" height="' + hb + '" rx="16" fill="#E69F00" fill-opacity=".05" stroke="#E69F00" stroke-opacity=".35"/>');
-    s.push('<text x="482" y="' + (yb + 19) + '" fill="#E69F00" font-size="11.5" font-weight="700" letter-spacing="1.2">CLAIM 2</text>');
     E.forEach(function (e) {
       var a = pos(e[0]), b = pos(e[1]), x0 = a.x + bw / 2, y0 = a.y + bh, x1 = b.x + bw / 2, y1 = b.y;
-      if (e[2] === 'side') {   // from the left side of the source to the right side of the target, same row
-        var yy = a.y + bh / 2;
-        s.push('<path d="M' + a.x + ',' + yy + 'L' + (b.x + bw + 2) + ',' + yy + '" fill="none" stroke="#6f877c" stroke-width="1.6" marker-end="url(#pm-a)"/>');
-        return;
-      }
-      if (e[2] === 'right') {   // from the right side of the source to the left side of the target, same row
-        var yr = a.y + bh / 2;
-        s.push('<path d="M' + (a.x + bw) + ',' + yr + 'L' + (b.x - 2) + ',' + yr + '" fill="none" stroke="#6f877c" stroke-width="1.6" marker-end="url(#pm-a)"/>');
-        return;
-      }
       if (e[0] === 'hier' && e[1] === 'L7') {   // round the right-hand side, clear of the boxes in between
-        var xr = a.x + bw, xm = W - 12, ya = a.y + bh / 2, yb2 = b.y + bh / 2;
-        s.push('<path d="M' + xr + ',' + ya + 'C' + xm + ',' + ya + ' ' + xm + ',' + ya + ' ' + xm + ',' + (ya + 20) + 'L' + xm + ',' + (yb2 - 20) + 'C' + xm + ',' + yb2 + ' ' + xm + ',' + yb2 + ' ' + (xr + 2) + ',' + yb2 + '" fill="none" stroke="#6f877c" stroke-width="1.6" marker-end="url(#pm-a)"/>');
+        var xr = a.x + bw, xm = W - 6, ya = a.y + bh / 2, yb = b.y + bh / 2;
+        s.push('<path d="M' + xr + ',' + ya + 'C' + xm + ',' + ya + ' ' + xm + ',' + ya + ' ' + xm + ',' + (ya + 20) + 'L' + xm + ',' + (yb - 20) + 'C' + xm + ',' + yb + ' ' + xm + ',' + yb + ' ' + (xr + 2) + ',' + yb + '" fill="none" stroke="#6f877c" stroke-width="1.6" marker-end="url(#pm-a)"/>');
         return;
       }
       s.push('<path d="M' + x0 + ',' + y0 + 'C' + x0 + ',' + (y0 + 34) + ' ' + x1 + ',' + (y1 - 34) + ' ' + x1 + ',' + (y1 - 2) + '" fill="none" stroke="#6f877c" stroke-width="1.6" marker-end="url(#pm-a)"/>');
     });
     Object.keys(N).forEach(function (k) {
-      var n = N[k], p = pos(k), st = STAT[n[4]], goal = n[8], fid = 'f' + n[6];
-      var fill = goal === 'goal1' ? '#10302a' : goal === 'goal2' ? '#2a2310' : '#12211c', edge = goal === 'goal1' ? '#7fd6b0' : goal === 'goal2' ? '#E69F00' : st[0];
-      s.push('<a href="#' + n[5] + '" data-step="' + n[5] + '" data-fact="' + fid + '"><g class="pm-node"><rect x="' + p.x + '" y="' + p.y + '" width="' + bw + '" height="' + bh + '" rx="12" fill="' + fill + '" stroke="' + edge + '" stroke-width="' + (goal ? 3 : 2) + '"/>' +
-        '<text x="' + (p.x + 12) + '" y="' + (p.y + 23) + '" fill="#e8f1ec" font-size="' + (goal ? 15.5 : 15) + '" font-weight="700">' + n[2] + '</text>' +
+      var n = N[k], p = pos(k), st = STAT[n[4]], fin = k === 'T9';
+      s.push('<a href="#' + n[5] + '" data-step="' + n[5] + '"><g class="pm-node"><rect x="' + p.x + '" y="' + p.y + '" width="' + bw + '" height="' + bh + '" rx="12" fill="' + (fin ? '#2a2310' : '#12211c') + '" stroke="' + (fin ? '#E69F00' : st[0]) + '" stroke-width="' + (fin ? 3 : 2) + '"' + (n[4] === 'argued' ? ' stroke-dasharray="6 4"' : '') + '/>' +
+        '<text x="' + (p.x + 12) + '" y="' + (p.y + 23) + '" fill="#e8f1ec" font-size="15" font-weight="700">' + n[2] + '</text>' +
         '<text x="' + (p.x + 12) + '" y="' + (p.y + 41) + '" fill="#a3b8ae" font-size="12.5">' + n[3] + '</text>' +
-        '<text x="' + (p.x + 12) + '" y="' + (p.y + 57) + '" fill="' + (goal ? edge : st[0]) + '" font-size="10.5" font-weight="700" letter-spacing="1">' + (goal ? 'THEOREM · ' + st[1].toUpperCase() : st[1].toUpperCase()) + '</text>' +
-        '<rect x="' + (p.x + bw - 50) + '" y="' + (p.y - 11) + '" width="40" height="22" rx="11" fill="' + edge + '"/>' +
-        '<text x="' + (p.x + bw - 30) + '" y="' + (p.y + 5) + '" fill="#0a1411" font-size="13" font-weight="800" text-anchor="middle">' + n[6] + '</text></g></a>');
+        '<text x="' + (p.x + 12) + '" y="' + (p.y + 57) + '" fill="' + st[0] + '" font-size="10.5" font-weight="700" letter-spacing="1">' + st[1].toUpperCase() + '</text>' +
+        (n[6] ? '<text x="' + (p.x + bw - 12) + '" y="' + (p.y + 57) + '" fill="#F0E442" font-size="10.5" font-weight="700" letter-spacing="1" text-anchor="end">LEAN</text>' : '') + '</g></a>');
     });
     s.push('</svg>'); return s.join('');
   }
@@ -388,8 +338,26 @@
           gt(120, 20, 'neighbour A', GS, 'middle') + gt(150, 152, 'neighbour B', GA, 'middle') + gt(24, 62, 'C', GP, 'end') + gt(176, 46, 'crossover', GI) + gt(120, 85, 'child', GM, 'middle'));
       case 'nest':
         return nest({ top: 4, width: 260, labels: false });
+      case 'move':
+        var runRow = function (n, y, lab) {   // a shared run of n edges and the ribbon zigzagging across it
+          var x0 = 30, x1 = 210, st = (x1 - x0) / n, d = 'M' + (x0 - 14) + ',' + (y - 12), out = '', side = -1;
+          for (var i = 0; i < n; i++) { var m = x0 + (i + 0.5) * st; d += ' L' + m + ',' + y + ' L' + (x0 + (i + 1) * st - 2) + ',' + (y - 12 * side); side = -side; }
+          for (i = 0; i <= n; i++) out += gdot(x0 + i * st, y, i === 0 || i === n ? GA : GI, i === 0 || i === n ? 4.5 : 3);
+          return '<path d="M' + x0 + ',' + y + 'H' + x1 + '" stroke="' + GM + '" stroke-width="2"/>' + '<path d="' + d + '" fill="none" stroke="' + GS + '" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"/>' + out + gt(120, y - 22, lab, GI, 'middle');
+        };
+        return gsvg('A move: a shared run made two edges longer; the ribbon leaves at the same end, on the same side',
+          runRow(3, 50, '3 edges') + runRow(5, 122, '5 edges: two more') + gt(120, 154, 'same ends, same side', GM, 'middle'));
+      case 'junction':
+        var J = [[20, 120], [60, 70], [100, 60], [140, 40], [185, 55], [222, 100]], cols = [GS, GR, GS, GR, GS], dsh = [0, 1, 0, 1, 0];
+        var body = '';
+        for (var q = 0; q < J.length - 1; q++) body += '<path d="M' + J[q] + 'L' + J[q + 1] + '" stroke="' + cols[q] + '" stroke-width="4"' + (dsh[q] ? ' stroke-dasharray="7 4"' : '') + '/>';
+        J.forEach(function (p, q) { body += gdot(p[0], p[1], GI, q === 2 ? 5.5 : 3.5); });
+        body += grib('M76,38 C86,104 118,98 128,22', GA) + gring(100, 60, GA);
+        return gsvg('Junctions: where one child’s side ends and the next begins on the outline; one carries a hook',
+          '<path d="M' + J.join('L') + 'L222,150L20,150Z" fill="' + GB + '"/>' + body + gt(58, 96, 'junction', GA, 'middle') + gt(120, 140, 'inside the block', GM, 'middle') + gt(150, 20, 'hook here', GA));
+
     }
     return '';
   }
-  window.SKF = { tile: tile, places: places, curved: curved, tree: tree, periodic: periodic, signature: signature, ports: ports, zigzag: zigzag, nest: nest, period: period, scope: scope, proofMap: proofMap, proofNodes: function () { if (!PM_NODES) proofMap(); return PM_NODES; }, STAT: STAT, lengthBar: lengthBar, parityTable: parityTable, gloss: gloss };
+  window.SKF = { tile: tile, places: places, curved: curved, tree: tree, periodic: periodic, signature: signature, ports: ports, zigzag: zigzag, nest: nest, scope: scope, proofMap: proofMap, lengthBar: lengthBar, parityTable: parityTable, gloss: gloss };
 })();
