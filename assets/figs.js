@@ -250,24 +250,25 @@
       hier: [3, 0, 'Supertiles, for ever', 'same pattern at every level', 'cited', 'p1', '1a', 'Thm 2.1, Prop. 2.4'],
       L1: [0, 1, 'Black box', 'only rim ports matter', 'proved', 'p2', '2a', 'Lemmas 4.1, 4.2'],
       L2: [1, 1, 'Zigzag Lemma', 'a run: only even or odd', 'proved', 'p4', '4a', 'Lemma 5.1'],
-      sig: [2, 1, 'Signature at level 1', 'every kind, no loop', 'computed', 'p3', '3b', 'Computation 7.2(a)'],
-      sides: [3, 1, 'Side lengths', 'one matrix; parities fixed', 'computed', 'p5', '5b', 'Props 6.1, 6.2, Cor. 6.3'],
-      L3: [0.5, 2, 'Small-map walk', 'equals the exact gluing', 'proved', 'p5', '5a', 'Prop. 5.4'],
-      L5: [3, 2, 'Small map alternates', 'for ever', 'proved', 'p5', '5c', 'Lemma 7.1'],
-      WALK: [0, 3, 'The 18 walks', 'nine kinds, two parities', 'computed', 'p5', '5e', 'Computation 7.2(b)'],
-      T6: [1.5, 3, 'Signature Theorem', 'every supertile, every level', 'proved', 'p5', '5d', 'Thm 7.3'],
-      LOC: [0, 4, 'Localisation Lemma', 'a loop needs ≤ 3 supertiles', 'proved', 'p6', '6a', 'Lemma 7.6'],
-      TURN: [1, 4, 'Hairpin Lemma', 'loops turn only at crossovers', 'proved', 'p6', '6c', 'Lemma 7.8'],
-      L8: [2, 4, 'Every block merges', 'one strand 3 or 4 levels up', 'computed', 'p7', '7a', 'Thm 8.5, Lemma 8.8'],
-      L7: [3, 4, 'Grandparent Lemma', 'the nest covers the plane', 'proved', 'p7', '7b', 'Lemma 8.3'],
-      ERT: [0, 5, 'Endless Strand Theorem', 'no loop, in any tiling', 'proved', 'p6', '6d', '§7.3', 'goal1'],
-      FAR: [1, 5, 'Lonely Crossover Lemma', 'crossovers a side apart', 'proved', 'p6', '6b', 'Lemma 7.7'],
-      AT: [2.5, 5, 'Ariadne Theorem', 'one strand, in the nest tiling', 'proved', 'p7', '7c', '§8.3', 'goal2']
+      sig: [2, 1, 'Signature at level 1', 'every kind, no loop', 'computed', 'p3', '3b', 'Computation 7.5'],
+      sides: [3, 1, 'Side lengths', 'grow; parities fixed', 'proved', 'p5', '5b', 'Props 6.1, 6.2, Cor. 6.3'],
+      L3: [0.5, 2, 'Lengthening Lemma', 'two more edges change nothing', 'proved', 'p5', '5a', 'Lemma 7.1'],
+      L5: [3, 2, 'Reachability Lemma', 'every level, two edges at a time', 'proved', 'p5', '5c', 'Lemma 7.2'],
+      WALK: [0, 3, 'The 18 assemblies', 'level 1, every port followed', 'computed', 'p5', '5e', 'Computation 7.3'],
+      T6: [1.5, 3, 'Signature Theorem', 'every supertile, every level', 'proved', 'p5', '5d', 'Prop. 7.4, Thm 7.6'],
+      JM: [2.5, 3, 'Junction map', 'where a block’s ribbons go', 'computed', 'p7', '7a', 'Computation 8.6, Lemma 8.7'],
+      LOC: [0, 4, 'Localisation Lemma', 'a loop needs ≤ 3 supertiles', 'proved', 'p6', '6a', 'Lemma 7.10'],
+      TURN: [1, 4, 'Hairpin Lemma', 'loops turn only at crossovers', 'proved', 'p6', '6c', 'Lemma 7.11'],
+      L8: [2, 4, 'Every block merges', 'one strand 3 or 4 levels up', 'proved', 'p7', '7b', 'Thm 8.5, Lemma 8.8'],
+      L7: [3, 4, 'Grandparent Lemma', 'the nest covers the plane', 'proved', 'p7', '7c', 'Lemma 8.3'],
+      ERT: [0, 5, 'Endless Strand Theorem', 'no loop, in any tiling', 'proved', 'p6', '6d', '§7.4', 'goal1'],
+      FAR: [1, 5, 'Lonely Crossover Lemma', 'crossovers a side apart', 'proved', 'p6', '6b', 'Lemma 7.12'],
+      AT: [2.5, 5, 'Ariadne Theorem', 'one strand, in the nest tiling', 'proved', 'p7', '7d', '§8.3', 'goal2']
     };
     PM_NODES = N;
-    var E = [['tile', 'sig'], ['L1', 'L3'], ['L2', 'L3'], ['hier', 'sides'], ['sides', 'L5'], ['L3', 'T6'], ['sig', 'T6'], ['L5', 'T6'], ['hier', 'L7'],
-      ['L3', 'WALK'], ['WALK', 'T6', 'right'],
-      ['T6', 'LOC'], ['T6', 'TURN'], ['LOC', 'TURN', 'right'], ['T6', 'L8'], ['L5', 'L8'], ['LOC', 'ERT'], ['TURN', 'ERT'], ['FAR', 'ERT', 'side'], ['L8', 'AT'], ['L7', 'AT']];
+    var E = [['tile', 'sig'], ['L1', 'L3'], ['L2', 'L3'], ['hier', 'sides'], ['sides', 'L5'], ['L3', 'L5', 'right'], ['L3', 'T6'], ['sig', 'T6'], ['L5', 'T6'], ['hier', 'L7'],
+      ['WALK', 'T6', 'right'], ['L5', 'JM'], ['T6', 'JM', 'right'],
+      ['T6', 'LOC'], ['T6', 'TURN'], ['LOC', 'TURN', 'right'], ['JM', 'L8'], ['LOC', 'ERT'], ['TURN', 'ERT'], ['FAR', 'ERT', 'side'], ['L8', 'AT'], ['L7', 'AT']];
     function pos(k) { var n = N[k], x = 20 + n[0] * 225; return { x: x, y: rowy[n[1]] }; }
     var s = ['<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="The map of the proof: shared groundwork, then one branch for each of the two theorems">',
       '<defs><marker id="pm-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10z" fill="#6f877c"/></marker></defs>'];

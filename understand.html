@@ -120,7 +120,7 @@
         <div class="body withfig">
           <div class="stack" style="gap:12px">
             <p>The spectre tiles group into supertiles of 9 tiles, these into bigger supertiles of 71, then 559, and so on for ever, every level built by the same rule. Seen from outside, every supertile turns out to look the same: the ribbon makes a hook round each corner of its outline, except at the two ends of one edge, where two ribbons cross.</p>
-            <p>Because every supertile looks the same from outside, the way supertiles glue together repeats from level to level. That lets a finite check speak for all levels, and the gluing keeps merging strands until a given patch lies on one. That the repetition goes on for ever follows from the spectre paper&rsquo;s theorems and an exact computation.</p>
+            <p>Because every supertile looks the same from outside, gluing supertiles together depends only on whether each shared run of edges is even or odd: a run two edges longer behaves exactly like the shorter one. The sides of the supertiles at any level are those at the smallest level made longer by even amounts, so one finite check at the smallest level speaks for all levels. The same idea shows that the gluing keeps merging strands until a given patch lies on one. That every level is glued by the same rule comes from the spectre paper&rsquo;s theorems.</p>
             <div class="row"><a class="btn small" href="prove.html">The argument, step by step &rarr;</a></div>
           </div>
           <figure class="fig" id="f-why"><figcaption>The middle tile&rsquo;s strands at each size: colours join, never split.</figcaption></figure>
