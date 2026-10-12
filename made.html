@@ -26,15 +26,15 @@
   <section class="wrap page-head">
     <div class="kick">How this was made</div>
     <h1>Made with AI: an experiment</h1>
-    <p class="lede">This project is an experiment in using AI for mathematical exploration. I came up with the idea of looking for a mono&#8209;stranded aperiodic knot. Then I used an AI system (Claude, by Anthropic) for almost everything else: the search for a design, the computations, the proof, its write-up (the paper), this website and the handout.</p>
+    <p class="lede">The Spectre Knot is an experiment in using AI for mathematical exploration. Justin Roughley came up with the original idea of looking for a mono&#8209;stranded aperiodic knot, and then used AI to search for it. From then on he and an AI system (Claude, by Anthropic) worked together at every stage: the AI did the detailed work, and he directed it, guided it and corrected it. Together they searched for the design, proved the two theorems, wrote a formal version of the proof that the Lean proof assistant checks, and made the paper, this website and the handout.</p>
   </section>
 
   <section class="wrap section" style="display:grid;gap:18px">
     <div class="status">
-      <h2>The proof has not been checked by a person</h2>
-      <p>I have not checked the whole proof, and parts of it are beyond my expertise. No mathematician has reviewed it. I&rsquo;m sharing it as it is, with that said plainly, so you can decide for yourself how much weight to give it. The tile itself is there to enjoy: print it, make a few, and see the ribbons join up.</p>
+      <h2>The status of the proof</h2>
+      <p>The proofs and the Lean were written by the AI, working with Justin Roughley. Lean checks the combinatorial heart of the proof; the step linking it to actual tilings of the plane (how real supertiles fit together) is argued in words. Justin Roughley has read parts of the write-up and spot-checked pictures and counts; most of the proof has not been reviewed by a human, and no professional mathematician has reviewed it.</p>
     </div>
-    <p class="mut" style="max-width:72ch">AI can turn out a great deal of plausible-looking mathematics very quickly. I would rather be open about how this was made, so this page sets out plainly who did what.</p>
+    <p class="mut" style="max-width:72ch">AI can turn out a great deal of plausible-looking mathematics very quickly. That is why the proof was also written for Lean, whose checker verifies every step mechanically, and why this page sets out plainly who did what.</p>
   </section>
 
   <section class="wrap section" id="who">
@@ -42,15 +42,15 @@
     <div class="tablewrap"><table class="who">
       <thead><tr><th>What</th><th>Who</th></tr></thead>
       <tbody>
-        <tr><td>The question: is there a single-strand knot tile on an aperiodic monotile?</td><td>Me</td></tr>
-        <tr><td>Searching for designs (it produced 34 candidates)</td><td>Search programs written and run by the AI</td></tr>
-        <tr><td>Choosing design 0.1:01 and drawing its ribbons</td><td>Me, by hand, in a tile editor the AI built</td></tr>
-        <tr><td>The computations, up to 133 million tiles</td><td>Programs written by the AI</td></tr>
-        <tr><td>The proofs of the two theorems, and their write-up (the paper)</td><td>The AI, at my direction</td></tr>
-        <tr><td>Naming the theorems and lemmas (the Endless Strand Theorem, the Ariadne Theorem, the Signature Theorem; the Zigzag and Grandparent Lemmas)</td><td>Me, choosing from names the AI suggested</td></tr>
-        <tr><td>A formal version of the proof&rsquo;s combinatorial part, for the Lean proof assistant</td><td>Written by the AI; checked step by step by Lean</td></tr>
-        <tr><td>This website, the handout and the figures</td><td>Written and drawn by the AI; I chose the direction and asked for changes</td></tr>
-        <tr><td>Checking the proof</td><td>The AI, reviewing its own work in several passes. No human mathematician has. I have not checked it all.</td></tr>
+        <tr><td>The question: is there a single-strand knot tile on an aperiodic monotile?</td><td>Justin Roughley</td></tr>
+        <tr><td>Searching for designs (it produced 34 candidates)</td><td>The AI wrote and ran the search programs, with Justin Roughley guiding the search</td></tr>
+        <tr><td>Choosing design 0.1:01 and drawing its ribbons</td><td>Justin Roughley, by hand, in a tile editor the AI built</td></tr>
+        <tr><td>The computations, up to 133 million tiles</td><td>Programs written by the AI, as Justin Roughley directed</td></tr>
+        <tr><td>The proofs of the two theorems, and their write-up (the paper)</td><td>The AI, working with Justin Roughley: he directed the work, questioned it and asked for corrections</td></tr>
+        <tr><td>A formal version of the proof&rsquo;s combinatorial part, for the Lean proof assistant</td><td>Written by the AI, at Justin Roughley&rsquo;s direction; every step checked by Lean</td></tr>
+        <tr><td>Naming the theorems and lemmas (the Endless Strand Theorem, the Ariadne Theorem, the Signature Theorem; the Zigzag and Grandparent Lemmas)</td><td>Justin Roughley, choosing from names the AI suggested</td></tr>
+        <tr><td>This website, the handout and the figures</td><td>Written and drawn by the AI; Justin Roughley chose the direction and asked for changes</td></tr>
+        <tr><td>Reviewing the proof</td><td>The AI, reviewing its own work in several passes. Justin Roughley has read parts of the write-up and spot-checked pictures and counts. No professional mathematician has reviewed it.</td></tr>
       </tbody>
     </table></div>
   </section>
@@ -59,18 +59,20 @@
     <div class="grid2">
       <div class="stack" style="align-content:start">
         <h2>What has been checked</h2>
-        <p class="mut">Every computation the proof relies on has been re-run in full, with logs kept. The geometric computations were done twice, by two separate programs, one in floating point and one in exact arithmetic. Both were written by the AI, so they are separate implementations, not independent people. The AI also reviewed the written argument several times, acting as a referee, and the errors it found were fixed. The combinatorial part of the proof was also written out in Lean, a language for proofs whose checker verifies every step mechanically, and Lean accepts it. That formal version was written by the AI too, and it takes as given the spectre paper&rsquo;s description of how supertiles are assembled, and the geometry that links the assemblies to the plane.</p>
+        <p class="mut"><b style="color:var(--ink)">By Lean.</b> The combinatorial part of the proof is written out in Lean, a language for proofs whose checker verifies every step mechanically, and Lean accepts it: that every supertile, of every kind and size, looks the same from outside; that no strand closes into a loop; and that in the nest tiling all the pieces join into one strand. It takes as given how real supertiles fit together in the plane, from the spectre paper; that step is argued in words.</p>
+        <p class="mut"><b style="color:var(--ink)">By computer.</b> Every computation the proof relies on has been re-run in full, with logs kept. The geometric computations were done twice, by two separate programs, one in floating point and one in exact arithmetic.</p>
+        <p class="mut"><b style="color:var(--ink)">By the AI.</b> The AI reviewed the written argument several times, and the errors it found were fixed.</p>
       </div>
       <div class="stack" style="align-content:start">
         <h2>What has not</h2>
-        <p class="mut">No one with the right expertise has checked the argument, so it is a claim, not an established result. The <a href="prove.html">Prove</a> page marks each step as cited from the spectre paper, computed, or argued in words, with a Lean tag where the Lean version also checks it, and says exactly which tilings the claim covers.</p>
+        <p class="mut">Most of the proof has not been reviewed by a human, and no professional mathematician has reviewed it. The <a href="prove.html">Prove</a> page marks each step as cited from the spectre paper, computed, or argued in words, with a Lean tag where Lean also checks it, and says exactly which tilings each theorem covers.</p>
       </div>
     </div>
   </section>
 
   <section class="wrap section" id="words">
     <h2 style="margin-bottom:12px">A note on words</h2>
-    <p class="mut" style="max-width:72ch">Where this site says &lsquo;we&rsquo;, it means me working with the AI. Where it says a check was done by a second or separate program, that program was also written by the AI.</p>
+    <p class="mut" style="max-width:72ch">Where this site says &lsquo;we&rsquo;, it means Justin Roughley and the AI working together. Every program, including the second or separate ones used as checks, and the Lean, was written by the AI.</p>
   </section>
 </main>
 <footer class="foot"><div class="wrap"><nav aria-label="More"><a href="index.html">Home</a><a href="see.html">See</a><a href="understand.html">Understand</a><a href="make.html">Make</a><a href="prove.html">Prove</a><a href="made.html">How this was made, with AI</a><a href="about.html#credits">Credits and references</a><a href="about.html#cite">Cite</a><a href="about.html#licence">Licence and contact</a></nav><p>The tile is the straight-edged form of the spectre, discovered in 2023 by David Smith, Joseph Samuel Myers, Craig&nbsp;S. Kaplan and Chaim Goodman&#8209;Strauss. The knot: Justin Roughley came up with the original idea of looking for a mono&#8209;stranded aperiodic knot, and then used AI to search for it (2026).</p></div></footer>

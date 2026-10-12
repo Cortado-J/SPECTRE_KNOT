@@ -505,8 +505,8 @@ function renderStrip() {
   const bn = document.getElementById('dBanner');
   bn.className = 'banner ' + (cur.proved ? 'proved' : 'unproved');
   bn.innerHTML = cur.featured
-    ? '<b>Proved: one endless strand</b> in the nest tiling drawn here (the Ariadne Theorem), and <b>no loops in every spectre tiling whose supertiles fill the plane</b> (the Endless Strand Theorem). This is the design proved on the website and in the write-up of the proof, by induction over all supertile levels. The proof was written by AI and has not been checked by a mathematician.'
-    : cur.proved ? '<b>Proved: one endless strand, no loops,</b> in the nest tiling drawn here. The first design proved, by an earlier version of the method used for 0.1:01 (also AI-written, not checked by a mathematician).'
+    ? '<b>Proved: one endless strand</b> in the nest tiling drawn here (the Ariadne Theorem), and <b>no loops in every spectre tiling whose supertiles fill the plane</b> (the Endless Strand Theorem). This is the design proved on the website and in the write-up of the proof, by induction over all supertile levels. The proof was made with AI.'
+    : cur.proved ? '<b>Proved: one endless strand, no loops,</b> in the nest tiling drawn here. The first design proved, by an earlier version of the method used for 0.1:01 (also made with AI).'
     : '<b>Not proved.</b> No closed loops in any supertile up to level 7 (about 2.1 million tiles), which is strong evidence, but the single-strand proof has not been run on this design.';
 }
 let stripTimer = null;
