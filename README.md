@@ -13,7 +13,6 @@ This repository is the published website (GitHub Pages). It is generated; the so
 - `prove.html`: the proof, at four depths
 - `made.html`: how AI was used, who did what, and what has been checked
 - `about.html`: how it was made, credits, citing
-- `viewer.html`: the original research viewer; `editor.html`: the tile editor (unlisted)
 - `downloads/`: the A4 handout, the cut-out page, and the tile as a large PNG
 - `assets/`, `data/`, `img/`: styles, scripts, drawing data and pictures
 
