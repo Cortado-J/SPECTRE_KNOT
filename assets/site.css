@@ -362,3 +362,4 @@ a.res { white-space: nowrap; }
 .mapwire { position: absolute; width: 0; border-left: 2px dashed color-mix(in srgb, var(--mint) 55%, transparent); pointer-events: none; }
 @media (max-width: 760px) { .depthbar .lab { order: 0; } .mapbtn { order: 1; } .depth { order: 2; } }
 .toprow > p { padding-right: 64px; }   /* clear of the wire down to the map button */
+.gcard.nofig { align-content: start; }

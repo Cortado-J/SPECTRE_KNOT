@@ -249,7 +249,7 @@
       L7: [20, R[3], 'Nest covers the plane', 'every tile is in some block', 'proved', 'p6'],
       T6: [520, R[3], 'Every supertile', 'signature, no closed loop', 'proved', 'p5', 1],
       L8: [245, R[4], 'Every block merges', 'level 1 computed, then moves', 'proved', 'p6', 1],
-      TA: [695, R[4], 'No closed loop', 'the Endless Strand Theorem', 'proved', 'p7', 1],
+      TA: [695, R[4], 'No closed loop', 'the Daedalus Theorem', 'proved', 'p7', 1],
       T9: [245, R[5], 'One endless strand', 'the Ariadne Theorem', 'proved', 'p6', 1]
     };
     // each arrow: from (box, x offset along its bottom) to (box, x offset along its top), or into a side ('L' or 'R')
@@ -324,6 +324,14 @@
   function gloss(name) {
     var K = { stroke: GI, sw: 2 };
     switch (name) {
+      case 'ribbon':
+        return tile({ width: 260, pad: 0.3, label: 'The tile and its ribbon' });
+      case 'piece':
+        return tile({ colours: true, width: 260, pad: 0.3, label: 'The 14 pieces of one tile, each in its own colour' });
+      case 'strand':
+        return SK.snapshot({ level: 1, box: SK.boxOf(1, 0.05), width: 260, mode: 't', markTile: true, label: 'Nine tiles: the middle tile’s pieces lie on five strands, one colour each' });
+      case 'arc':
+        return SK.snapshot({ level: 1, box: SK.boxOf(1, 0.05), width: 260, mode: 'b', label: 'A block of nine tiles: each colour is one arc, running from its rim back to its rim' });
       case 'port':
         return tile({ ports: true, width: 260, pad: 0.3, label: 'The tile with a port on each of its 14 edges' });
       case 'supertile':

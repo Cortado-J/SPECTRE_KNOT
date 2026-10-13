@@ -36,7 +36,7 @@
         <div class="body withfig">
           <div class="stack" style="gap:12px">
             <p>It is a Celtic knot drawn on a tile. Every tile carries the same small drawing of ribbon, and when the tiles are laid together the ribbons meet across the edges and carry on, weaving over and under.</p>
-            <p>The tile is the spectre, a shape that covers the whole plane but only in patterns that never repeat. The surprise is twofold, and each half is a theorem. The <b>Endless Strand Theorem</b>: in every spectre tiling whose supertiles fill the plane, no strand ever closes into a loop. The <b>Ariadne Theorem</b>: in the nest tiling drawn on this site, grown outwards from a single tile, each block sitting in the same place (child number 1) inside the next, all the pieces join into one endless strand, with no second strand. (Ariadne gave Theseus the one thread that led him through the whole labyrinth.)</p>
+            <p>The tile is the spectre, a shape that covers the whole plane but only in patterns that never repeat. The surprise is twofold, and each half is a theorem. The <b>Daedalus Theorem</b>: in every spectre tiling whose supertiles fill the plane, no strand ever closes into a loop. The <b>Ariadne Theorem</b>: in the nest tiling drawn on this site, grown outwards from a single tile, each block sitting in the same place (child number 1) inside the next, all the pieces join into one endless strand, with no second strand. (Both names come from the Greek myth of the labyrinth: <a href="#names">where the names come from</a>.)</p>
             <div class="row"><a class="btn small" href="see.html">Watch it join up &rarr;</a></div>
           </div>
           <figure class="fig" id="f-what"><figcaption>Nine tiles, printed as on the handout. Follow any ribbon: it never closes up.</figcaption></figure>
@@ -107,7 +107,7 @@
         <summary>So how many strands does the whole tiling make?</summary>
         <div class="body withfig">
           <div class="stack" style="gap:12px">
-            <p><b>One</b>, in the nest tiling drawn here: that is the Ariadne Theorem. (The spectre tiles the plane in infinitely many ways, and the answer may differ: computer checks suggest that some other spectre tilings have three strands. That is evidence, not a proof. In every one whose supertiles fill the plane, though, each strand is endless, by the Endless Strand Theorem: none closes up.) Look at a small patch and you see many separate pieces, because each piece soon runs out of the patch. Look at a bigger patch and the pieces join up.</p>
+            <p><b>One</b>, in the nest tiling drawn here: that is the Ariadne Theorem. (The spectre tiles the plane in infinitely many ways, and the answer may differ: computer checks suggest that some other spectre tilings have three strands. That is evidence, not a proof. In every one whose supertiles fill the plane, though, each strand is endless, by the Daedalus Theorem: none closes up.) Look at a small patch and you see many separate pieces, because each piece soon runs out of the patch. Look at a bigger patch and the pieces join up.</p>
             <p>Follow the 14 pieces of one tile: in a block of 9 tiles they lie on 5 strands, in 71 tiles on 2, and from 559 tiles on they are one strand. In every block computed, up to 133 million tiles, every tile&rsquo;s pieces join up like this within a few levels. Why it goes on for ever is on the <a href="prove.html">Prove</a> page.</p>
             <div class="row"><a class="btn small" href="see.html">See it happen &rarr;</a></div>
           </div>
@@ -115,12 +115,13 @@
         </div>
       </details>
 
-      <details id="ariadne">
-        <summary>Where does the Ariadne Theorem get its name?</summary>
+      <details id="names">
+        <summary>Where do the theorems get their names?</summary>
         <div class="body">
           <div class="stack" style="gap:12px">
-            <p>From the Greek myth of the labyrinth. King Minos of Crete kept the Minotaur, half man and half bull, in a labyrinth so tangled that no one who went in could find the way out. His daughter Ariadne gave Theseus a ball of thread: he tied one end at the entrance, unwound it as he went in, killed the Minotaur, and followed the thread back out.</p>
-            <p>The theorem says the same of the knot. In the nest tiling drawn on this site, all the pieces of ribbon join into one thread that runs through every tile, so from any tile you can follow it to any other, however far away.</p>
+            <p>Both come from the Greek myth of the labyrinth. King Minos of Crete had the craftsman Daedalus build a labyrinth to hold the Minotaur, half man and half bull: a maze so tangled that no one who went in could find the way out. Minos&rsquo;s daughter Ariadne gave Theseus a ball of thread. He tied one end at the entrance, unwound it as he went in, killed the Minotaur, and followed the thread back out.</p>
+            <p>The <b>Daedalus Theorem</b> is about the labyrinth itself, the way the passages are built. In every spectre tiling whose supertiles fill the plane, no strand ever closes into a loop: every passage of ribbon runs on for ever in both directions.</p>
+            <p>The <b>Ariadne Theorem</b> is about the thread. In the nest tiling drawn on this site, all the pieces of ribbon join into one thread that runs through every tile, so from any tile you can follow it to any other, however far away.</p>
             <p>The story carries on into two words used for each tile. Its <b>thread</b> is the shortest stretch of the strand that holds all 14 of its pieces, and its <b>labyrinth</b> is the set of tiles that stretch passes through: the smallest patch in which the tile&rsquo;s pieces all join up. For the starting tile the thread is 112 pieces long and the labyrinth is 19 tiles. Across the 4,401-tile block, half the tiles have a labyrinth of about 60 tiles or fewer, but about one in ten needs thousands. (These are measurements, not part of the proof.)</p>
           </div>
         </div>
@@ -154,7 +155,7 @@
         <summary>Could a closed loop appear somewhere far away?</summary>
         <div class="body">
           <div class="stack" style="gap:12px">
-            <p>None can, in the tiling drawn here or in any spectre tiling whose supertiles grow to fill the plane: that is the Endless Strand Theorem. Every supertile, of every kind, was assembled by computer up to level 9 (about 133 million tiles) without a single closed loop, and the argument on the <a href="prove.html">Prove</a> page carries this to every level, using the spectre paper&rsquo;s theorems. So every strand runs on for ever in both directions. The page marks what is computed, what is quoted and what is argued, and which parts have also been checked by the Lean proof assistant.</p>
+            <p>None can, in the tiling drawn here or in any spectre tiling whose supertiles grow to fill the plane: that is the Daedalus Theorem. Every supertile, of every kind, was assembled by computer up to level 9 (about 133 million tiles) without a single closed loop, and the argument on the <a href="prove.html">Prove</a> page carries this to every level, using the spectre paper&rsquo;s theorems. So every strand runs on for ever in both directions. The page marks what is computed, what is quoted and what is argued, and which parts have also been checked by the Lean proof assistant.</p>
             <p>It also says plainly what is not covered: tilings with &lsquo;fault lines&rsquo;, where two infinite supertiles meet. And no closed loop is not the same as one strand: one strand, the Ariadne Theorem, is claimed only for the nest tiling drawn here.</p>
           </div>
         </div>

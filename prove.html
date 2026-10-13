@@ -33,7 +33,7 @@
     <span class="mapwire" id="mapwire1" aria-hidden="true"></span>
     <div class="claims">
       <div class="claim c1">
-        <div class="kick">The Endless Strand Theorem</div>
+        <div class="kick">The Daedalus Theorem</div>
         <h2>In every spectre tiling whose supertiles fill the plane, with the Spectre Knot design on each tile, no strand ever closes into a loop.</h2>
         <p class="mut small">Every strand runs on for ever in both directions. Steps 1&ndash;5; scope in <a href="#p7">step 7</a>.</p>
       </div>
@@ -217,7 +217,7 @@
       <div class="lvl l3"><div class="lin"><div class="pad">
         <span class="lvtag">In detail</span>
         <p>The design is the same on every tile in the strict sense: the nest tiling uses only one handedness of the spectre, so it is one drawing, turned and slid, never flipped. Over and under is a separate question: any drawing of this kind can be given a weave that alternates along every ribbon. The single-strand result is about which pieces join.</p>
-        <p>The no-loop half is our paper&rsquo;s <a class="res" href="https://cortado-j.github.io/SPECTRE_KNOT_PROOF/#r-thm-A">Theorem A</a> <span class="resinfo">(The Endless Strand Theorem; <span class="st proved">argued</span> <span class="st lean part">Lean, in part</span>)</span>: in every spectre tiling whose supertiles fill the plane, a closed strand would lie inside a single supertile, and none has one (step 5). The three strands along another chain are <a class="res" href="https://cortado-j.github.io/SPECTRE_KNOT_PROOF/#r-rem-three">Remark 9.1</a> <span class="resinfo">(Three strands: a computation, not a theorem; remark)</span>.</p>
+        <p>The no-loop half is our paper&rsquo;s <a class="res" href="https://cortado-j.github.io/SPECTRE_KNOT_PROOF/#r-thm-A">Theorem A</a> <span class="resinfo">(The Daedalus Theorem; <span class="st proved">argued</span> <span class="st lean part">Lean, in part</span>)</span>: in every spectre tiling whose supertiles fill the plane, a closed strand would lie inside a single supertile, and none has one (step 5). The three strands along another chain are <a class="res" href="https://cortado-j.github.io/SPECTRE_KNOT_PROOF/#r-rem-three">Remark 9.1</a> <span class="resinfo">(Three strands: a computation, not a theorem; remark)</span>.</p>
       </div></div></div>
       <div class="pctl"></div>
     </article>
@@ -268,19 +268,34 @@
     <details id="glossary">
       <summary>Glossary</summary>
       <div class="gloss">
+        <div class="gcard nofig" id="g-spectre"><div><b>Spectre</b><p>The tile: one shape whose copies cover the whole plane, but only in patterns that never repeat, found in 2023. The one drawn here is its straight-edged form, Tile(1,1), always laid without flipping.</p></div></div>
+        <div class="gcard" id="g-ribbon" data-gloss="ribbon"><div class="gfig"></div><div><b>Ribbon</b><p>What is drawn on the tiles: the band that weaves over and under across the whole tiling.</p></div></div>
+        <div class="gcard" id="g-piece" data-gloss="piece"><div class="gfig"></div><div><b>Piece</b><p>One tile&rsquo;s share of the ribbon. Every tile carries the same 14 pieces, each running from one edge to another.</p></div></div>
+        <div class="gcard" id="g-strand" data-gloss="strand"><div class="gfig"></div><div><b>Strand</b><p>A whole joined-up run of pieces, followed across tile edges for as far as it goes. The two theorems are about strands.</p></div></div>
+        <div class="gcard nofig" id="g-loop"><div><b>Closed loop</b><p>A strand that comes back to where it started: a ring. The Daedalus Theorem says that none exists.</p></div></div>
         <div class="gcard" id="g-port" data-gloss="port"><div class="gfig"></div><div><b>Port</b><p>The one point on each tile edge where ribbons cross it, 0.15 of the edge off its middle. (From step 2 on, as in our paper, the word means the two ribbon ends of a tile at that point, one heading towards each end of the edge: 28 per tile.)</p></div></div>
         <div class="gcard" id="g-supertile" data-gloss="supertile"><div class="gfig"></div><div><b>Supertile</b><p>A cluster of tiles (9, 71, 559, &hellip;) that behaves like one big tile. There are nine kinds, named by Greek letters, and every level is built from the one below by the same rule.</p></div></div>
+        <div class="gcard nofig" id="g-kind"><div><b>Kind</b><p>Every supertile is one of nine kinds, named by the Greek letters &Gamma;, &Delta;, &Theta;, &Lambda;, &Xi;, &Pi;, &Sigma;, &Phi; and &Psi;. Its kind fixes which children it has and how they fit together.</p></div></div>
+        <div class="gcard nofig" id="g-child"><div><b>Child, parent</b><p>The supertiles one level down that make up a supertile are its children, each with a number; it is their parent. A &Gamma; supertile has 7 children, the other kinds 8.</p></div></div>
+        <div class="gcard nofig" id="g-mystic"><div><b>Mystic</b><p>The pair of tiles that every level-1 supertile holds as its &Gamma; child. It counts as a single child, so a level-1 supertile has 9 tiles (8 for &Gamma;).</p></div></div>
         <div class="gcard" id="g-level" data-gloss="level"><div class="gfig"></div><div><b>Level</b><p>Level 0 is a single tile, level 1 a supertile of tiles, level 2 a supertile of level-1 supertiles, and so on.</p></div></div>
         <div class="gcard" id="g-rim" data-gloss="rim"><div class="gfig"></div><div><b>Rim</b><p>The outline of a supertile. Only the ports on the rim matter from outside.</p></div></div>
+        <div class="gcard nofig" id="g-box"><div><b>Box</b><p>What a patch of tiles looks like from outside: which of its rim&rsquo;s ribbon ends are joined to which, and whether there is a closed loop inside. Gluing patches together needs only their boxes.</p></div></div>
         <div class="gcard" id="g-hook" data-gloss="hook"><div class="gfig"></div><div><b>Hook</b><p>At a corner of the rim, a ribbon that comes in through the port just before the corner and goes straight back out through the port just after it.</p></div></div>
         <div class="gcard" id="g-crossover" data-gloss="crossover"><div class="gfig"></div><div><b>Crossover</b><p>At one special corner (the &Gamma; corner) the two ribbons do not hook back; they cross and leave by the far side.</p></div></div>
         <div class="gcard" id="g-signature" data-gloss="signature"><div class="gfig"></div><div><b>Signature</b><p>What a supertile looks like from outside: a hook at every corner but two, one crossover, and no ring inside.</p></div></div>
         <div class="gcard" id="g-run" data-gloss="run"><div class="gfig"></div><div><b>Run</b><p>A stretch of edges along which two neighbouring supertiles touch.</p></div></div>
+        <div class="gcard nofig" id="g-zigzag"><div><b>Zigzag</b><p>How the ribbons run along a run shared by two blocks: they cross it edge by edge, taking every hook on it in turn, so only whether the run is even or odd matters.</p></div></div>
         <div class="gcard" id="g-parity" data-gloss="parity"><div class="gfig"></div><div><b>Even, odd</b><p>Whether a run (or a side) has an even or odd number of tile edges. The zigzag along a run only cares about this.</p></div></div>
         <div class="gcard" id="g-mark" data-gloss="mark"><div class="gfig"></div><div><b>Mark</b><p>A point on a child&rsquo;s rim where something happens: its neighbour changes, or its crossover sits.</p></div></div>
         <div class="gcard" id="g-move" data-gloss="move"><div class="gfig"></div><div><b>Move</b><p>Making one shared side two edges longer, on both children that share it. The ribbons zigzag round two more corners and come out where they did before, so a move changes nothing that matters (step 5).</p></div></div>
         <div class="gcard" id="g-junction" data-gloss="junction"><div class="gfig"></div><div><b>Junction</b><p>A corner on a block&rsquo;s outline where one child&rsquo;s side ends and the next begins. Every ribbon of a block ends up, one level up, on the hook at one of five junctions (step 6).</p></div></div>
         <div class="gcard" id="g-nest" data-gloss="nest"><div class="gfig"></div><div><b>Nest</b><p>A chain of blocks, each one child of the next, growing to fill the whole plane. The tiling on this site is grown this way.</p></div></div>
+        <div class="gcard nofig" id="g-block"><div><b>Block</b><p>One of the supertiles of the nest: N0 (one tile), N1 (9 tiles), N2 (71), N3 (559) and so on, each child number 1 of the next.</p></div></div>
+        <div class="gcard" id="g-arc" data-gloss="arc"><div class="gfig"></div><div><b>Arc</b><p>A stretch of a strand inside a block, running from the block&rsquo;s rim back to its rim.</p></div></div>
+        <div class="gcard nofig" id="g-thread"><div><b>Thread</b><p>In the nest tiling, a tile&rsquo;s thread is the shortest stretch of the strand that holds all 14 of its pieces.</p></div></div>
+        <div class="gcard nofig" id="g-labyrinth"><div><b>Labyrinth</b><p>The tiles that a tile&rsquo;s thread passes through: the smallest patch in which all its pieces join up. For the starting tile it is 19 tiles.</p></div></div>
+        <div class="gcard nofig" id="g-lean"><div><b>Lean</b><p>A proof assistant: a program whose checker accepts a proof only if every step is correct. The combinatorial part of this proof is written in Lean and accepted by it.</p></div></div>
       </div>
     </details>
   </section>
@@ -331,7 +346,7 @@
   document.querySelectorAll('[data-fig="pmap"] a').forEach(function (a) { a.addEventListener('click', function () { closeMap(); var st = document.getElementById(a.dataset.step); if (st && +st.dataset.depth < 2) setStep(st, 2); }); });
   fig('lenbar', SKF.lengthBar({ width: 760 }));
   fig('partab', SKF.parityTable('Delta'));
-  document.querySelectorAll('[data-gloss]').forEach(function (el) { el.querySelector('.gfig').innerHTML = SKF.gloss(el.dataset.gloss); });
+  document.querySelectorAll('[data-gloss]').forEach(function (el) { var f = el.querySelector('.gfig'); if (f) f.innerHTML = SKF.gloss(el.dataset.gloss); });
   var zn = 5, zo = document.getElementById('zzout');
   function zz() { var r = SKF.zigzag(zn, { width: 600 }); fig('zigzag', r.svg); zo.textContent = zn + (zn === 1 ? ' edge: ' : ' edges: ') + (zn % 2 ? 'odd, other side' : 'even, same side'); }
   document.querySelectorAll('[data-zz]').forEach(function (b) { b.addEventListener('click', function () { zn = Math.max(1, Math.min(9, zn + +b.dataset.zz)); zz(); }); });
