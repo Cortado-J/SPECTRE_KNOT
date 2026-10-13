@@ -223,7 +223,7 @@
   function proofMap(o) {
     o = o || {}; var W = 920, bw = 200, bh = 64, cx = [20, 245, 470, 695], rowy = [16, 120, 224, 328, 432, 536, 640], H = 722;
     var N = {
-      tile: [0, 0, 'The tile’s drawing', '12 hooks, 1 crossover', 'computed', 'p3', 1],
+      tile: [0, 0, 'The tile’s drawing', '12 hooks, 1 crossover', 'proved', 'p3', 1],
       hier: [3, 0, 'Supertiles, for ever', 'same pattern at every level', 'cited', 'p1'],
       L1: [0, 1, 'Black box', 'only rim ports matter', 'proved', 'p2', 1],
       L2: [1, 1, 'Zigzag', 'a run: only even or odd', 'proved', 'p4', 1],
