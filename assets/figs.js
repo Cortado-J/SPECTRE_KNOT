@@ -189,14 +189,28 @@
 
   /* blocks of the nest: N1 inside N2 inside N3 (real outlines) */
   function nest(o) {
-    o = o || {}; var top = o.top || 3, b = SK.boxOf(top, 0.04).slice(), F;
+    o = o || {}; var top = o.top || 3, b = SK.boxOf(top, 0.04).slice(), F, k;
     if (o.headroom) b[3] += (b[3] - b[1]) * o.headroom;
-    F = frame(b, o.width || 520);
+    // blocks too small on screen for a label at their corner get one in a margin on the right, with a leader line
+    var W0 = o.width || 520, sc0 = W0 / (b[2] - b[0]), small = [];
+    for (k = 0; k <= top; k++) { var bk = D.boxes[k]; if ((bk[2] - bk[0]) * sc0 < 120) small.push(k); }
+    if (small.length) b[2] += (b[2] - b[0]) * 0.32;
+    F = frame(b, W0 * (small.length ? 1.32 : 1));
     var fills = ['#E69F00', '#56B4E9', '#7fd6b0', '#CC79A7', '#e8f1ec', '#8ab4ff'];
     var s = ['<svg viewBox="0 0 ' + F.W + ' ' + F.H + '" role="img" aria-label="Nested blocks: each is one piece of the next"><g transform="' + F.g + '">'];
     for (var k = top; k >= 0; k--) s.push('<path d="' + D.rims[k] + '" fill="' + fills[k] + '" fill-opacity="' + (k === top ? 0.08 : 0.16) + '" stroke="' + fills[k] + '" stroke-width="' + (1.8 / F.sc) + '" stroke-linejoin="round"/>');
     s.push('</g>');
-    if (o.labels !== false) for (k = 0; k <= top; k++) { var bb = D.boxes[k]; s.push('<text x="' + F.x(bb[2]) + '" y="' + (F.y(bb[3]) - 4) + '" fill="' + fills[k] + '" font-size="14" font-weight="700" text-anchor="end">N' + k + ' · ' + SK.LV[k] + '</text>'); }
+    if (o.labels !== false) {
+      var lab = function (k) { return 'N' + k + ' · ' + SK.LV[k]; };
+      for (k = 0; k <= top; k++) if (small.indexOf(k) < 0) { var bb = D.boxes[k]; s.push('<text x="' + F.x(bb[2]) + '" y="' + (F.y(bb[3]) - 4) + '" fill="' + fills[k] + '" font-size="14" font-weight="700" text-anchor="end">' + lab(k) + '</text>'); }
+      // the small ones: a column in the right margin, biggest at the top, centred on the blocks' height
+      var cyc = F.y((D.boxes[0][1] + D.boxes[0][3]) / 2), xl = F.W - 12, gap = 22, y0 = cyc - gap * (small.length - 1) / 2;
+      small.slice().reverse().forEach(function (k, i) {
+        var bb = D.boxes[k], ax = F.x(bb[2]), ay = F.y((bb[1] + bb[3]) / 2), ty = y0 + i * gap;
+        s.push('<path d="M' + ax + ',' + ay + 'L' + (xl - 112) + ',' + (ty - 4) + '" stroke="' + fills[k] + '" stroke-width="1.2" fill="none" stroke-opacity=".8"/>');
+        s.push('<text x="' + xl + '" y="' + ty + '" fill="' + fills[k] + '" font-size="14" font-weight="700" text-anchor="end" paint-order="stroke" stroke="#0d1a16" stroke-width="3">' + lab(k) + '</text>');
+      });
+    }
     s.push('</svg>'); return s.join('');
   }
 
