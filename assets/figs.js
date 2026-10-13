@@ -235,37 +235,43 @@
   /* the map of the proof: what rests on what. Each box links to its step. */
   var STAT = { computed: ['#56B4E9', 'computed'], cited: ['#E69F00', 'cited'], proved: ['#7fd6b0', 'argued'] };
   function proofMap(o) {
-    o = o || {}; var W = 920, bw = 200, bh = 64, cx = [20, 245, 470, 695], rowy = [16, 120, 224, 328, 432, 536, 640], H = 722;
+    // laid out by hand so that no arrow crosses another or runs behind a box: x, y of each box's top left corner
+    o = o || {}; var W = 920, bw = 200, bh = 64, H = 616, R = [16, 120, 224, 328, 432, 536];
     var N = {
-      tile: [0, 0, 'The tile’s drawing', '12 hooks, 1 crossover', 'proved', 'p3', 1],
-      hier: [3, 0, 'Supertiles, for ever', 'same pattern at every level', 'cited', 'p1'],
-      L1: [0, 1, 'Black box', 'only rim ports matter', 'proved', 'p2', 1],
-      L2: [1, 1, 'Zigzag', 'a run: only even or odd', 'proved', 'p4', 1],
-      sig: [2, 1, 'Level 1, computed', '18 assemblies, signature', 'computed', 'p5', 1],
-      sides: [3, 1, 'Side lengths', 'grow; parities fixed', 'proved', 'p5', 1],
-      L3: [0.5, 2, 'Two more edges', 'change nothing', 'proved', 'p5', 1],
-      L5: [1, 3, 'Every level', 'reached two edges at a time', 'proved', 'p5', 1],
-      L7: [3, 3, 'Nest covers the plane', 'every tile is in some block', 'proved', 'p6'],
-      T6: [1.5, 4, 'Every supertile', 'signature, no closed loop', 'proved', 'p5', 1],
-      L8: [2.5, 5, 'Every block merges', 'level 1 computed, then moves', 'proved', 'p6', 1],
-      TA: [0.15, 5, 'No closed loop', 'the Endless Strand Theorem', 'proved', 'p7', 1],
-      T9: [1.2, 6, 'One endless strand', 'the Ariadne Theorem', 'proved', 'p6', 1]
+      hier: [20, R[0], 'Supertiles, for ever', 'same pattern at every level', 'cited', 'p1'],
+      L1: [245, R[0], 'Black box', 'only rim ports matter', 'proved', 'p2', 1],
+      L2: [470, R[0], 'Zigzag', 'a run: only even or odd', 'proved', 'p4', 1],
+      tile: [695, R[0], 'The tile’s drawing', '12 hooks, 1 crossover', 'proved', 'p3', 1],
+      sides: [140, R[1], 'Side lengths', 'grow; parities fixed', 'proved', 'p5', 1],
+      L3: [370, R[1], 'Two more edges', 'change nothing', 'proved', 'p5', 1],
+      sig: [695, R[1], 'Level 1, computed', '18 assemblies, signature', 'computed', 'p5', 1],
+      L5: [255, R[2], 'Every level', 'reached two edges at a time', 'proved', 'p5', 1],
+      L7: [20, R[3], 'Nest covers the plane', 'every tile is in some block', 'proved', 'p6'],
+      T6: [520, R[3], 'Every supertile', 'signature, no closed loop', 'proved', 'p5', 1],
+      L8: [245, R[4], 'Every block merges', 'level 1 computed, then moves', 'proved', 'p6', 1],
+      TA: [695, R[4], 'No closed loop', 'the Endless Strand Theorem', 'proved', 'p7', 1],
+      T9: [245, R[5], 'One endless strand', 'the Ariadne Theorem', 'proved', 'p6', 1]
     };
-    var E = [['tile', 'sig'], ['L1', 'L3'], ['L2', 'L3'], ['hier', 'sides'], ['sides', 'L5'], ['L3', 'L5'], ['sig', 'T6'], ['L5', 'T6'], ['hier', 'L7'], ['T6', 'L8'], ['L5', 'L8'], ['T6', 'T9'], ['L7', 'T9'], ['L8', 'T9'], ['T6', 'TA']];
-    function pos(k) { var n = N[k], x = 20 + n[0] * 225; return { x: x, y: rowy[n[1]] }; }
+    // each arrow: from (box, x offset along its bottom) to (box, x offset along its top), or into a side ('L' or 'R')
+    var E = [['hier', 100, 'sides', 100], ['hier', 14, 'L7', 14], ['L1', 100, 'L3', 75], ['L2', 100, 'L3', 125], ['tile', 100, 'sig', 100],
+      ['sides', 100, 'L5', 75], ['L3', 100, 'L5', 125], ['sig', 100, 'T6', 140], ['L5', 125, 'T6', 60],
+      ['L5', 75, 'L8', 75], ['T6', 60, 'L8', 135], ['T6', 160, 'TA', 100], ['L8', 100, 'T9', 100],
+      ['L7', 100, 'T9', 'L'], ['T6', 100, 'T9', 'R']];
     var s = ['<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="The map of the proof: what each step rests on">',
       '<defs><marker id="pm-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10z" fill="#6f877c"/></marker></defs>'];
     E.forEach(function (e) {
-      var a = pos(e[0]), b = pos(e[1]), x0 = a.x + bw / 2, y0 = a.y + bh, x1 = b.x + bw / 2, y1 = b.y;
-      if (e[0] === 'hier' && e[1] === 'L7') {   // round the right-hand side, clear of the boxes in between
-        var xr = a.x + bw, xm = W - 6, ya = a.y + bh / 2, yb = b.y + bh / 2;
-        s.push('<path d="M' + xr + ',' + ya + 'C' + xm + ',' + ya + ' ' + xm + ',' + ya + ' ' + xm + ',' + (ya + 20) + 'L' + xm + ',' + (yb - 20) + 'C' + xm + ',' + yb + ' ' + xm + ',' + yb + ' ' + (xr + 2) + ',' + yb + '" fill="none" stroke="#6f877c" stroke-width="1.6" marker-end="url(#pm-a)"/>');
-        return;
+      var a = N[e[0]], b = N[e[2]], x0 = a[0] + e[1], y0 = a[1] + bh, d;
+      if (e[3] === 'L' || e[3] === 'R') {   // run down beside the boxes, then turn into the target's side
+        var x1 = e[3] === 'L' ? b[0] - 2 : b[0] + bw + 2, y1 = b[1] + bh / 2;
+        d = 'M' + x0 + ',' + y0 + ' L' + x0 + ',' + (y1 - 40) + ' C' + x0 + ',' + y1 + ' ' + x0 + ',' + y1 + ' ' + (x0 + (x1 > x0 ? 40 : -40)) + ',' + y1 + ' L' + x1 + ',' + y1;
+      } else {
+        var x1 = b[0] + e[3], y1 = b[1] - 2, k = (y1 - y0) / 2;
+        d = 'M' + x0 + ',' + y0 + ' C' + x0 + ',' + (y0 + k) + ' ' + x1 + ',' + (y1 - k) + ' ' + x1 + ',' + y1;
       }
-      s.push('<path d="M' + x0 + ',' + y0 + 'C' + x0 + ',' + (y0 + 34) + ' ' + x1 + ',' + (y1 - 34) + ' ' + x1 + ',' + (y1 - 2) + '" fill="none" stroke="#6f877c" stroke-width="1.6" marker-end="url(#pm-a)"/>');
+      s.push('<path d="' + d + '" fill="none" stroke="#6f877c" stroke-width="1.6" marker-end="url(#pm-a)"/>');
     });
     Object.keys(N).forEach(function (k) {
-      var n = N[k], p = pos(k), st = STAT[n[4]], fin = k === 'T9' || k === 'TA';
+      var n = N[k], p = { x: n[0], y: n[1] }, st = STAT[n[4]], fin = k === 'T9' || k === 'TA';
       s.push('<a href="#' + n[5] + '" data-step="' + n[5] + '"><g class="pm-node"><rect x="' + p.x + '" y="' + p.y + '" width="' + bw + '" height="' + bh + '" rx="12" fill="' + (fin ? '#2a2310' : '#12211c') + '" stroke="' + (fin ? '#E69F00' : st[0]) + '" stroke-width="' + (fin ? 3 : 2) + '"' + '/>' +
         '<text x="' + (p.x + 12) + '" y="' + (p.y + 23) + '" fill="#e8f1ec" font-size="15" font-weight="700">' + n[2] + '</text>' +
         '<text x="' + (p.x + 12) + '" y="' + (p.y + 41) + '" fill="#a3b8ae" font-size="12.5">' + n[3] + '</text>' +
