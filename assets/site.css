@@ -351,3 +351,14 @@ table.cmd code { white-space: nowrap; font-size: .82rem; }
 a.res { white-space: nowrap; }
 .resinfo { color: var(--mut); }
 .resinfo .st { font-size: .62rem; padding: 1px 7px; vertical-align: 2px; margin: 0 1px; }
+
+/* Prove: the depth bar's small map button, wired to the map card above it */
+.depthbar .lab { font-size: 1.02rem; line-height: 1.25; color: var(--ink); }
+.depthbar .wrap { position: relative; }
+.mapbtn { margin-left: auto; width: 46px; height: 46px; border-radius: 12px; border: 1.5px solid var(--mint); background: var(--surf); color: var(--mint); display: grid; place-items: center; cursor: pointer; flex: none; position: relative; z-index: 1; }
+.mapbtn svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.6; }
+.mapbtn:hover, .mapbtn:focus-visible { background: color-mix(in srgb, var(--mint) 16%, var(--surf)); }
+.toprow { position: relative; }
+.mapwire { position: absolute; width: 0; border-left: 2px dashed color-mix(in srgb, var(--mint) 55%, transparent); pointer-events: none; }
+@media (max-width: 760px) { .depthbar .lab { order: 0; } .mapbtn { order: 1; } .depth { order: 2; } }
+.toprow > p { padding-right: 64px; }   /* clear of the wire down to the map button */

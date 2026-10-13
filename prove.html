@@ -29,7 +29,8 @@
     <p class="lede">Proof of the following two theorems:</p>
   </section>
 
-  <section class="wrap" style="padding-block:0 18px;display:grid;gap:14px">
+  <section class="wrap toprow" style="padding-block:0 18px;display:grid;gap:14px">
+    <span class="mapwire" id="mapwire1" aria-hidden="true"></span>
     <div class="claims">
       <div class="claim c1">
         <div class="kick">The Endless Strand Theorem</div>
@@ -51,13 +52,15 @@
   </section>
 
   <div class="depthbar"><div class="wrap">
-    <span class="lab">How deeply do you want to understand this?</span>
+    <span class="mapwire" id="mapwire2" aria-hidden="true"></span>
+    <span class="lab">How deeply do you want<br>to understand this?</span>
     <div class="depth" role="group" aria-label="How deeply">
       <button type="button" data-d="1"><b>1</b><span>A few easier steps<small>the idea, with pictures</small></span></button>
       <button type="button" data-d="2"><b>2</b><span>More explanation<small>each step explained</small></span></button>
       <button type="button" data-d="3"><b>3</b><span>In depth<small>the details, with our paper&rsquo;s results</small></span></button>
       <a class="go-lean" href="https://cortado-j.github.io/SPECTRE_KNOT_PROOF/"><b>4</b><span>A Lean proof<small>on the proof site &rarr;</small></span></a>
     </div>
+    <button type="button" class="mapbtn" data-openmap aria-haspopup="dialog" aria-label="Open the map of the proof" title="Map of the proof"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="2.5" width="7" height="5" rx="1.5"/><rect x="14.5" y="2.5" width="7" height="5" rx="1.5"/><rect x="8.5" y="16.5" width="7" height="5" rx="1.5"/><path d="M6 7.5C6 12 12 12 12 16.5M18 7.5C18 12 12 12 12 16.5"/></svg></button>
   </div></div>
 
   <section class="wrap" style="padding-top:18px"><nav class="toc" aria-label="The seven steps" id="toc"></nav></section>
@@ -312,6 +315,16 @@
   function openMap() { if (dlg.showModal) dlg.showModal(); else dlg.setAttribute('open', ''); }
   function closeMap() { if (dlg.close) dlg.close(); else dlg.removeAttribute('open'); }
   document.getElementById('mapopen').addEventListener('click', openMap);
+  (function wires() {
+    var card = document.getElementById('mapopen'), btn = document.querySelector('.mapbtn'), w1 = document.getElementById('mapwire1'), w2 = document.getElementById('mapwire2');
+    function place() {
+      var bar = btn.parentNode, top = w1.parentNode, br = btn.getBoundingClientRect(), x = br.left + br.width / 2;
+      var tr = top.getBoundingClientRect(), cr = card.getBoundingClientRect(), wr = bar.getBoundingClientRect();
+      w1.style.left = (x - tr.left - 1) + 'px'; w1.style.top = (cr.bottom - tr.top) + 'px'; w1.style.height = (tr.bottom - cr.bottom) + 'px';
+      w2.style.left = (x - wr.left - 1) + 'px'; w2.style.top = (bar.parentNode.getBoundingClientRect().top - wr.top) + 'px'; w2.style.height = (br.top - bar.parentNode.getBoundingClientRect().top) + 'px';
+    }
+    place(); window.addEventListener('resize', place); window.addEventListener('load', place);
+  })();
   document.querySelectorAll('[data-openmap]').forEach(function (b) { b.addEventListener('click', openMap); });
   document.querySelectorAll('[data-closemap]').forEach(function (b) { b.addEventListener('click', closeMap); });
   dlg.addEventListener('click', function (e) { if (e.target === dlg) closeMap(); });   // a click on the backdrop
