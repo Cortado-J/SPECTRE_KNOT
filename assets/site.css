@@ -217,7 +217,24 @@ ol.howto { margin: 0; padding-left: 1.3em; color: var(--mut); display: grid; gap
 .claim { background: linear-gradient(135deg, #15302a, var(--surf)); border: 1px solid color-mix(in srgb, var(--mint) 40%, var(--line)); border-radius: var(--r); padding: 22px 24px; display: grid; gap: 10px; }
 .claim h2 { font-size: 1.35rem; }
 .claims { display: grid; gap: 14px; grid-template-columns: minmax(0, 1fr); }
-@media (min-width: 760px) { .claims { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
+@media (min-width: 760px) { .claims { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } .claims .mapcard { grid-column: 1 / -1; } }
+@media (min-width: 1040px) { .claims { grid-template-columns: repeat(3, minmax(0, 1fr)); } .claims .mapcard { grid-column: auto; } }
+.mapcard { font: inherit; color: inherit; text-align: left; cursor: pointer; align-content: start; background: linear-gradient(135deg, #18241f, var(--surf)); border-color: var(--line); }
+.mapcard:hover, .mapcard:focus-visible { border-color: var(--mint); }
+.mapcard .kick { color: var(--mut); }
+.mapthumb { display: block; height: 170px; }
+.mapthumb svg { width: 100%; height: 100%; display: block; }
+.linkbtn { font: inherit; background: none; border: 0; padding: 0; color: var(--mint); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.mapdlg { width: min(1000px, 94vw); max-height: 92vh; padding: 18px 20px 22px; background: var(--bg); color: var(--ink); border: 1px solid var(--line); border-radius: var(--r); }
+.mapdlg::backdrop { background: rgba(4, 10, 8, .72); }
+.mapdlg-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
+.mapdlg-head h2 { font-size: 1.3rem; }
+.mapdlg-x { font: inherit; font-size: 1.6rem; line-height: 1; background: none; border: 1px solid var(--line); color: var(--ink); width: 40px; height: 40px; border-radius: 50%; cursor: pointer; }
+.mapdlg-x:hover { border-color: var(--mint); }
+.mapdlg > p { margin-bottom: 12px; max-width: 80ch; }
+.mapfit { min-width: 560px; }
+.mapfit svg { display: block; width: 100%; height: auto; max-height: calc(92vh - 190px); margin: 0 auto; }
+@media (max-width: 700px) { .mapfit svg { max-height: none; } }
 .claim.c2 { background: linear-gradient(135deg, #2a2310, var(--surf)); border-color: color-mix(in srgb, var(--amber) 55%, var(--line)); }
 .claim.c2 .kick { color: var(--amber); }
 .claimnotes { display: grid; gap: 10px; }

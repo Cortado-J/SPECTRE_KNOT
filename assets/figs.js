@@ -234,9 +234,10 @@
       L7: [3, 3, 'Nest covers the plane', 'every tile is in some block', 'proved', 'p6'],
       T6: [1.5, 4, 'Every supertile', 'signature, no closed loop', 'proved', 'p5', 1],
       L8: [2.5, 5, 'Every block merges', 'level 1 computed, then moves', 'proved', 'p6', 1],
-      T9: [1.2, 6, 'One endless strand', 'in the tiling drawn here', 'proved', 'p6', 1]
+      TA: [0.15, 5, 'No closed loop', 'the Endless Strand Theorem', 'proved', 'p7', 1],
+      T9: [1.2, 6, 'One endless strand', 'the Ariadne Theorem', 'proved', 'p6', 1]
     };
-    var E = [['tile', 'sig'], ['L1', 'L3'], ['L2', 'L3'], ['hier', 'sides'], ['sides', 'L5'], ['L3', 'L5'], ['sig', 'T6'], ['L5', 'T6'], ['hier', 'L7'], ['T6', 'L8'], ['L5', 'L8'], ['T6', 'T9'], ['L7', 'T9'], ['L8', 'T9']];
+    var E = [['tile', 'sig'], ['L1', 'L3'], ['L2', 'L3'], ['hier', 'sides'], ['sides', 'L5'], ['L3', 'L5'], ['sig', 'T6'], ['L5', 'T6'], ['hier', 'L7'], ['T6', 'L8'], ['L5', 'L8'], ['T6', 'T9'], ['L7', 'T9'], ['L8', 'T9'], ['T6', 'TA']];
     function pos(k) { var n = N[k], x = 20 + n[0] * 225; return { x: x, y: rowy[n[1]] }; }
     var s = ['<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="The map of the proof: what each step rests on">',
       '<defs><marker id="pm-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10z" fill="#6f877c"/></marker></defs>'];
@@ -250,12 +251,14 @@
       s.push('<path d="M' + x0 + ',' + y0 + 'C' + x0 + ',' + (y0 + 34) + ' ' + x1 + ',' + (y1 - 34) + ' ' + x1 + ',' + (y1 - 2) + '" fill="none" stroke="#6f877c" stroke-width="1.6" marker-end="url(#pm-a)"/>');
     });
     Object.keys(N).forEach(function (k) {
-      var n = N[k], p = pos(k), st = STAT[n[4]], fin = k === 'T9';
+      var n = N[k], p = pos(k), st = STAT[n[4]], fin = k === 'T9' || k === 'TA';
       s.push('<a href="#' + n[5] + '" data-step="' + n[5] + '"><g class="pm-node"><rect x="' + p.x + '" y="' + p.y + '" width="' + bw + '" height="' + bh + '" rx="12" fill="' + (fin ? '#2a2310' : '#12211c') + '" stroke="' + (fin ? '#E69F00' : st[0]) + '" stroke-width="' + (fin ? 3 : 2) + '"' + '/>' +
         '<text x="' + (p.x + 12) + '" y="' + (p.y + 23) + '" fill="#e8f1ec" font-size="15" font-weight="700">' + n[2] + '</text>' +
         '<text x="' + (p.x + 12) + '" y="' + (p.y + 41) + '" fill="#a3b8ae" font-size="12.5">' + n[3] + '</text>' +
         '<text x="' + (p.x + 12) + '" y="' + (p.y + 57) + '" fill="' + st[0] + '" font-size="10.5" font-weight="700" letter-spacing="1">' + st[1].toUpperCase() + '</text>' +
-        (n[6] ? '<text x="' + (p.x + bw - 12) + '" y="' + (p.y + 57) + '" fill="#F0E442" font-size="10.5" font-weight="700" letter-spacing="1" text-anchor="end">LEAN</text>' : '') + '</g></a>');
+        (n[6] ? '<text x="' + (p.x + bw - 12) + '" y="' + (p.y + 57) + '" fill="#F0E442" font-size="10.5" font-weight="700" letter-spacing="1" text-anchor="end">LEAN</text>' : '') +
+        // the Prove step this fact belongs to
+        '<circle cx="' + (p.x + bw - 17) + '" cy="' + (p.y + 18) + '" r="11" fill="#1d3a31" stroke="#7fd6b0" stroke-width="1.4"/><text x="' + (p.x + bw - 17) + '" y="' + (p.y + 22.5) + '" fill="#e8f1ec" font-size="12" font-weight="700" text-anchor="middle">' + n[5].slice(1) + '</text>' + '</g></a>');
     });
     s.push('</svg>'); return s.join('');
   }

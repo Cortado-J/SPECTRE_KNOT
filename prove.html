@@ -41,6 +41,11 @@
         <h2 id="claim-text">In the nest tiling drawn on this site, with the Spectre Knot design on each tile, the ribbon pieces of all the tiles join into one endless strand.</h2>
         <p class="mut small">The nest tiling is grown outwards from a single tile, each block sitting in the same place (child number 1) inside the next. <a href="#p6">Step 6</a>.</p>
       </div>
+      <button type="button" class="claim c3 mapcard" id="mapopen" aria-haspopup="dialog">
+        <span class="kick">Map of the proof</span>
+        <span class="mapthumb" data-fig="pmapthumb" aria-hidden="true"></span>
+        <span class="mut small">What rests on what, step by step. Click to open the map.</span>
+      </button>
     </div>
     <p class="mut small">The proofs, and their Lean version, were written with AI: <a href="made.html">how this was made, and what has been checked</a>.</p>
   </section>
@@ -222,14 +227,16 @@
     </article>
   </section>
 
+  <dialog class="mapdlg" id="mapdlg" aria-labelledby="mapdlg-h">
+    <div class="mapdlg-head"><h2 id="mapdlg-h">Map of the proof</h2><button type="button" class="mapdlg-x" data-closemap aria-label="Close the map">&times;</button></div>
+    <p class="mut small">Each box is one fact, and an arrow means &lsquo;is used to prove&rsquo;. The number on a box is the step of this page it belongs to. The border says what supports it: <span class="st cited">cited</span> from the spectre paper, <span class="st computed">computed</span> by machine, or <span class="st proved">argued</span> in words; a yellow <span class="st lean">Lean</span> tag means it has also been checked by the Lean proof assistant (<a href="made.html#checked">what that covers</a>). Click a box to open that step.</p>
+    <div class="scrollx"><div class="mapfit" data-fig="pmap"></div></div>
+  </dialog>
+
   <section class="wrap extras" style="display:grid;gap:14px;padding-bottom:24px">
     <h2>Going further</h2>
     <p class="mut small">The rigorous version of every step is on <a href="https://cortado-j.github.io/SPECTRE_KNOT_PROOF/">the proof site</a>: each result of <a href="https://cortado-j.github.io/SPECTRE_KNOT_PROOF/downloads/The-Spectre-Knot-paper.pdf">the write-up of the proof</a> with its proof, what it rests on and its Lean.</p>
-    <details class="pmap" id="map">
-      <summary>Map of the proof, and what the marks mean</summary>
-      <p class="mut small">Each step is marked by what supports it: <span class="st cited">cited</span> from the spectre paper, <span class="st computed">computed</span> by machine, or <span class="st proved">argued</span> in words. A yellow <span class="st lean">Lean</span> tag means it has also been checked by the Lean proof assistant (<a href="made.html#checked">what that covers</a>). In the map each box is one fact, an arrow means &lsquo;is used to prove&rsquo;, and the border gives its mark. Click a box to open that step.</p>
-      <div class="scrollx"><div data-fig="pmap" style="min-width:640px"></div></div>
-    </details>
+    <p class="mut small"><button type="button" class="linkbtn" data-openmap>The map of the proof, and what the marks mean</button></p>
     <details id="fail">
       <summary>How could it fail? Every way we could think of, and what rules it out</summary>
       <div class="tablewrap"><table class="nums risk">
@@ -308,7 +315,15 @@
   fig('treeb', SKF.tree('b', { width: 700 }));
   fig('scope', SKF.scope({ width: 640 }));
   fig('pmap', SKF.proofMap());
-  document.querySelectorAll('[data-fig="pmap"] a').forEach(function (a) { a.addEventListener('click', function () { var st = document.getElementById(a.dataset.step); if (st && +st.dataset.depth < 2) setStep(st, 2); }); });
+  fig('pmapthumb', SKF.proofMap().replace(/<a [^>]*>|<\/a>/g, '').replace('id="pm-a"', 'id="pm-a2"').replace(/url\(#pm-a\)/g, 'url(#pm-a2)'));
+  var dlg = document.getElementById('mapdlg');
+  function openMap() { if (dlg.showModal) dlg.showModal(); else dlg.setAttribute('open', ''); }
+  function closeMap() { if (dlg.close) dlg.close(); else dlg.removeAttribute('open'); }
+  document.getElementById('mapopen').addEventListener('click', openMap);
+  document.querySelectorAll('[data-openmap]').forEach(function (b) { b.addEventListener('click', openMap); });
+  document.querySelectorAll('[data-closemap]').forEach(function (b) { b.addEventListener('click', closeMap); });
+  dlg.addEventListener('click', function (e) { if (e.target === dlg) closeMap(); });   // a click on the backdrop
+  document.querySelectorAll('[data-fig="pmap"] a').forEach(function (a) { a.addEventListener('click', function () { closeMap(); var st = document.getElementById(a.dataset.step); if (st && +st.dataset.depth < 2) setStep(st, 2); }); });
   fig('lenbar', SKF.lengthBar({ width: 760 }));
   fig('partab', SKF.parityTable('Delta'));
   document.querySelectorAll('[data-gloss]').forEach(function (el) { el.querySelector('.gfig').innerHTML = SKF.gloss(el.dataset.gloss); });
