@@ -410,12 +410,21 @@
           grib('M136,12 L136,50 C136,92 170,82 210,82', GS) + gdot(170, 50, GI, 5) + gring(136, 50, GA) + gring(170, 82, GA) +
           gt(176, 44, 'corner') + gt(30, 140, 'inside the supertile') + gt(204, 100, 'out', GS, 'end') + gt(118, 26, 'in', GS, 'end'));
       case 'crossover':
-        return gsvg('The crossover: at corners A and B the two ribbons do not hook; they cross inside the supertile',
-          '<path d="M40,140V40H200V140Z" fill="' + GB + '"/><path d="M40,140V40H200V140" fill="none" stroke="' + GI + '" stroke-width="2.5"/>' +
-          grib('M75,6 L75,40 C75,70 95,75 120,100 C145,125 180,70 200,70 L236,70', GS, true) +
-          grib('M165,6 L165,40 C165,70 145,75 120,100 C95,125 60,70 40,70 L4,70', GA) +
-          gdot(40, 40, GI, 5) + gdot(200, 40, GI, 5) + [[40, 70], [75, 40], [165, 40], [200, 70]].map(function (q) { return '<circle cx="' + q[0] + '" cy="' + q[1] + '" r="3.2" fill="#0d1a16" stroke="' + GI + '" stroke-width="1.6"/>'; }).join('') +
-          gt(32, 32, 'A', GI, 'end') + gt(208, 32, 'B', GI) + gt(120, 158, 'they cross inside', GM, 'middle'), 240, 166);
+        // the real tile near its crossover corners A = v0, B = v1: strands 0 and 1 are the two crossover pieces,
+        // drawn unclipped so that their X at the port on edge AB shows; the twelve hooks faint
+        var Fx = frame([-0.32, -0.5, 1.48, 0.86], 240), cid = 'gx' + (++uid), XW = 0.06, XB = 0.11, XC = [GA, GS];
+        var xs = ['<svg viewBox="0 0 ' + Fx.W + ' ' + Fx.H + '" role="img" aria-label="The crossover on the tile: at corners A and B the two ribbons do not hook back; they cross inside the tile and again at the port on the edge AB"><defs><clipPath id="' + cid + '"><path d="' + polyD(T.rim) + '"/></clipPath></defs><g transform="' + Fx.g + '">',
+          '<path d="' + polyD(T.rim) + '" fill="' + GB + '"/><g clip-path="url(#' + cid + ')" fill="none" opacity=".35">'];
+        T.strands.forEach(function (st, i) { if (i > 1) xs.push('<path d="' + st.d + '" stroke="#06100d" stroke-width="' + XB + '"/><path d="' + st.d + '" stroke="#7fd6b0" stroke-width="' + XW + '"/>'); });
+        xs.push('</g><path d="' + polyD(T.rim) + '" fill="none" stroke="' + GI + '" stroke-width="' + (1.6 / Fx.sc) + '" stroke-linejoin="round"/><g fill="none" stroke-linecap="round">');
+        [0, 1].forEach(function (i) { xs.push('<path d="' + T.strands[i].d + '" stroke="#06100d" stroke-width="' + XB + '"/><path d="' + T.strands[i].d + '" stroke="' + XC[i] + '" stroke-width="' + XW + '"/>'); });
+        [0, 1].forEach(function (i) { T.strands[i].ov.forEach(function (v) { xs.push('<path d="' + v[0] + '" stroke="#06100d" stroke-width="' + XB + '" stroke-linecap="butt"/><path d="' + v[1] + '" stroke="' + XC[i] + '" stroke-width="' + XW + '" stroke-linecap="butt"/>'); }); });
+        xs.push('</g></g>');
+        var xr = function (q) { return '<circle cx="' + Fx.x(q[0]).toFixed(1) + '" cy="' + Fx.y(q[1]).toFixed(1) + '" r="13" fill="none" stroke="' + GI + '" stroke-width="1.6" stroke-dasharray="4 3"/>'; };
+        xs.push(xr(T.cross[0]) + xr([0.65, 0]) + gdot(Fx.x(0), Fx.y(0), GI, 4) + gdot(Fx.x(1), Fx.y(1 - 1), GI, 4) +
+          gt(Fx.x(0) - 8, Fx.y(0) + 16, 'A', GI, 'end') + gt(Fx.x(1), Fx.y(0) - 9, 'B', GI, 'middle') +
+          gt(Fx.x(0.62) + 18, Fx.y(0.5) - 12, 'inside the tile', GM) + gt(Fx.x(0.65), Fx.y(0) + 52, 'and at the edge', GM, 'middle') + '</svg>');
+        return xs.join('');
       case 'signature':
         return signature(1, { width: 260, label: 'The signature of a 9-tile supertile' });
       case 'run':
