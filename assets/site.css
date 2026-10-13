@@ -273,6 +273,7 @@ ol.howto { margin: 0; padding-left: 1.3em; color: var(--mut); display: grid; gap
 .pfig figure { margin: 0; background: var(--bg2); border: 1px solid var(--line); border-radius: var(--r-s); padding: 12px; display: grid; gap: 8px; }
 .pfig figure svg { display: block; width: 100%; height: auto; max-height: 440px; max-width: 620px; margin-inline: auto; }
 .pfig figure .wide svg { max-width: 920px; max-height: none; }
+.pfig figure .compact svg { max-height: 300px; }
 .pfig figcaption { font-size: .85rem; color: var(--faint); }
 .pctl { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; margin-top: 12px; }
 .pctl button { border: 1px solid var(--line); background: var(--bg); color: var(--mint); border-radius: 999px; padding: 6px 14px; font-weight: 650; font-size: .88rem; }

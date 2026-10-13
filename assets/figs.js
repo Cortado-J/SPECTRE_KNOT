@@ -238,25 +238,27 @@
     // laid out by hand so that no arrow crosses another or runs behind a box: x, y of each box's top left corner
     o = o || {}; var W = 920, bw = 200, bh = 64, H = 616, R = [16, 120, 224, 328, 432, 536];
     var N = {
-      hier: [20, R[0], 'Supertiles, for ever', 'same pattern at every level', 'cited', 'p1'],
-      L1: [245, R[0], 'Black box', 'only rim ports matter', 'proved', 'p2', 1],
-      L2: [470, R[0], 'Zigzag', 'a run: only even or odd', 'proved', 'p4', 1],
-      tile: [695, R[0], 'The tile’s drawing', '12 hooks, 1 crossover', 'proved', 'p3', 1],
-      sides: [140, R[1], 'Side lengths', 'grow; parities fixed', 'proved', 'p5', 1],
-      L3: [370, R[1], 'Two more edges', 'change nothing', 'proved', 'p5', 1],
-      sig: [695, R[1], 'Level 1, computed', '18 assemblies, signature', 'computed', 'p5', 1],
-      L5: [255, R[2], 'Every level', 'reached two edges at a time', 'proved', 'p5', 1],
-      L7: [20, R[3], 'Nest covers the plane', 'every tile is in some block', 'proved', 'p6'],
-      T6: [520, R[3], 'Every supertile', 'signature, no closed loop', 'proved', 'p5', 1],
-      L8: [245, R[4], 'Every block merges', 'level 1 computed, then moves', 'proved', 'p6', 1],
-      TA: [695, R[4], 'No closed loop', 'the Daedalus Theorem', 'proved', 'p7', 1],
-      T9: [245, R[5], 'One endless strand', 'the Ariadne Theorem', 'proved', 'p6', 1]
+      hier: [20, R[0], 'Supertiles, for ever', 'same pattern at every level', 'cited', 'p2'],
+      L1: [245, R[0], 'Black box', 'only rim ports matter', 'proved', 'p4', 1],
+      L2: [470, R[0], 'Zigzag', 'a run: only even or odd', 'proved', 'p5', 1],
+      tile: [695, R[0], 'The tile’s drawing', '12 hooks, 1 crossover', 'proved', 'p4', 1],
+      sides: [140, R[1], 'Side lengths', 'grow; parities fixed', 'proved', 'p6', 1],
+      L3: [370, R[1], 'Two more edges', 'change nothing', 'proved', 'p7', 1],
+      sig: [695, R[1], 'Level 1, computed', '18 assemblies, signature', 'computed', 'p7', 1],
+      L5: [255, R[2], 'Every level', 'reached two edges at a time', 'proved', 'p7', 1],
+      L7: [20, R[3], 'Nest covers the plane', 'every tile is in some block', 'proved', 'p8'],
+      T6: [520, R[3], 'Every supertile', 'signature, no closed loop', 'proved', 'p7', 1],
+      L8: [245, R[4], 'Every block merges', 'level 1 computed, then moves', 'proved', 'p9', 1],
+      str: [470, R[4], 'Strands', 'a loop, or endless both ways', 'proved', 'p3', 1],
+      T9: [245, R[5], 'One endless strand', 'the Ariadne Theorem', 'proved', 'p9', 1],
+      TA: [695, R[5], 'No closed loop', 'the Daedalus Theorem', 'proved', 'p7', 1]
     };
-    // each arrow: from (box, x offset along its bottom) to (box, x offset along its top), or into a side ('L' or 'R')
+    // each arrow: from (box, x offset along its bottom) to (box, x offset along its top), or into a side ('L' or 'R').
+    // An arrow implied by a longer chain is left out (Every supertile → One endless strand runs through Every block merges).
     var E = [['hier', 100, 'sides', 100], ['hier', 14, 'L7', 14], ['L1', 100, 'L3', 75], ['L2', 100, 'L3', 125], ['tile', 100, 'sig', 100],
       ['sides', 100, 'L5', 75], ['L3', 100, 'L5', 125], ['sig', 100, 'T6', 140], ['L5', 125, 'T6', 60],
       ['L5', 75, 'L8', 75], ['T6', 60, 'L8', 135], ['T6', 160, 'TA', 100], ['L8', 100, 'T9', 100],
-      ['L7', 100, 'T9', 'L'], ['T6', 100, 'T9', 'R']];
+      ['L7', 100, 'T9', 'L'], ['str', 50, 'T9', 160], ['str', 150, 'TA', 40]];
     var s = ['<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="The map of the proof: what each step rests on">',
       '<defs><marker id="pm-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10z" fill="#6f877c"/></marker></defs>'];
     E.forEach(function (e) {
