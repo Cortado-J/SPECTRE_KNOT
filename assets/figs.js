@@ -325,7 +325,9 @@
     var K = { stroke: GI, sw: 2 };
     switch (name) {
       case 'spectre':
-        return SK.snapshot({ level: 2, box: SK.boxOf(2, 0.03), width: 260, ribbons: false, tileFill: '#fff3c4', tileEdge: '#3a3a3a', tileW: 0.06, rimColour: '#141414', rimW: 0.12, label: '71 spectre tiles: copies of one shape, never repeating' });
+        var Fs = frame(bbox(T.rim, 0.3), 170);
+        return '<svg viewBox="0 0 ' + Fs.W + ' ' + Fs.H + '" role="img" aria-label="The spectre: one tile, a polygon with 14 equal edges"><g transform="' + Fs.g + '">' +
+          '<path d="' + polyD(T.rim) + '" fill="#fff3c4" stroke="' + GR + '" stroke-width="' + (2.5 / Fs.sc) + '" stroke-linejoin="round"/></g></svg>';
       case 'loop':
         return gsvg('A closed loop: a strand that comes back to its start. There are none.',
           '<ellipse cx="120" cy="74" rx="66" ry="42" fill="none" stroke="#06100d" stroke-width="13"/><ellipse cx="120" cy="74" rx="66" ry="42" fill="none" stroke="' + GR + '" stroke-width="8"/>' +
