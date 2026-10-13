@@ -4,12 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Prove · The Spectre Knot</title>
-<meta name="description" content="Why the Spectre Knot never closes into a loop, and why in the nest tiling drawn here it is one endless strand: the argument in seven steps, at four depths, with diagrams.">
+<meta name="description" content="Why the Spectre Knot never closes into a loop, and why in the nest tiling drawn here it is one endless strand: the argument step by step, from a few easy sentences to the details, with diagrams, and a link to the Lean proof.">
 <link rel="canonical" href="https://cortado-j.github.io/SPECTRE_KNOT/prove.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="The Spectre Knot">
 <meta property="og:title" content="Prove · The Spectre Knot">
-<meta property="og:description" content="Why the Spectre Knot never closes into a loop, and why in the nest tiling drawn here it is one endless strand: the argument in seven steps, at four depths, with diagrams.">
+<meta property="og:description" content="Why the Spectre Knot never closes into a loop, and why in the nest tiling drawn here it is one endless strand: the argument step by step, from a few easy sentences to the details, with diagrams, and a link to the Lean proof.">
 <meta property="og:url" content="https://cortado-j.github.io/SPECTRE_KNOT/prove.html">
 <meta property="og:image" content="https://cortado-j.github.io/SPECTRE_KNOT/img/og-card.png">
 <meta property="og:image:width" content="1200">
@@ -26,7 +26,7 @@
   <section class="wrap page-head">
     <div class="kick">Prove</div>
     <h1>Why it is one strand</h1>
-    <p class="lede">Two theorems, argued in seven steps. Each step opens deeper, from a few easy sentences down to the rigorous version.</p>
+    <p class="lede">Proof of the following two theorems:</p>
   </section>
 
   <section class="wrap" style="padding-block:0 18px;display:grid;gap:14px">
@@ -46,12 +46,12 @@
   </section>
 
   <div class="depthbar"><div class="wrap">
-    <span class="lab">How deep?</span>
-    <div class="depth" role="group" aria-label="Depth for every step">
-      <button type="button" data-d="1"><b>1</b>A few easy steps</button>
-      <button type="button" data-d="2"><b>2</b>An explanation</button>
-      <button type="button" data-d="3"><b>3</b>In detail</button>
-      <button type="button" data-d="4"><b>4</b>Rigorous</button>
+    <span class="lab">How deeply do you want to understand this?</span>
+    <div class="depth" role="group" aria-label="How deeply">
+      <button type="button" data-d="1"><b>1</b><span>A few easier steps<small>the idea, with pictures</small></span></button>
+      <button type="button" data-d="2"><b>2</b><span>More explanation<small>each step explained</small></span></button>
+      <button type="button" data-d="3"><b>3</b><span>In depth<small>the details and the write-up&rsquo;s results</small></span></button>
+      <a class="go-lean" href="https://cortado-j.github.io/SPECTRE_KNOT_PROOF/"><b>4</b><span>A Lean proof<small>on the proof site, for the hard core &rarr;</small></span></a>
     </div>
   </div></div>
 
@@ -290,7 +290,7 @@
 <script>
 (function () {
   'use strict';
-  var NAMES = ['', 'A few easy steps', 'An explanation', 'In detail', 'Rigorous'];
+  var NAMES = ['', 'A few easier steps', 'More explanation', 'In depth'];   // level 3 shows both the detail (.l3) and the write-up's results (.l4)
   // diagrams
   function fig(name, svg) { document.querySelectorAll('[data-fig="' + name + '"]').forEach(function (el) { el.innerHTML = svg; }); }
   fig('nest', SKF.nest({ top: 3, width: 520 }));
@@ -313,7 +313,7 @@
   document.querySelectorAll('[data-zz]').forEach(function (b) { b.addEventListener('click', function () { zn = Math.max(1, Math.min(9, zn + +b.dataset.zz)); zz(); }); });
   zz();
   // rigorous level: links to the proof site (assets/prove-results.js, written by build_site.py)
-  document.querySelectorAll('[data-rig]').forEach(function (el) { el.innerHTML = '<span class="lvtag">Rigorous</span>' + ((window.SKRES || {})[el.dataset.rig] || ''); });
+  document.querySelectorAll('[data-rig]').forEach(function (el) { el.innerHTML = '<span class="lvtag">In the write-up</span>' + ((window.SKRES || {})[el.dataset.rig] || ''); });
 
   // depth: one for the page, overridable per step
   var steps = Array.prototype.slice.call(document.querySelectorAll('.pstep'));
@@ -331,11 +331,11 @@
     })();
   }
   function setStep(st, d) {
-    st.dataset.depth = d;
-    for (var k = 1; k <= 4; k++) st.querySelector('.l' + k).classList.toggle('show', k <= d);
+    d = Math.max(1, Math.min(3, d)); st.dataset.depth = d;
+    for (var k = 1; k <= 4; k++) st.querySelector('.l' + k).classList.toggle('show', k <= (d === 3 ? 4 : d));
     var c = st.querySelector('.pctl'); c.innerHTML = '';
     if (d > 1) { var less = document.createElement('button'); less.type = 'button'; less.textContent = '↑ Less'; less.addEventListener('click', function () { keep(c, function () { setStep(st, d - 1); }); }); c.appendChild(less); }
-    if (d < 4) { var more = document.createElement('button'); more.type = 'button'; more.textContent = 'Go deeper: ' + NAMES[d + 1].toLowerCase() + ' ↓'; more.addEventListener('click', function () { setStep(st, d + 1); }); c.appendChild(more); }
+    if (d < 3) { var more = document.createElement('button'); more.type = 'button'; more.textContent = 'Go deeper: ' + NAMES[d + 1].toLowerCase() + ' ↓'; more.addEventListener('click', function () { setStep(st, d + 1); }); c.appendChild(more); }
   }
   var btns = document.querySelectorAll('.depth button');
   function setAll(d, keep) {
@@ -355,7 +355,9 @@
   var m = /depth-(\d)/.exec(location.hash); if (m) d0 = +m[1];
   // the starting depth is applied without the opening animation, so a link to a step (prove.html#p5) lands on it
   document.body.classList.add('noanim');
-  setAll(Math.max(1, Math.min(4, d0)), true);
+  setAll(Math.max(1, Math.min(3, d0)), true);
+  // Back, Forward and reload: reopen each step at the depth it had (site.js)
+  document.addEventListener('sk:restore', function (e) { var S = (e.detail && e.detail.steps) || {}; steps.forEach(function (st) { if (S[st.id]) setStep(st, S[st.id]); }); });
   requestAnimationFrame(function () { requestAnimationFrame(function () { document.body.classList.remove('noanim'); }); });
 })();
 </script>
