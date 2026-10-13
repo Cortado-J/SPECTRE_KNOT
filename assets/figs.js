@@ -324,6 +324,68 @@
   function gloss(name) {
     var K = { stroke: GI, sw: 2 };
     switch (name) {
+      case 'spectre':
+        return SK.snapshot({ level: 2, box: SK.boxOf(2, 0.03), width: 260, ribbons: false, tileFill: '#fff3c4', tileEdge: '#3a3a3a', tileW: 0.06, rimColour: '#141414', rimW: 0.12, label: '71 spectre tiles: copies of one shape, never repeating' });
+      case 'loop':
+        return gsvg('A closed loop: a strand that comes back to its start. There are none.',
+          '<ellipse cx="120" cy="74" rx="66" ry="42" fill="none" stroke="#06100d" stroke-width="13"/><ellipse cx="120" cy="74" rx="66" ry="42" fill="none" stroke="' + GR + '" stroke-width="8"/>' +
+          '<path d="M44,136L196,14" stroke="' + GA + '" stroke-width="6" stroke-linecap="round"/>' + gt(120, 152, 'never happens', GA, 'middle'));
+      case 'kind':
+        var KL = ['Γ', 'Δ', 'Θ', 'Λ', 'Ξ', 'Π', 'Σ', 'Φ', 'Ψ'], hx = function (cx, cy, r) { var q = []; for (var i = 0; i < 6; i++) { var a = Math.PI / 6 + i * Math.PI / 3; q.push((cx + r * Math.cos(a)).toFixed(1) + ',' + (cy + r * Math.sin(a)).toFixed(1)); } return 'M' + q.join('L') + 'Z'; };
+        return gsvg('The nine kinds of supertile, named by Greek letters', KL.map(function (k, i) {
+          var cx = 50 + (i % 3) * 70, cy = 30 + Math.floor(i / 3) * 48, c = k === 'Δ' ? GA : GR;
+          return '<path d="' + hx(cx, cy, 21) + '" fill="' + GB + '" stroke="' + c + '" stroke-width="2"/><text x="' + cx + '" y="' + (cy + 6) + '" fill="' + (k === 'Δ' ? GA : GI) + '" font-size="17" font-weight="700" text-anchor="middle">' + k + '</text>';
+        }).join('') + gt(120, 158, 'the nest is all Δ', GA, 'middle'), 240, 166);
+      case 'child':
+        var r = 19, w = r * Math.sqrt(3), C = [[0, 0], [w, 0], [-w, 0], [w / 2, -1.5 * r], [-w / 2, -1.5 * r], [w / 2, 1.5 * r], [-w / 2, 1.5 * r], [1.5 * w, -1.5 * r]];
+        var hx2 = function (cx, cy) { var q = []; for (var i = 0; i < 6; i++) { var a = Math.PI / 6 + i * Math.PI / 3; q.push((cx + (r - 1.5) * Math.cos(a)).toFixed(1) + ',' + (cy + (r - 1.5) * Math.sin(a)).toFixed(1)); } return 'M' + q.join('L') + 'Z'; };
+        return gsvg('A parent supertile made of its children, one level down, each with a number',
+          '<rect x="38" y="20" width="166" height="124" rx="16" fill="none" stroke="' + GM + '" stroke-width="1.6" stroke-dasharray="5 4"/>' + gt(46, 15, 'parent', GM) +
+          C.map(function (c, i) { var x = 112 + c[0], y = 86 + c[1], on = i === 1; return '<path d="' + hx2(x, y) + '" fill="' + (on ? '#2a2310' : GB) + '" stroke="' + (on ? GA : GR) + '" stroke-width="1.8"/><text x="' + x + '" y="' + (y + 5) + '" fill="' + (on ? GA : GI) + '" font-size="13" font-weight="700" text-anchor="middle">' + i + '</text>'; }).join('') +
+          gt(120, 158, 'children, numbered', GM, 'middle'), 240, 166);
+      case 'mystic':
+        var S3 = Math.sqrt(3), P8 = [3 - S3 / 2, 1.5], c30 = Math.cos(Math.PI / 6), s30 = Math.sin(Math.PI / 6);
+        var t1 = T.rim, t2 = T.rim.map(function (p) { return [c30 * p[0] - s30 * p[1] + P8[0], s30 * p[0] + c30 * p[1] + P8[1]]; });
+        var bb = bbox(t1.concat(t2), 0.35), Fm = frame(bb, 170);
+        return '<svg viewBox="0 0 ' + Fm.W + ' ' + (Fm.H + 22) + '" role="img" aria-label="The Mystic: a pair of tiles that counts as one child"><g transform="' + Fm.g + '">' +
+          '<path d="' + polyD(t1) + '" fill="#2a2310" stroke="' + GA + '" stroke-width="' + (2 / Fm.sc) + '" stroke-linejoin="round"/>' +
+          '<path d="' + polyD(t2) + '" fill="#13283a" stroke="' + GS + '" stroke-width="' + (2 / Fm.sc) + '" stroke-linejoin="round"/></g>' +
+          gt(Fm.W / 2, Fm.H + 16, 'two tiles, one child', GM, 'middle') + '</svg>';
+      case 'box':
+        var PC = [GA, GS, GR, GP], ports = [[90, 30, 0], [150, 30, 1], [190, 62, 2], [190, 102, 0], [150, 134, 3], [90, 134, 1], [50, 102, 3], [50, 62, 2]];
+        return gsvg('A box: only which rim ends are joined inside matters, not how',
+          '<path d="M70,30H170L190,50V114L170,134H70L50,114V50Z" fill="#0b1512" stroke="' + GM + '" stroke-width="2"/>' +
+          '<text x="120" y="96" fill="' + GM + '" font-size="40" font-weight="700" text-anchor="middle">?</text>' +
+          ports.map(function (p) { return gdot(p[0], p[1], PC[p[2]], 6); }).join('') + gt(120, 156, 'same colour: joined inside', GM, 'middle'), 240, 164);
+      case 'zigzag':
+        return zigzag(3, { width: 300 }).svg;
+      case 'block':
+        var fills = ['#E69F00', '#56B4E9', '#7fd6b0', '#CC79A7'], cw = 64, cells = [0, 1, 2, 3].map(function (k, i) {
+          var b = D.boxes[k], sz = Math.max(b[2] - b[0], b[3] - b[1]), sc = (18 + k * 14) / sz, cx = 24 + i * cw, cy = 64, mx = (b[0] + b[2]) / 2, my = (b[1] + b[3]) / 2;
+          return '<path d="' + D.rims[k] + '" transform="translate(' + cx + ',' + cy + ') scale(' + sc + ',' + (-sc) + ') translate(' + (-mx) + ',' + (-my) + ')" fill="' + fills[k] + '" fill-opacity=".18" stroke="' + fills[k] + '" stroke-width="1.8" vector-effect="non-scaling-stroke"/>' +
+            gt(cx, 128, 'N' + k, fills[k], 'middle') + gt(cx, 146, ['1', '9', '71', '559'][k], GM, 'middle') + (i < 3 ? gt(cx + cw / 2 + 4, 76, '⊂', GM, 'middle') : '');
+        }).join('');
+        return gsvg('The blocks of the nest: N0, one tile, inside N1, inside N2, inside N3', cells + gt(124, 162, 'tiles in each block', GM, 'middle'), 252, 168);
+      case 'thread':
+      case 'labyrinth':
+        var TH = window.SKTHREAD; if (!TH) return '';
+        var all = []; TH.laby.forEach(function (q) { all = all.concat(q); });
+        var Ft = frame(bbox(all, 0.5), 190), sw = 0.8 / Ft.sc, isT = name === 'thread';
+        var body = '<g transform="' + Ft.g + '">' + TH.tiles.map(function (q) { return '<path d="' + polyD(q) + '" fill="#101c18" stroke="#3d5249" stroke-width="' + sw + '"/>'; }).join('') +
+          (isT ? '' : TH.laby.map(function (q) { return '<path d="' + polyD(q) + '" fill="' + GA + '" fill-opacity=".32" stroke="' + GA + '" stroke-width="' + (1.2 * sw) + '"/>'; }).join('')) +
+          '<path d="' + polyD(TH.start) + '" fill="' + (isT ? '#1d3a31' : 'none') + '" stroke="' + GR + '" stroke-width="' + (2.4 * sw) + '"/>' +
+          (isT ? '<path d="' + TH.d + '" fill="none" stroke="#06100d" stroke-width="' + (5 * sw) + '" stroke-linecap="round" stroke-linejoin="round"/><path d="' + TH.d + '" fill="none" stroke="' + GA + '" stroke-width="' + (2.6 * sw) + '" stroke-linecap="round" stroke-linejoin="round"/>' : '') + '</g>';
+        return '<svg viewBox="0 0 ' + Ft.W + ' ' + (Ft.H + 22) + '" role="img" aria-label="' + (isT ? 'The starting tile’s thread: ' + TH.pieces + ' pieces' : 'The starting tile’s labyrinth: ' + TH.labyN + ' tiles') + '">' + body +
+          gt(Ft.W / 2, Ft.H + 16, isT ? 'thread: ' + TH.pieces + ' pieces' : 'labyrinth: ' + TH.labyN + ' tiles', isT ? GA : GA, 'middle') + '</svg>';
+      case 'lean':
+        var mono = ' font-family="ui-monospace, Menlo, Consolas, monospace" font-size="11.5"';
+        return gsvg('Lean: the statements of the two theorems, each checked by Lean',
+          '<rect x="14" y="16" width="212" height="104" rx="10" fill="#0b1512" stroke="' + GM + '" stroke-width="1.4"/>' +
+          '<text x="26" y="42"' + mono + ' fill="' + GS + '">theorem</text><text x="84" y="42"' + mono + ' fill="' + GI + '">theoremA_strand</text>' +
+          '<text x="26" y="62"' + mono + ' fill="' + GM + '">  … := by …</text>' +
+          '<text x="26" y="88"' + mono + ' fill="' + GS + '">theorem</text><text x="84" y="88"' + mono + ' fill="' + GI + '">theoremB_strand</text>' +
+          '<text x="26" y="108"' + mono + ' fill="' + GM + '">  … := by …</text>' +
+          '<path d="M60,140l8,8l16,-18" fill="none" stroke="#F0E442" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>' + gt(92, 146, 'checked by Lean', '#F0E442'), 240, 160);
       case 'ribbon':
         return tile({ width: 260, pad: 0.3, label: 'The tile and its ribbon' });
       case 'piece':
