@@ -414,7 +414,7 @@
           '<path d="M40,140V40H200V140Z" fill="' + GB + '"/><path d="M40,140V40H200V140" fill="none" stroke="' + GI + '" stroke-width="2.5"/>' +
           grib('M75,6 L75,40 C75,70 95,75 120,100 C145,125 180,70 200,70 L236,70', GS, true) +
           grib('M165,6 L165,40 C165,70 145,75 120,100 C95,125 60,70 40,70 L4,70', GA) +
-          gdot(40, 40, GI, 5) + gdot(200, 40, GI, 5) + [[40, 70], [75, 40], [165, 40], [200, 70]].map(function (q) { return gring(q[0], q[1], GA); }).join('') +
+          gdot(40, 40, GI, 5) + gdot(200, 40, GI, 5) + [[40, 70], [75, 40], [165, 40], [200, 70]].map(function (q) { return '<circle cx="' + q[0] + '" cy="' + q[1] + '" r="3.2" fill="#0d1a16" stroke="' + GI + '" stroke-width="1.6"/>'; }).join('') +
           gt(32, 32, 'A', GI, 'end') + gt(208, 32, 'B', GI) + gt(120, 158, 'they cross inside', GM, 'middle'), 240, 166);
       case 'signature':
         return signature(1, { width: 260, label: 'The signature of a 9-tile supertile' });
