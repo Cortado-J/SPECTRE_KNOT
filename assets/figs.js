@@ -410,10 +410,12 @@
           grib('M136,12 L136,50 C136,92 170,82 210,82', GS) + gdot(170, 50, GI, 5) + gring(136, 50, GA) + gring(170, 82, GA) +
           gt(176, 44, 'corner') + gt(30, 140, 'inside the supertile') + gt(204, 100, 'out', GS, 'end') + gt(118, 26, 'in', GS, 'end'));
       case 'crossover':
-        return gsvg('The crossover: two ribbons cross on the edge AB instead of hooking',
-          '<path d="M30,150L70,50H170L210,150Z" fill="' + GB + '"/><path d="M30,150L70,50H170L210,150" fill="none" stroke="' + GI + '" stroke-width="2.5"/>' +
-          grib('M28,72 C75,97 138,106 150,22', GA) + grib('M212,72 C165,97 102,106 90,22', GS, true) +
-          gdot(70, 50, GI, 5) + gdot(170, 50, GI, 5) + gt(64, 40, 'A', GI, 'end') + gt(176, 40, 'B', GI) + gt(120, 140, 'the two ribbons cross', GM, 'middle'));
+        return gsvg('The crossover: at corners A and B the two ribbons do not hook; they cross inside the supertile',
+          '<path d="M40,140V40H200V140Z" fill="' + GB + '"/><path d="M40,140V40H200V140" fill="none" stroke="' + GI + '" stroke-width="2.5"/>' +
+          grib('M75,6 L75,40 C75,70 95,75 120,100 C145,125 180,70 200,70 L236,70', GS, true) +
+          grib('M165,6 L165,40 C165,70 145,75 120,100 C95,125 60,70 40,70 L4,70', GA) +
+          gdot(40, 40, GI, 5) + gdot(200, 40, GI, 5) + [[40, 70], [75, 40], [165, 40], [200, 70]].map(function (q) { return gring(q[0], q[1], GA); }).join('') +
+          gt(32, 32, 'A', GI, 'end') + gt(208, 32, 'B', GI) + gt(120, 158, 'they cross inside', GM, 'middle'), 240, 166);
       case 'signature':
         return signature(1, { width: 260, label: 'The signature of a 9-tile supertile' });
       case 'run':
