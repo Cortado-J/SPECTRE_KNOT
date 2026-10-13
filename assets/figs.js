@@ -168,15 +168,15 @@
     s.push('<text x="10" y="24" fill="#a3b8ae" font-size="13">block A</text><text x="10" y="' + (H - 10) + '" fill="#a3b8ae" font-size="13">block B</text>');
     s.push('<path d="M' + m + ',' + mid + 'H' + (W - m) + '" stroke="#e8f1ec" stroke-width="2.5"/>');
     for (var i = 0; i <= n; i++) s.push('<circle cx="' + (m + i * step) + '" cy="' + mid + '" r="' + (i === 0 || i === n ? 6 : 4) + '" fill="' + (i === 0 || i === n ? '#E69F00' : '#e8f1ec') + '"/>');
-    // ribbon starting in A near the first corner; each edge: cross on a slant; each corner: hook back in the other block
+    // ribbon starting in A near the first corner; along each edge it crosses the run on a slant, and at each corner it
+    // turns back round it in the other block: one smooth wave, horizontal at every turn, so the turns are round
     function ribbon(startTop, col, dash) {
-      var d = '', side = startTop ? -1 : 1, y = function (sd) { return mid + sd * 34; };
-      d = 'M' + (m - 26) + ',' + y(side);
+      var side = startTop ? -1 : 1, y = function (sd) { return mid + sd * 40; };
+      var d = 'M' + (m - 26) + ',' + y(side) + ' L' + m + ',' + y(side);
       for (var j = 0; j < n; j++) {
         var x0 = m + j * step, x1 = x0 + step;
-        d += ' C' + (x0 + step * 0.35) + ',' + y(side) + ' ' + (x0 + step * 0.65) + ',' + y(-side) + ' ' + (x1 - step * 0.12) + ',' + y(-side);
+        d += ' C' + (x0 + step * 0.5) + ',' + y(side) + ' ' + (x1 - step * 0.5) + ',' + y(-side) + ' ' + x1 + ',' + y(-side);
         side = -side;
-        if (j < n - 1) d += ' Q' + (x1 + step * 0.05) + ',' + y(side * 1.9) + ' ' + (x1 + step * 0.12) + ',' + y(side);
       }
       d += ' L' + (W - m + 26) + ',' + y(side);
       s.push('<path d="' + d + '" fill="none" stroke="' + col + '" stroke-width="5" stroke-linecap="round"' + (dash ? ' stroke-dasharray="10 7"' : '') + ' class="zz"/>');
@@ -317,7 +317,7 @@
       case 'crossover':
         return gsvg('The crossover: two ribbons cross on the edge AB instead of hooking',
           '<path d="M30,150L70,50H170L210,150Z" fill="' + GB + '"/><path d="M30,150L70,50H170L210,150" fill="none" stroke="' + GI + '" stroke-width="2.5"/>' +
-          grib('M28,72 L58,80 C95,95 130,90 146,50 L150,22', GA) + grib('M212,72 L182,80 C145,95 110,90 94,50 L90,22', GS, true) +
+          grib('M28,72 C75,97 138,106 150,22', GA) + grib('M212,72 C165,97 102,106 90,22', GS, true) +
           gdot(70, 50, GI, 5) + gdot(170, 50, GI, 5) + gt(64, 40, 'A', GI, 'end') + gt(176, 40, 'B', GI) + gt(120, 140, 'the two ribbons cross', GM, 'middle'));
       case 'signature':
         return signature(1, { width: 260, label: 'The signature of a 9-tile supertile' });
@@ -340,8 +340,10 @@
         return nest({ top: 4, width: 260, labels: false });
       case 'move':
         var runRow = function (n, y, lab) {   // a shared run of n edges and the ribbon zigzagging across it
-          var x0 = 30, x1 = 210, st = (x1 - x0) / n, d = 'M' + (x0 - 14) + ',' + (y - 12), out = '', side = -1;
-          for (var i = 0; i < n; i++) { var m = x0 + (i + 0.5) * st; d += ' L' + m + ',' + y + ' L' + (x0 + (i + 1) * st - 2) + ',' + (y - 12 * side); side = -side; }
+          // one smooth wave: round turns at the corners, crossing the run in the middle of each edge
+          var x0 = 30, x1 = 210, st = (x1 - x0) / n, side = -1, d = 'M' + (x0 - 14) + ',' + (y + 12 * side) + ' L' + x0 + ',' + (y + 12 * side), out = '';
+          for (var i = 0; i < n; i++) { var a = x0 + i * st, b = a + st; d += ' C' + (a + st / 2) + ',' + (y + 12 * side) + ' ' + (b - st / 2) + ',' + (y - 12 * side) + ' ' + b + ',' + (y - 12 * side); side = -side; }
+          d += ' L' + (x1 + 14) + ',' + (y + 12 * side);
           for (i = 0; i <= n; i++) out += gdot(x0 + i * st, y, i === 0 || i === n ? GA : GI, i === 0 || i === n ? 4.5 : 3);
           return '<path d="M' + x0 + ',' + y + 'H' + x1 + '" stroke="' + GM + '" stroke-width="2"/>' + '<path d="' + d + '" fill="none" stroke="' + GS + '" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"/>' + out + gt(120, y - 22, lab, GI, 'middle');
         };
