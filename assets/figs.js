@@ -117,6 +117,71 @@
     s.push('</svg>'); return s.join('');
   }
 
+  /* interactive: slide a moves the one strand along by p pieces, slide b by q; a done q times and b backwards p
+     times sends every piece to itself (along the strand) yet moves the plane (in the plane). Fills element el. */
+  function slides(el) {
+    var p = 2, q = 3, prog = 1, timer = null, A = [1, 0], B = [0.38, 0.92];
+    var SKY = '#56B4E9', PINK = '#CC79A7', AMB = '#E69F00', INK = '#e8f1ec', MUT = '#a3b8ae', FAINT = '#6f877c';
+    el.innerHTML = '<div class="slctl">' +
+      '<span class="slst"><span>slide <b style="color:' + SKY + '">a</b> moves it along by p =</span><b class="slv" data-v="p" style="color:' + SKY + '"></b><span class="slud"><button data-k="p" data-d="1" aria-label="more">&#9650;</button><button data-k="p" data-d="-1" aria-label="fewer">&#9660;</button></span></span>' +
+      '<span class="slst"><span>slide <b style="color:' + PINK + '">b</b> moves it along by q =</span><b class="slv" data-v="q" style="color:' + PINK + '"></b><span class="slud"><button data-k="q" data-d="1" aria-label="more">&#9650;</button><button data-k="q" data-d="-1" aria-label="fewer">&#9660;</button></span></span>' +
+      '<button class="btn small ghost" data-play>&#9654; Step through</button></div>' +
+      '<div class="slgrid"><div><div class="small mut">In the plane</div><div class="slplane"></div></div><div><div class="small mut">Along the strand</div><div class="slline"></div></div></div>' +
+      '<div class="slsum"></div>';
+    function moves() { var m = [], i; for (i = 0; i < q; i++) m.push({ k: 'a', d: A, s: p }); for (i = 0; i < p; i++) m.push({ k: 'b', d: [-B[0], -B[1]], s: -q }); return m; }
+    function mk(id, col) { return '<marker id="' + id + '" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="4" markerHeight="4" orient="auto"><path d="M0,0L10,5L0,10z" fill="' + col + '"/></marker>'; }
+    function plane(k) {
+      var M = moves(), sc = 46, pts = [[0, 0]], i, j;
+      M.forEach(function (m) { var l = pts[pts.length - 1]; pts.push([l[0] + m.d[0], l[1] + m.d[1]]); });
+      var xs = pts.map(function (t) { return t[0]; }), ys = pts.map(function (t) { return t[1]; });
+      var x0 = Math.min.apply(0, xs) - 1, x1 = Math.max.apply(0, xs) + 1, y0 = Math.min.apply(0, ys) - 1, y1 = Math.max.apply(0, ys) + 0.8;
+      var X = function (t) { return ((t[0] - x0) * sc).toFixed(1); }, Y = function (t) { return ((y1 - t[1]) * sc).toFixed(1); };
+      var s = ['<svg width="' + ((x1 - x0) * sc).toFixed(0) + '" viewBox="0 0 ' + ((x1 - x0) * sc).toFixed(0) + ' ' + ((y1 - y0) * sc).toFixed(0) + '" role="img" aria-label="The combined slide on the lattice of the repeating pattern"><defs>' + mk('sla', SKY) + mk('slb', PINK) + mk('slx', AMB) + '</defs>'];
+      for (j = -12; j <= 12; j++) for (i = -20; i <= 20; i++) { var c = [i * A[0] + j * B[0], i * A[1] + j * B[1]]; if (c[0] >= x0 && c[0] <= x1 && c[1] >= y0 && c[1] <= y1) s.push('<circle cx="' + X(c) + '" cy="' + Y(c) + '" r="2.6" fill="' + FAINT + '"/>'); }
+      var n = Math.round(k * M.length);
+      for (i = 0; i < n; i++) s.push('<line x1="' + X(pts[i]) + '" y1="' + Y(pts[i]) + '" x2="' + X(pts[i + 1]) + '" y2="' + Y(pts[i + 1]) + '" stroke="' + (M[i].k === 'a' ? SKY : PINK) + '" stroke-width="3" stroke-linecap="round" marker-end="url(#' + (M[i].k === 'a' ? 'sla' : 'slb') + ')"/>');
+      s.push('<circle cx="' + X(pts[0]) + '" cy="' + Y(pts[0]) + '" r="6" fill="#0d1a16" stroke="' + INK + '" stroke-width="2"/><text x="' + X(pts[0]) + '" y="' + (Y(pts[0]) - 11) + '" text-anchor="middle" font-size="13" fill="' + INK + '">start</text>');
+      if (n === M.length) { var e = pts[pts.length - 1]; s.push('<line x1="' + X(pts[0]) + '" y1="' + Y(pts[0]) + '" x2="' + X(e) + '" y2="' + Y(e) + '" stroke="' + AMB + '" stroke-width="2.5" stroke-dasharray="6 5" marker-end="url(#slx)"/><circle cx="' + X(e) + '" cy="' + Y(e) + '" r="6" fill="' + AMB + '"/><text x="' + X(e) + '" y="' + (+Y(e) + 22) + '" text-anchor="middle" font-size="13" font-weight="700" fill="' + AMB + '">end, not the start</text>'); }
+      return s.join('') + '</svg>';
+    }
+    function line(k) {
+      var M = moves(), lo = -1, hi = p * q + 1, sp = Math.max(22, Math.min(44, 360 / (hi - lo))), W = (hi - lo) * sp + 40, ay = 120, H = 240, i;
+      var X = function (v) { return 20 + (v - lo) * sp; };
+      var s = ['<svg width="' + W + '" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="The same slides as moves along the numbered pieces of the strand"><defs>' + mk('sla2', SKY) + mk('slb2', PINK) + '</defs>'];
+      s.push('<line x1="' + (X(lo) - 10) + '" y1="' + ay + '" x2="' + (X(hi) + 10) + '" y2="' + ay + '" stroke="' + AMB + '" stroke-width="4" stroke-linecap="round"/>');
+      for (i = lo; i <= hi; i++) s.push('<circle cx="' + X(i) + '" cy="' + ay + '" r="4" fill="#0d1a16" stroke="' + AMB + '" stroke-width="2"/><text x="' + X(i) + '" y="' + (ay + 26) + '" text-anchor="middle" font-size="12" fill="' + MUT + '">' + i + '</text>');
+      var pos = 0, na = 0, nb = 0, n = Math.round(k * M.length);
+      for (i = 0; i < n; i++) {
+        var m = M[i], x1 = X(pos), x2 = X(pos + m.s), up = m.k === 'a', lane = up ? na++ % 2 : nb++ % 2;
+        var h = (up ? -1 : 1) * (28 + 14 * lane + Math.abs(x2 - x1) * 0.12) * 1.6; pos += m.s;
+        s.push('<path d="M' + x1 + ',' + (ay + (up ? -6 : 6)) + 'Q' + (x1 + x2) / 2 + ',' + (ay + h) + ' ' + x2 + ',' + (ay + (up ? -6 : 6)) + '" fill="none" stroke="' + (up ? SKY : PINK) + '" stroke-width="2.5" marker-end="url(#' + (up ? 'sla2' : 'slb2') + ')"/>');
+      }
+      s.push('<circle cx="' + X(pos) + '" cy="' + ay + '" r="7" fill="' + (n === M.length ? AMB : INK) + '"/>');
+      s.push('<text x="' + X(lo) + '" y="18" font-size="13" font-weight="700" fill="' + SKY + '">a: +' + p + ' pieces, done ' + q + ' times</text>');
+      s.push('<text x="' + X(lo) + '" y="' + (H - 8) + '" font-size="13" font-weight="700" fill="' + PINK + '">b backwards: &#8722;' + q + ' pieces, done ' + p + ' times</text>');
+      return s.join('') + '</svg>';
+    }
+    function draw() {
+      el.querySelector('[data-v=p]').textContent = p; el.querySelector('[data-v=q]').textContent = q;
+      el.querySelector('.slplane').innerHTML = plane(prog); el.querySelector('.slline').innerHTML = line(prog);
+      el.querySelector('.slsum').innerHTML = '<p>Along the strand: <b style="color:' + SKY + '">' + q + ' &times; (+' + p + ')</b> + <b style="color:' + PINK + '">' + p + ' &times; (&#8722;' + q + ')</b> = <b style="color:' + AMB + '">0</b>, so every piece would be back where it started.</p>' +
+        '<p>In the plane: <b style="color:' + SKY + '">a, ' + q + ' times</b>, then <b style="color:' + PINK + '">b backwards, ' + p + ' times</b>, ends <b style="color:' + AMB + '">somewhere else</b>, so every piece has moved. Both can&rsquo;t be true.</p>';
+    }
+    function stop() { if (timer) { clearInterval(timer); timer = null; } }
+    el.addEventListener('click', function (ev) {
+      var t = ev.target.closest('button'); if (!t) return;
+      if (t.hasAttribute('data-play')) {
+        stop(); if (matchMedia('(prefers-reduced-motion: reduce)').matches) { prog = 1; draw(); return; }
+        var i = 0, n = p + q; prog = 0; draw();
+        timer = setInterval(function () { i++; prog = i / n; draw(); if (i >= n) stop(); }, 550); return;
+      }
+      var d = +t.getAttribute('data-d'); stop(); prog = 1;
+      if (t.getAttribute('data-k') === 'p') p = Math.max(1, Math.min(5, p + d)); else q = Math.max(1, Math.min(5, q + d));
+      draw();
+    });
+    draw();
+  }
+
   /* the signature of a block, read off the real ribbons: each piece joins two rim ports.
      Hooks (blue) join the two ports by one corner; the crossover (amber) is the one exception. */
   function signature(k, o) {
@@ -469,5 +534,5 @@
     }
     return '';
   }
-  window.SKF = { tile: tile, places: places, curved: curved, tree: tree, periodic: periodic, signature: signature, ports: ports, zigzag: zigzag, nest: nest, scope: scope, proofMap: proofMap, lengthBar: lengthBar, parityTable: parityTable, gloss: gloss };
+  window.SKF = { tile: tile, places: places, curved: curved, tree: tree, periodic: periodic, slides: slides, signature: signature, ports: ports, zigzag: zigzag, nest: nest, scope: scope, proofMap: proofMap, lengthBar: lengthBar, parityTable: parityTable, gloss: gloss };
 })();

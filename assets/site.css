@@ -166,6 +166,20 @@ main { display: block; }
 .faq .fig { background: var(--bg2); border: 1px solid var(--line); border-radius: var(--r-s); padding: 12px; display: grid; place-items: center; }
 .faq .fig svg { width: 100%; max-height: 360px; height: auto; }
 .faq .fig figcaption { font-size: .85rem; color: var(--faint); margin-top: 8px; text-align: center; }
+.faq .slides { background: var(--bg2); border: 1px solid var(--line); border-radius: var(--r-s); padding: 14px; display: grid; gap: 12px; }
+.slctl { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: center; color: var(--mut); font-size: .95rem; }
+.slst { display: inline-flex; align-items: center; gap: 8px; }
+.slv { font-size: 1.2rem; min-width: 1em; text-align: center; }
+.slud { display: inline-flex; flex-direction: column; gap: 2px; }
+.slud button { border: 1px solid var(--line); background: var(--surf); color: var(--ink); border-radius: 6px; font-size: .6rem; line-height: 1; padding: 3px 7px; cursor: pointer; }
+.slud button:hover { border-color: var(--mint); }
+.slud button:focus-visible, .slides .btn:focus-visible { outline: 2px solid var(--mint); outline-offset: 2px; }
+.slgrid { display: grid; gap: 14px; grid-template-columns: minmax(0, 1fr); }
+.slgrid > div { min-width: 0; overflow-x: auto; }
+.slgrid svg { max-width: 100%; height: auto; display: block; margin-inline: auto; }
+.slline svg { max-width: none; }
+.slsum p { color: var(--mut); margin: 0; }
+@media (min-width: 700px) { .slgrid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
 @media (min-width: 860px) { .faq .body.withfig { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; } }
 .flash { animation: flash 1.6s ease; }
 @keyframes flash { 0% { box-shadow: 0 0 0 0 rgba(230,159,0,.7); } 100% { box-shadow: 0 0 0 14px rgba(230,159,0,0); } }

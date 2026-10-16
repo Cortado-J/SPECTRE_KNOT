@@ -144,11 +144,12 @@
         <div class="body withfig">
           <div class="stack" style="gap:12px">
             <p>In a repeating pattern, there are two different slides, <b>a</b> and <b>b</b>, that each bring the whole pattern back onto itself. A slide moves every strand onto a strand.</p>
-            <p>If there were only one strand, both slides would have to move that one strand onto itself: slide it along its own length, in two independent directions at once. A single line cannot do that. Combining the two slides cleverly gives a shift that moves the strand along itself by a tiny amount but moves the plane by a full step, which is impossible.</p>
+            <p>If there were only one strand, both slides would have to move that one strand onto itself, so each would run it along its own length: <b>a</b> by some number of pieces, p, and <b>b</b> by some other number, q. However cleverly the strand winds, this fails. Do <b>a</b> q times, then <b>b</b> backwards p times. Along the strand that comes to q&times;p &minus; p&times;q = 0, so every piece is back where it started. But in the plane the two slides point different ways, so the combined slide is not zero and moves every piece. Both can&rsquo;t be true.</p>
             <p>So it takes a tiling that never repeats. The spectre&rsquo;s is one.</p>
           </div>
           <figure class="fig" id="f-periodic"><figcaption>Slide <b>a</b> runs a strand along itself. Slide <b>b</b> lands it on a different strand.</figcaption></figure>
         </div>
+        <div class="body"><div class="slides" id="f-slides" aria-label="Try it: the two slides, in the plane and along the strand"></div></div>
       </details>
 
       <details id="loops">
@@ -197,6 +198,7 @@
   var strip = [0, 1, 2].map(function (k) { return '<div style="flex:1;min-width:0">' + SK.snapshot({ level: k, box: SK.boxOf(k, 0.06), width: 300, mode: 't', markTile: k > 0, markW: k === 2 ? 0.12 : 0.06, tileEdge: 'rgba(205,235,220,0.3)', label: SK.LV[k] }) + '<div class="small mut" style="text-align:center">' + SK.LV[k] + ': ' + [14, 5, 2][k] + (k ? ' strands' : ' pieces') + '</div></div>'; }).join('');
   put('f-why', '<div style="display:flex;gap:8px;align-items:end;width:100%">' + strip + '</div>');
   put('f-periodic', SKF.periodic({ width: 520 }));
+  SKF.slides(document.getElementById('f-slides'));
 })();
 </script>
 </body>
