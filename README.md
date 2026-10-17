@@ -8,7 +8,7 @@ This repository is the published website (GitHub Pages). It is generated; the so
 
 - `index.html`: home, with the zoom from one tile out to 34,649 tiles
 - `see.html`: watch the strands join, one block at a time
-- `understand.html`: questions and answers, with diagrams
+- `understand.html`: questions and answers, with diagrams, in five sections (`understand-*.html`)
 - `make.html`: the fold-up tile and the downloads
 - `prove.html`: the proof, at four depths
 - `made.html`: how AI was used, who did what, and what has been checked

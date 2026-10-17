@@ -378,3 +378,84 @@ a.res { white-space: nowrap; }
 @media (max-width: 760px) { .depthbar .lab { order: 0; } .mapbtn { order: 1; } .depth { order: 2; } }
 .toprow > p { padding-right: 64px; }   /* clear of the wire down to the map button */
 .gcard.nofig { align-content: start; }
+
+/* Understand: a contents page of five section cards, each with a small picture of an idea from its page */
+.ucards { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); }
+.ucard { background: var(--surf); border: 1px solid var(--line); border-radius: var(--r); padding: 14px 14px 18px; display: grid; gap: 10px; align-content: start; transition: border-color .25s, background .25s; }
+.ucard:hover, .ucard:focus-within { border-color: var(--mint); background: var(--surf2); }
+.ucard > a { display: grid; gap: 12px; color: var(--ink); text-decoration: none; }
+.uthumb { height: 128px; background: var(--bg2); border: 1px solid var(--line); border-radius: var(--r-s); display: grid; place-items: center; overflow: hidden; padding: 8px; }
+.uthumb svg { width: 100%; height: 100%; display: block; }
+.ucard h2 { font-size: 1.28rem; display: flex; gap: 10px; align-items: center; padding-inline: 4px; }
+.ucard h2 span, .toc.usec a span { display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: var(--surf2); color: var(--ink); font-size: .82rem; font-weight: 800; flex: none; }
+.ucard:hover h2 span { background: var(--mint); color: #062018; }
+.ucard p { color: var(--mut); font-size: .95rem; padding-inline: 4px; }
+.uqs { list-style: none; margin: 0; padding: 0 4px; display: grid; gap: 3px; font-size: .9rem; }
+.uqs a { color: var(--mut); text-decoration-color: var(--faint); }
+.uqs a:hover { color: var(--ink); }
+.uqs li::before { content: "?"; color: var(--mint); font-weight: 800; margin-right: 8px; }
+.kick a { color: inherit; text-decoration: none; }
+.kick a:hover { text-decoration: underline; }
+.toc.usec a[aria-current="page"] { color: #062018; background: var(--mint); border-color: var(--mint); }
+.toc.usec a[aria-current="page"] span { background: #062018; color: var(--mint); }
+.upn { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; margin-top: 26px; }
+.upn a { flex: 0 1 auto; }
+.upn .all { order: 0; }
+@media (max-width: 600px) { .upn { display: grid; grid-template-columns: 1fr; } .upn a { justify-content: center; } }
+.faq h2.ugroup { font-size: .78rem; letter-spacing: .14em; text-transform: uppercase; color: var(--mint); font-weight: 700; margin: 18px 0 2px; }
+.faq h2.ugroup:first-child { margin-top: 0; }
+.faq h2.ugroup small { display: block; text-transform: none; letter-spacing: 0; color: var(--mut); font-weight: 500; font-size: .95rem; margin-top: 4px; }
+
+/* Understand, section 4: the figures of why every level behaves the same. Odd and even as on Prove (odd amber,
+   dashed; even mint); long and short stretches sky and pink; corners black and white, outlined. */
+.lv { --odd: #E69F00; --even: #7fd6b0; --long: #56B4E9; --short: #CC79A7; --cb: #0a1411; --cw: #f4f6f8; --cs: #c9d2dc;
+  --panel: var(--bg2); --fill: var(--surf2); --rule: #2e4a40; --muted: var(--mut); --fg: var(--ink); --ring: #F0E442; }
+.lv .lfig { background: var(--bg2); border: 1px solid var(--line); border-radius: var(--r-s); padding: 14px; display: grid; gap: 12px; margin: 0; min-width: 0; }
+.lv .lfig svg { display: block; width: 100%; height: auto; max-width: 780px; margin-inline: auto; }
+.lv .lfig .wide > svg { max-height: 74vh; }
+/* on a phone the diagrams with words in them keep a readable size and scroll sideways */
+.lv #l-asm, .lv #l-rows, .lv #l-bar { min-width: 600px; } .lv #l-dom, .lv #l-loops { min-width: 620px; }
+.lv #l-zz, .lv #l-fib { min-width: 540px; } .lv #l-real { min-width: 480px; }
+.lv .cd { display: inline-block; width: .74em; height: .74em; border-radius: 50%; border: 1.5px solid var(--cs); vertical-align: -.06em; }
+.lv .cd.b { background: var(--cb); } .lv .cd.w { background: var(--cw); }
+.lv .lfig svg text { font-family: var(--font); font-variant-numeric: tabular-nums; }
+.lv .lfig figcaption { font-size: .86rem; color: var(--faint); max-width: 76ch; }
+.lv .body p b:not([class]) { color: var(--ink); }
+.lv .wide { overflow-x: auto; min-width: 0; }
+.lv .controls { display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center; font-size: .92rem; color: var(--mut); }
+.lv .stepper { display: inline-flex; align-items: center; gap: 8px; }
+.lv .stepper b { font-size: 1.2rem; min-width: 1em; text-align: center; color: var(--ink); font-variant-numeric: tabular-nums; }
+.lv .ud { display: inline-flex; flex-direction: column; gap: 2px; }
+.lv .ud button { border: 1px solid var(--line); background: var(--surf); color: var(--ink); border-radius: 6px; font-size: .6rem; line-height: 1; padding: 3px 7px; }
+.lv .ud button:hover { border-color: var(--mint); }
+.lv .pick { border: 1px solid var(--line); background: var(--surf); color: var(--mut); border-radius: 999px; padding: 4px 12px; font-weight: 650; font-size: .88rem; font-variant-numeric: tabular-nums; }
+.lv .pick:hover { border-color: var(--mint); color: var(--ink); }
+.lv .pick[aria-pressed="true"] { background: var(--mint); color: #062018; border-color: var(--mint); }
+.lv .lkey { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: .85rem; color: var(--mut); align-items: center; }
+.lv .lkey svg { display: inline-block; width: 34px; height: 10px; vertical-align: middle; margin-right: 6px; }
+.lv .tally { font-size: .95rem; color: var(--mut); font-variant-numeric: tabular-nums; }
+.lv .tally b { color: var(--ink); }
+.lv .odd, .lv .tally b.odd { color: var(--odd); } .lv .even, .lv .tally b.even { color: var(--even); }
+.lv .lp { color: var(--long); } .lv .sp { color: var(--short); }
+.lv .recipes { display: grid; gap: 4px; font-size: .9rem; font-variant-numeric: tabular-nums; }
+.lv .rrow { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 5px 0; border-bottom: 1px solid var(--line); }
+.lv .chip { display: inline-flex; align-items: baseline; gap: 5px; border: 1.5px solid; border-radius: 999px; padding: 1px 9px; font-weight: 650; }
+.lv .chip.odd { border-color: var(--odd); color: var(--odd); border-style: dashed; }
+.lv .chip.even { border-color: var(--even); color: var(--even); }
+.lv .chip i { font-style: normal; font-size: 1.02rem; }
+.lv .par { color: var(--faint); margin-left: 6px; }
+.lv .tri { display: grid; grid-template-columns: minmax(0, .55fr) minmax(0, 1fr) minmax(0, 1.45fr); gap: 16px; align-items: end; }
+.lv .tri > div { min-width: 0; display: grid; gap: 6px; }
+.lv .small-l { font-size: .8rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--faint); }
+@media (max-width: 720px) { .lv .tri { grid-template-columns: minmax(0, 1fr); } }
+.lv .cgrid { border-collapse: collapse; font-size: .88rem; font-variant-numeric: tabular-nums; }
+.lv .cgrid th { color: var(--faint); font-weight: 650; padding: 3px 8px; text-align: center; }
+.lv .cgrid td { padding: 0; text-align: center; }
+.lv .cgrid button { background: none; border: 1px solid transparent; border-radius: 6px; padding: 3px 6px; white-space: nowrap; color: var(--ink); }
+.lv .cgrid button span { color: var(--faint); }
+.lv .cgrid button:hover { border-color: var(--line); }
+.lv .cgrid button[aria-pressed="true"] { border-color: var(--mint); background: var(--surf); }
+.lv .zoomsvg { background: var(--bg); border: 1px solid var(--line); border-radius: 8px; touch-action: pan-y; }
+.lv .lnote { border-left: 3px solid var(--line); padding-left: 14px; color: var(--mut); font-size: .95rem; max-width: 72ch; }
+.lv .dom { transition: transform .5s cubic-bezier(.5,.1,.3,1.3); transform-box: view-box; }
+.lv .zz-range { width: min(320px, 52vw); accent-color: var(--mint); }

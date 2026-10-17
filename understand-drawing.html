@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The drawing on each tile · Understand · The Spectre Knot</title>
+<meta name="description" content="The drawing on each tile of the Spectre Knot: its fourteen pieces of ribbon, how they meet across edges, and why there is just one crossing.">
+<link rel="canonical" href="https://cortado-j.github.io/SPECTRE_KNOT/understand-drawing.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="The Spectre Knot">
+<meta property="og:title" content="The drawing on each tile · Understand · The Spectre Knot">
+<meta property="og:description" content="The drawing on each tile of the Spectre Knot: its fourteen pieces of ribbon, how they meet across edges, and why there is just one crossing.">
+<meta property="og:url" content="https://cortado-j.github.io/SPECTRE_KNOT/understand-drawing.html">
+<meta property="og:image" content="https://cortado-j.github.io/SPECTRE_KNOT/img/og-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="The Spectre Knot: one tile, one endless strand">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="img/tile-icon.png">
+<link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="top"><div class="wrap"><a class="brand" href="index.html"><svg viewBox="-1.07 -2.57 5.13 3.63" aria-hidden="true"><g transform="scale(1,-1)"><path d="M0.000,0.000L1.000,0.000L1.500,-0.866L2.366,-0.366L2.366,0.634L3.366,0.634L3.866,1.500L3.000,2.000L2.134,1.500L1.634,2.366L0.634,2.366L-0.366,2.366L-0.866,1.500L0.000,1.000Z" fill="none" stroke="#7fd6b0" stroke-width=".26" stroke-linejoin="round"/><path d="M.5,.35C1.4,.2 1.6,1.3 2.6,1.05" fill="none" stroke="#E69F00" stroke-width=".3" stroke-linecap="round"/></g></svg><span>The Spectre Knot</span></a><nav class="nav" aria-label="Main"><a href="see.html">See</a><a href="understand.html" aria-current="page">Understand</a><a href="make.html">Make</a><a href="prove.html">Prove</a></nav><a class="aibtn" href="made.html">Made with AI</a></div></header>
+<main id="main">
+  <section class="wrap page-head">
+    <div class="kick"><a href="understand.html">Understand</a> &middot; 2 of 5</div>
+    <h1>The drawing on each tile</h1>
+    <p class="lede">The fourteen pieces of ribbon on every tile, how they meet across the edges, and why there is just one crossing.</p>
+    <nav class="toc usec" aria-label="The five sections of Understand"><a href="understand-tile.html"><span>1</span>The knot and the tile</a><a href="understand-drawing.html" aria-current="page"><span>2</span>The drawing</a><a href="understand-strand.html"><span>3</span>One endless strand</a><a href="understand-levels.html"><span>4</span>Every level the same</a><a href="understand-names.html"><span>5</span>Names and people</a></nav>
+  </section>
+
+  <section class="wrap" style="padding-block:20px 10px">
+    <div class="faq">
+      <details id="drawing" open>
+        <summary>What exactly is drawn on each tile?</summary>
+        <div class="body withfig">
+          <div class="stack" style="gap:12px">
+            <p>Fourteen pieces of ribbon. Each runs from one edge of the tile to another. Each of the 14 edges has one <b>port</b>, a point a little way off the middle of the edge, and two pieces cross there, one over and one under.</p>
+            <p>Inside the tile there is just <b>one crossing</b>. That is about as simple as a design can be.</p>
+            <p>The colours here only tell the 14 pieces apart. On a single tile they are 14 separate pieces.</p>
+          </div>
+          <figure class="fig" id="f-drawing"><figcaption>The 14 pieces, the 14 ports (orange circles) and the one crossing inside (blue).</figcaption></figure>
+        </div>
+      </details>
+
+      <details id="edges">
+        <summary>How do the ribbons meet when tiles touch?</summary>
+        <div class="body withfig">
+          <div class="stack" style="gap:12px">
+            <p>The port on each edge sits 0.15 of the edge&rsquo;s length off the midpoint, to one side or the other depending on the edge. Around the tile the sides alternate, edge by edge. The offset is there only for looks: it makes the curves more pleasing. With every port at the midpoint, the ribbons would join up in exactly the same way.</p>
+            <p>When two spectres meet along an edge, one edge is always an &lsquo;even&rsquo; edge and the other an &lsquo;odd&rsquo; one, so their ports land on exactly the same point. The ribbon leaving one tile carries straight on into the next.</p>
+          </div>
+          <figure class="fig" id="f-edges"><figcaption>The outlined tile and its neighbours. Every ribbon crosses an edge at a port and carries on.</figcaption></figure>
+        </div>
+      </details>
+
+      <details id="one-crossing">
+        <summary>Why just one crossing, and does it matter where it is?</summary>
+        <div class="body withfig">
+          <div class="stack" style="gap:12px">
+            <p>The plainest Celtic recipe has no crossing inside the tile at all: every ribbon just turns back round a corner. On the spectre that fails at once: in every one of the first supertiles, of 8 or 9 tiles, a strand closes into a loop.</p>
+            <p>So change one thing: two ribbons that would have turned round two neighbouring corners cross each other instead. That one crossing is enough. It gives the design a pattern that copies itself: seen from outside, every supertile, however big, looks like the tile again, with a hook round every corner but two and a crossing at those two. That repetition is what the proof runs on (<a href="prove.html#p4">Prove, step 4</a>). The AI search turned up 34 candidate designs; Justin Roughley chose this one and drew its ribbons by hand.</p>
+            <p>Where the crossing goes matters a great deal. There are 14 places it could go, one beside each edge. With it at 8 of them, closed loops appear in supertiles of at most 559 tiles. At the other 6, this one among them, the computer found no loop in any supertile up to 272,791 tiles. Only the design drawn here has been proved.</p>
+            <p>What does not matter is the exact drawing: where precisely inside the tile the two ribbons cross, and how the curves bend. All that counts is which port each piece joins to which. Any drawing with the same joins gives exactly the same strands. Over and under don&rsquo;t change the strands either; they only make the weave alternate.</p>
+          </div>
+          <figure class="fig" id="f-places"><figcaption>The 14 places the crossing could go, one beside each edge. Solid blue: no loop found, up to 272,791 tiles. Dashed orange: loops in supertiles of at most 559 tiles. The six blue places form one unbroken run.</figcaption></figure>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <div class="wrap"><nav class="upn" aria-label="Previous and next section"><a class="btn ghost small" href="understand-tile.html">&larr; 1 The knot and the tile</a><a class="btn ghost small all" href="understand.html">All sections</a><a class="btn small" href="understand-strand.html">3 One endless strand &rarr;</a></nav></div>
+</main>
+<footer class="foot"><div class="wrap"><nav aria-label="More"><a href="index.html">Home</a><a href="see.html">See</a><a href="understand.html">Understand</a><a href="make.html">Make</a><a href="prove.html">Prove</a><a href="made.html">How it was made</a><a href="about.html#credits">Credits and references</a><a href="about.html#cite">Cite</a><a href="about.html#licence">Licence and contact</a></nav><p>The tile is the straight-edged form of the spectre, discovered in 2023 by David Smith, Joseph Samuel Myers, Craig&nbsp;S. Kaplan and Chaim Goodman&#8209;Strauss. The knot: Justin Roughley came up with the original idea of looking for a mono&#8209;stranded aperiodic knot, and then used AI to search for it (2026).</p></div></footer>
+<script src="data/knot-data.js"></script>
+<script src="data/tile-data.js"></script>
+<script src="assets/knot.js"></script>
+<script src="assets/figs.js"></script>
+<script src="assets/site.js"></script>
+<script>
+(function () {
+  'use strict';
+  function put(id, svg) { var f = document.getElementById(id); f.insertAdjacentHTML('afterbegin', svg); }
+  put('f-drawing', SKF.tile({ colours: true, ports: true, cross: true, labels: true, width: 500, label: 'The tile with 14 coloured pieces, its ports and its crossing' }));
+  var D = window.SKDATA, ob = D.boxes[0], cx = (ob[0] + ob[2]) / 2, cy = (ob[1] + ob[3]) / 2, r = 3.3;
+  put('f-edges', SK.snapshot({ level: 1, box: [cx - r, cy - r * 0.75, cx + r, cy + r * 0.75], width: 520, mode: null, markTile: true, markW: 0.06, rimStroke: false, rib: '#7fd6b0', tileEdge: 'rgba(205,235,220,0.5)', tileW: 0.03, label: 'The middle tile and its neighbours' }));
+  put('f-places', SKF.places({ width: 460, label: 'The fourteen places the crossing could go, coloured by whether loops appear' }));
+})();
+</script>
+</body>
+</html>

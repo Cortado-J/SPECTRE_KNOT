@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Why every level behaves the same · Understand · The Spectre Knot</title>
+<meta name="description" content="Why every level of spectre supertiles looks the same to the ribbons of the Spectre Knot: side lengths grow but odd stays odd, explained with black and white corners, the pattern's DNA and the Fibonacci numbers.">
+<link rel="canonical" href="https://cortado-j.github.io/SPECTRE_KNOT/understand-levels.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="The Spectre Knot">
+<meta property="og:title" content="Why every level behaves the same · Understand · The Spectre Knot">
+<meta property="og:description" content="Why every level of spectre supertiles looks the same to the ribbons of the Spectre Knot: side lengths grow but odd stays odd, explained with black and white corners, the pattern's DNA and the Fibonacci numbers.">
+<meta property="og:url" content="https://cortado-j.github.io/SPECTRE_KNOT/understand-levels.html">
+<meta property="og:image" content="https://cortado-j.github.io/SPECTRE_KNOT/img/og-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="The Spectre Knot: one tile, one endless strand">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="img/tile-icon.png">
+<link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="top"><div class="wrap"><a class="brand" href="index.html"><svg viewBox="-1.07 -2.57 5.13 3.63" aria-hidden="true"><g transform="scale(1,-1)"><path d="M0.000,0.000L1.000,0.000L1.500,-0.866L2.366,-0.366L2.366,0.634L3.366,0.634L3.866,1.500L3.000,2.000L2.134,1.500L1.634,2.366L0.634,2.366L-0.366,2.366L-0.866,1.500L0.000,1.000Z" fill="none" stroke="#7fd6b0" stroke-width=".26" stroke-linejoin="round"/><path d="M.5,.35C1.4,.2 1.6,1.3 2.6,1.05" fill="none" stroke="#E69F00" stroke-width=".3" stroke-linecap="round"/></g></svg><span>The Spectre Knot</span></a><nav class="nav" aria-label="Main"><a href="see.html">See</a><a href="understand.html" aria-current="page">Understand</a><a href="make.html">Make</a><a href="prove.html">Prove</a></nav><a class="aibtn" href="made.html">Made with AI</a></div></header>
+<main id="main">
+  <section class="wrap page-head">
+    <div class="kick"><a href="understand.html">Understand</a> &middot; 4 of 5</div>
+    <h1>Why every level behaves the same</h1>
+    <p class="lede">Inside a supertile the ribbons only notice whether each side has an odd or an even number of edges. Going up a level makes every side longer, but never turns odd into even, so to the ribbons every level looks like the smallest one, which the computer checked. Here is why, in pictures.</p>
+    <p class="small mut">This is the idea behind step 7 of the proof; the proof itself is on <a href="prove.html#p7">Prove, step 7</a>.</p>
+    <nav class="toc usec" aria-label="The five sections of Understand"><a href="understand-tile.html"><span>1</span>The knot and the tile</a><a href="understand-drawing.html"><span>2</span>The drawing</a><a href="understand-strand.html"><span>3</span>One endless strand</a><a href="understand-levels.html" aria-current="page"><span>4</span>Every level the same</a><a href="understand-names.html"><span>5</span>Names and people</a></nav>
+  </section>
+
+  <section class="wrap lv" style="padding-block:20px 10px">
+    <div class="faq">
+      <h2 class="ugroup">The step<small>What happens to a supertile&rsquo;s sides from one level to the next.</small></h2>
+
+      <details id="assembly" open>
+        <summary>What changes when you go up a level?</summary>
+        <div class="body">
+          <p>A supertile is built from its children, laid side by side. Here are the eight children of a real &Delta; supertile, each side labelled with its number of edges. Go up a level and every number grows, but no side changes from odd to even, or back.</p>
+          <figure class="lfig">
+            <div class="controls">
+              <div class="stepper"><span>children at level</span><b class="mVal">1</b><span class="ud"><button type="button" class="mUp" aria-label="One level up">&#9650;</button><button type="button" class="mDn" aria-label="One level down">&#9660;</button></span></div>
+              <span id="l-what"></span>
+            </div>
+            <div class="wide"><svg id="l-asm" role="img" aria-label="The eight children of a Δ supertile, each side labelled with its number of edges"></svg></div>
+            <div class="lkey">
+              <span><svg viewBox="0 0 34 10"><line x1="1" y1="5" x2="33" y2="5" stroke="#E69F00" stroke-width="4" stroke-dasharray="6 4"/></svg>odd number of edges</span>
+              <span><svg viewBox="0 0 34 10"><line x1="1" y1="5" x2="33" y2="5" stroke="#7fd6b0" stroke-width="4"/></svg>even</span>
+              <span>thin sides: on the outline of the parent</span>
+            </div>
+            <div class="tally" id="l-tally"></div>
+            <figcaption>Along a side shared by two children the ribbons zigzag, and come out according to odd or even only (<a href="prove.html#p5">Prove, step 5</a>); on the outline, extra edges are just extra hooks. So at every level the ribbons are joined up exactly as at level 1.</figcaption>
+          </figure>
+        </div>
+      </details>
+
+      <details id="dominoes">
+        <summary>How can one check cover every level?</summary>
+        <div class="body">
+          <p><b>Level 1</b> was computed outright: all 18 ways of assembling it (nine kinds, with the crossover either way round) give the same look from outside, the signature that every supertile shares (<a href="prove.html#p4">Prove, step 4</a>). <b>Each next level</b> is the same assembly with sides longer by even amounts, so it has the signature too. Each domino knocks over the next.</p>
+          <figure class="lfig">
+            <div class="controls"><div class="stepper"><span>children at level</span><b class="mVal">1</b><span class="ud"><button type="button" class="mUp" aria-label="One level up">&#9650;</button><button type="button" class="mDn" aria-label="One level down">&#9660;</button></span></div></div>
+            <div class="wide"><svg id="l-dom" viewBox="0 0 860 190" role="img" aria-label="A row of dominoes, one per level"></svg></div>
+            <figcaption>Press &#9650; to push them over: every level up to the one being built has fallen.</figcaption>
+          </figure>
+        </div>
+      </details>
+
+      <h2 class="ugroup">The reason: black and white corners<small>Why odd stays odd, seen in the corners of the tiles.</small></h2>
+
+      <details id="corners">
+        <summary>Why does a side stay odd or even?</summary>
+        <div class="body">
+          <p>Every tile has 14 corners, an even number, so they can be coloured black and white alternately all the way round: a corner is black when it is an even-numbered corner of its tile (v0, v2, &hellip;, v12) and white when it is odd-numbered. Where two tiles meet along an edge, an even-numbered edge always meets an odd-numbered one (the same fact that puts their ports on the same point), so the colours agree. The corners of the whole tiling are coloured like a chessboard: every edge joins a black corner to a white one. (A computer check found no clash in a supertile of every kind four levels up, about 28,000 corners each.)</p>
+          <p>Walk along edges and the colour flips at every step. So a path has an even number of edges exactly when it starts and ends on the same colour. A supertile&rsquo;s side is such a path: it is <b class="even">even</b> when its two end corners match and <b class="odd">odd</b> when they differ.</p>
+          <figure class="lfig">
+            <div class="controls" id="l-colPick"></div>
+            <div class="wide"><svg id="l-cols" role="img" aria-label="A level-2 Δ supertile with every tile corner coloured black or white, and one side split into its children's sides"></svg></div>
+            <div class="lkey"><span><svg viewBox="0 0 34 10"><circle cx="17" cy="5" r="4" fill="#0a1411" stroke="#c9d2dc" stroke-width="1.5"/></svg>black corner</span><span><svg viewBox="0 0 34 10"><circle cx="17" cy="5" r="4" fill="#f4f6f8" stroke="#c9d2dc" stroke-width="1.5"/></svg>white corner</span></div>
+            <div class="tally" id="l-colSum"></div>
+          </figure>
+          <p>So a side&rsquo;s odd-or-even is settled by the colours of its two end corners and nothing else. Its parts, its children&rsquo;s sides, always add up right: an odd part is one change of colour and an even part is none, so an even side has its odd parts in pairs and an odd side has an odd number of them. What the colours do not say on their own is which corners match. That is the next three questions.</p>
+        </div>
+      </details>
+
+      <details id="zigzag">
+        <summary>How do the colours steer the zigzag?</summary>
+        <div class="body">
+          <p>Where two supertiles share a run of edges, the ribbons zigzag along it (<a href="prove.html#p5">Prove, step 5</a>). Colour the corners of the run: they alternate, <i class="cd b" role="img" aria-label="black"></i> <i class="cd w" role="img" aria-label="white"></i> <i class="cd b" role="img" aria-label="black"></i> <i class="cd w" role="img" aria-label="white"></i> &hellip;, because every edge joins black to white. The <b class="lp">blue</b> ribbon is above the run at every black corner <i class="cd b" role="img" aria-label="black"></i> and below it at every white corner <i class="cd w" role="img" aria-label="white"></i>; the <b class="sp">pink</b> one the other way round. So which side a ribbon comes out on is just the colour of the last corner.</p>
+          <figure class="lfig">
+            <div class="controls"><div class="stepper"><span>a run of</span><b id="l-zzN">5</b><span class="ud"><button type="button" id="l-zzUp" aria-label="Longer run">&#9650;</button><button type="button" id="l-zzDn" aria-label="Shorter run">&#9660;</button></span><span>edges</span></div></div>
+            <div class="wide"><svg id="l-zz" role="img" aria-label="Two ribbons zigzagging along a shared run whose corners are coloured black and white"></svg></div>
+            <div class="tally" id="l-zzSum"></div>
+          </figure>
+        </div>
+      </details>
+
+      <details id="levels">
+        <summary>Do the colours match from level to level?</summary>
+        <div class="body">
+          <p>The colouring comes from the tiles themselves, so colours can be compared between levels. Here are a tile, a supertile and a supertile of supertiles, with their key corners: the six main corners, numbered 0 to 5 (the corners of the hexagon a supertile looks like from far away), and the two crossover corners, A and B.</p>
+          <figure class="lfig">
+            <div class="controls" id="l-lvPick"></div>
+            <div class="tri">
+              <div><div class="small-l">a tile</div><svg id="l-lv0" role="img" aria-label="A tile with its 14 corners coloured"></svg><div class="tally" id="l-lv0s"></div></div>
+              <div><div class="small-l">a supertile (level 1)</div><svg id="l-lv1" role="img" aria-label="A level-1 supertile with its key corners coloured"></svg><div class="tally" id="l-lv1s"></div></div>
+              <div><div class="small-l">a supertile of supertiles (level 2)</div><svg id="l-lv2" role="img" aria-label="A level-2 supertile with its key corners coloured"></svg><div class="tally" id="l-lv2s"></div></div>
+            </div>
+          </figure>
+          <p>They match. Every kind has exactly the same colours at its six corners at every level (checked directly up to level 4), and the crossover corners are always A black and B white, like the tile&rsquo;s own crossover corners v0 and v1. For A and B the reason is simple: a supertile&rsquo;s A is its &Gamma; child&rsquo;s A, and so on down to the first tile of a Mystic, where it is that tile&rsquo;s v0, which is black; B is the corner next to A, so it is white. The next question shows why the six corners keep their colours too.</p>
+        </div>
+      </details>
+
+      <details id="follow">
+        <summary>What is the pattern&rsquo;s DNA?</summary>
+        <div class="body">
+          <p>A parent&rsquo;s corner is the same point as a corner of one of its children, and which child, and which of its corners, is the same at every level: it is part of how every level is assembled. So a corner can be followed down. &Delta;&rsquo;s corner 1 is corner 4 of its &Pi; child; that is corner 3 of the &Pi;&rsquo;s &Xi; child; that is corner 4 of the &Xi;&rsquo;s &Pi; child; and so on, down to a single tile, where it is one of the tile&rsquo;s own corners. A point never changes colour, so the corner has that tile corner&rsquo;s colour at every level.</p>
+          <p>Every corner of every kind ends up in one of four loops: corners that are their own child&rsquo;s corner. This is the pattern&rsquo;s DNA.</p>
+          <figure class="lfig">
+            <div class="wide"><svg id="l-loops" role="img" aria-label="The four loops that every supertile corner settles into, each with the tile corner it sits on"></svg></div>
+            <p class="small mut">Pick any corner to follow it down:</p>
+            <div class="wide"><table class="cgrid" id="l-cgrid"></table></div>
+            <div class="tally" id="l-chain"></div>
+            <figcaption>Found by following the corners in the exact construction: which child corner each parent corner is was the same at levels 1, 2 and 3, and from single tiles to level 1 too. Our paper&rsquo;s <a class="res" href="https://cortado-j.github.io/SPECTRE_KNOT_PROOF/#r-prop-pattern">Proposition 2.4</a> <span class="resinfo">(The pattern holds at every level; <span class="st proved">argued</span> <span class="st lean part">Lean, in part</span>)</span> makes the rule the same at every level from level 1 up; that it already holds from the tile is a computer observation, not in the paper.</figcaption>
+          </figure>
+          <p>So the colours of a supertile&rsquo;s corners are copies of the colours of five corners of the tile itself, v0, v5, v6, v7 and v10, and the odd-or-even of every side, which is just whether its two corners match, is fixed once and for all. The only thing the tile has to get right is the one loop of two, &Pi;&rsquo;s corner 4 and &Xi;&rsquo;s corner 3: they swap at every level, and they sit on tile corners v10 and v6, both even, so both black. Had one of them been odd, those corners would change colour at every level, and the sides next to them would switch between odd and even.</p>
+        </div>
+      </details>
+
+      <details id="zoom">
+        <summary>What do the loops look like on the real tiles?</summary>
+        <div class="body">
+          <p>Each loop is a set of nested supertiles pinned at one point. A &Psi; supertile&rsquo;s corner 2 is the corner 2 of its &Psi; child, which is the corner 2 of that one&rsquo;s &Psi; child, and so on: &Psi;s inside &Psi;s, all touching at the same point, down to a single tile. Zoom in on the point and every level looks the same. For &Pi; and &Xi; the supertiles alternate: a &Pi;, inside it a &Xi;, inside that a &Pi;, &hellip;</p>
+          <figure class="lfig">
+            <div class="controls" id="l-zmPick"></div>
+            <div class="controls"><button type="button" class="pick" id="l-zmPlay">&#9654; zoom in</button><label class="small-l" for="l-zmU" style="display:flex;align-items:center;gap:8px">level 4<input id="l-zmU" class="zz-range" type="range" min="0" max="1000" value="0">tile</label></div>
+            <div class="wide"><svg id="l-zm" class="zoomsvg" role="img" aria-label="Nested supertiles of one loop, all sharing the corner at the centre"></svg></div>
+            <div class="tally" id="l-zmCap"></div>
+            <figcaption>A real level-4 supertile and, inside it, the child, grandchild and so on that share the corner at the centre, shaded more strongly at each level, with the children of each drawn in outline. The corner keeps its colour all the way down because it is one point.</figcaption>
+          </figure>
+        </div>
+      </details>
+
+      <h2 class="ugroup">The numbers behind it<small>An aside: the side lengths themselves are Fibonacci numbers, and that is how our paper shows odd stays odd (<a href="prove.html#p6">Prove, step 6</a>).</small></h2>
+
+      <details id="fib">
+        <summary>Where do the Fibonacci numbers come in?</summary>
+        <div class="body">
+          <p>Every side length is a Fibonacci number in disguise. In the Fibonacci numbers each is the sum of the two before, so their odd-or-even goes <b class="odd">odd</b>, <b class="odd">odd</b>, <b class="even">even</b> (odd&nbsp;+&nbsp;odd), and then the same again, for ever: every third one is even.</p>
+          <figure class="lfig">
+            <div class="wide"><svg id="l-fib" role="img" aria-label="The Fibonacci numbers, coloured odd or even, with one type of side's lengths hopping three places per level"></svg></div>
+            <div class="controls" id="l-letPick"></div>
+            <div class="tally" id="l-fibSum"></div>
+            <figcaption>Going up one level moves every side length exactly three places along the Fibonacci numbers (our paper&rsquo;s <a class="res" href="https://cortado-j.github.io/SPECTRE_KNOT_PROOF/#r-prop-fib">Proposition 6.2</a> <span class="resinfo">(Fibonacci side lengths; <span class="st proved">argued</span> <span class="st lean">Lean</span>)</span>). Three places is one whole turn of the odd, odd, even pattern, so each length always lands on the same colour as before. Adding 2, or doubling, is the same at every level, so it cannot change that.</figcaption>
+          </figure>
+        </div>
+      </details>
+
+      <details id="bricks">
+        <summary>Why does it have to be Fibonacci?</summary>
+        <div class="body">
+          <p>Think of a side as a row of bricks of two sizes: a <b class="lp">long</b> brick, L, of 8 edges (an &epsilon; side), and a <b class="sp">short</b> brick, S, of 5 edges (half an &eta; side, which has 10). Let the row grow by one rule: every long brick becomes a long and a short, <b>L&nbsp;&rarr;&nbsp;L&nbsp;S</b>, and every short brick grows into a long one, <b>S&nbsp;&rarr;&nbsp;L</b>.</p>
+          <figure class="lfig">
+            <div class="controls"><button type="button" class="pick" id="l-fstep">+1 round</button><button type="button" class="pick" id="l-flev">+1 level (3 rounds)</button><button type="button" class="pick" id="l-freset">start again</button></div>
+            <div class="wide"><svg id="l-rows" role="img" aria-label="A row of long and short bricks growing round by round; each row is the row above followed by the row above that"></svg></div>
+            <div class="tally" id="l-rowsSum"></div>
+          </figure>
+          <p>That rule is the whole reason for Fibonacci. After a round, the long bricks are all the bricks of the round before (each brick leaves one long brick behind), and the short bricks are the long ones of the round before. So each new row is the row above it followed by the row above that, and its length is the sum of theirs: 8, 13, 21, 34, 55, &hellip; It cannot be anything but Fibonacci.</p>
+          <p>Three rounds make one level of supertiles. A long brick becomes L&nbsp;S&nbsp;L&nbsp;L&nbsp;S: 3 long and 2 short, the same as 3 &epsilon; sides and one &eta; side, which is exactly how a parent&rsquo;s &epsilon; side is made from its children&rsquo;s sides. A short brick becomes L&nbsp;S&nbsp;L, so an &eta; side (two shorts) becomes 4 &epsilon; sides and an &eta; side: again exactly the real recipe. Then the whole row counts as one long brick of the next level, as eight children count as one parent.</p>
+          <figure class="lfig">
+            <div class="small-l">The same rule in two dimensions</div>
+            <div class="wide"><svg id="l-golden" role="img" aria-label="A rectangle growing by one square per round, keeping its shape"></svg></div>
+            <figcaption>A rectangle with sides L and S. Adding a square on its long side gives a rectangle with sides L+S and L: the next pair, by the same rule. The rectangle keeps its shape (its sides settle into the golden ratio, about 1.618 to 1), which is why every round makes the lengths about 1.618 times longer, and every level about 4.236 times (1.618&sup3;). The spectre&rsquo;s sides go up three rounds at a time; the single rounds in between are only for the picture, and so is the order of the bricks along a row: a side&rsquo;s length depends only on how many bricks of each size it has.</figcaption>
+          </figure>
+        </div>
+      </details>
+
+      <details id="sides">
+        <summary>What is a side made of?</summary>
+        <div class="body">
+          <p>Here is a real &Delta; supertile three levels up: 559 tiles, with its eight children outlined. Pick one of its sides. It is made of its children&rsquo;s sides, and each of those is made of its own children&rsquo;s sides, by the same recipe every time: an <b class="lp">&epsilon;</b> side is three &epsilon; sides and one <b class="sp">&eta;</b> side, and an &eta; side is four &epsilon; sides and one &eta; side. Those are the long and short bricks above, with &epsilon; as one long brick and &eta; as two short ones.</p>
+          <figure class="lfig">
+            <div class="controls" id="l-realPick"></div>
+            <div class="controls"><button type="button" class="pick" id="l-realC" aria-pressed="true">its children&rsquo;s sides</button><button type="button" class="pick" id="l-realG" aria-pressed="false">its grandchildren&rsquo;s sides</button></div>
+            <div class="wide"><svg id="l-real" role="img" aria-label="A level-3 Δ supertile with one side split into its children's or grandchildren's sides"></svg></div>
+            <div class="tally" id="l-realSum"></div>
+            <figcaption>Every side of every supertile is built like this, in every kind and at every level (our paper&rsquo;s <a class="res" href="https://cortado-j.github.io/SPECTRE_KNOT_PROOF/#r-prop-letters">Proposition 6.1</a> <span class="resinfo">(Lengths by letter; <span class="st proved">argued</span> <span class="st lean">Lean</span>)</span>); that is what makes the lengths grow as they do. Why the spectre&rsquo;s supertiles follow this particular recipe is a fact of how the spectre paper fits the children together. Sides with the other letters (&alpha;, &beta;, &gamma;, &delta;, &zeta;, &theta;) are grey here; they too are built from &epsilon; and &eta; sides and a few others.</figcaption>
+          </figure>
+        </div>
+      </details>
+
+      <details id="recipes">
+        <summary>Do the recipes always add up?</summary>
+        <div class="body">
+          <p>A parent&rsquo;s side is made of its children&rsquo;s sides, laid end to end. So its length is a sum, and odd&nbsp;+&nbsp;odd is even, odd&nbsp;+&nbsp;even is odd: the sum&rsquo;s odd-or-even is fixed by how many odd parts it has. Pick one of the &Delta;&rsquo;s six sides:</p>
+          <figure class="lfig">
+            <div class="controls"><div class="stepper"><span>children at level</span><b class="mVal">1</b><span class="ud"><button type="button" class="mUp" aria-label="One level up">&#9650;</button><button type="button" class="mDn" aria-label="One level down">&#9660;</button></span></div></div>
+            <div class="controls" id="l-sidePick"></div>
+            <div class="wide"><svg id="l-bar" role="img" aria-label="One side of the parent, made of its children's sides end to end"></svg></div>
+            <div class="tally" id="l-barSum"></div>
+          </figure>
+          <p>Every side has a type, a small Greek letter, and a side of a given type is always built from the same types of child side, in every kind of supertile and at every level. So eight recipes cover everything. Check each one: the parts always add up to the same odd-or-even as the side itself. That copies level&nbsp;1&rsquo;s odd and even to level&nbsp;2, level&nbsp;2&rsquo;s to level&nbsp;3, and so on for ever (our paper&rsquo;s <a class="res" href="https://cortado-j.github.io/SPECTRE_KNOT_PROOF/#r-cor-parity">Corollary 6.3</a> <span class="resinfo">(Parities are constant; <span class="st proved">argued</span> <span class="st lean">Lean</span>)</span>).</p>
+          <figure class="lfig">
+            <div class="recipes" id="l-recipes"></div>
+            <figcaption>Lengths for children at the level chosen with &#9650;/&#9660; above; the chip on the left is the length one level up.</figcaption>
+          </figure>
+        </div>
+      </details>
+
+      <p class="lnote" style="margin-top:14px">The signature is what a supertile looks like from outside (<a href="prove.html#p4">Prove, step 4</a>): a hook at every corner but two, one crossover, and no ring inside. Since no supertile at any level has a ring, no strand ever closes into a loop, in any spectre tiling whose supertiles fill the plane: the Daedalus Theorem.</p>
+    </div>
+  </section>
+
+  <div class="wrap"><nav class="upn" aria-label="Previous and next section"><a class="btn ghost small" href="understand-strand.html">&larr; 3 One endless strand</a><a class="btn ghost small all" href="understand.html">All sections</a><a class="btn small" href="understand-names.html">5 Names and people &rarr;</a></nav></div>
+</main>
+<footer class="foot"><div class="wrap"><nav aria-label="More"><a href="index.html">Home</a><a href="see.html">See</a><a href="understand.html">Understand</a><a href="make.html">Make</a><a href="prove.html">Prove</a><a href="made.html">How it was made</a><a href="about.html#credits">Credits and references</a><a href="about.html#cite">Cite</a><a href="about.html#licence">Licence and contact</a></nav><p>The tile is the straight-edged form of the spectre, discovered in 2023 by David Smith, Joseph Samuel Myers, Craig&nbsp;S. Kaplan and Chaim Goodman&#8209;Strauss. The knot: Justin Roughley came up with the original idea of looking for a mono&#8209;stranded aperiodic knot, and then used AI to search for it (2026).</p></div></footer>
+<script src="assets/site.js"></script>
+<script src="data/levels-main.js"></script>
+<script src="assets/levels.js"></script>
+</body>
+</html>

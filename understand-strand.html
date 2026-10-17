@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>One endless strand · Understand · The Spectre Knot</title>
+<meta name="description" content="How the pieces of the Spectre Knot join into strands: how many, why they keep joining, why no strand closes into a loop, and why a repeating tiling cannot make one strand.">
+<link rel="canonical" href="https://cortado-j.github.io/SPECTRE_KNOT/understand-strand.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="The Spectre Knot">
+<meta property="og:title" content="One endless strand · Understand · The Spectre Knot">
+<meta property="og:description" content="How the pieces of the Spectre Knot join into strands: how many, why they keep joining, why no strand closes into a loop, and why a repeating tiling cannot make one strand.">
+<meta property="og:url" content="https://cortado-j.github.io/SPECTRE_KNOT/understand-strand.html">
+<meta property="og:image" content="https://cortado-j.github.io/SPECTRE_KNOT/img/og-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="The Spectre Knot: one tile, one endless strand">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="img/tile-icon.png">
+<link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="top"><div class="wrap"><a class="brand" href="index.html"><svg viewBox="-1.07 -2.57 5.13 3.63" aria-hidden="true"><g transform="scale(1,-1)"><path d="M0.000,0.000L1.000,0.000L1.500,-0.866L2.366,-0.366L2.366,0.634L3.366,0.634L3.866,1.500L3.000,2.000L2.134,1.500L1.634,2.366L0.634,2.366L-0.366,2.366L-0.866,1.500L0.000,1.000Z" fill="none" stroke="#7fd6b0" stroke-width=".26" stroke-linejoin="round"/><path d="M.5,.35C1.4,.2 1.6,1.3 2.6,1.05" fill="none" stroke="#E69F00" stroke-width=".3" stroke-linecap="round"/></g></svg><span>The Spectre Knot</span></a><nav class="nav" aria-label="Main"><a href="see.html">See</a><a href="understand.html" aria-current="page">Understand</a><a href="make.html">Make</a><a href="prove.html">Prove</a></nav><a class="aibtn" href="made.html">Made with AI</a></div></header>
+<main id="main">
+  <section class="wrap page-head">
+    <div class="kick"><a href="understand.html">Understand</a> &middot; 3 of 5</div>
+    <h1>One endless strand</h1>
+    <p class="lede">How many strands the pieces make, why they keep joining, why no loop can appear anywhere, and why a repeating tiling could never do it.</p>
+    <nav class="toc usec" aria-label="The five sections of Understand"><a href="understand-tile.html"><span>1</span>The knot and the tile</a><a href="understand-drawing.html"><span>2</span>The drawing</a><a href="understand-strand.html" aria-current="page"><span>3</span>One endless strand</a><a href="understand-levels.html"><span>4</span>Every level the same</a><a href="understand-names.html"><span>5</span>Names and people</a></nav>
+  </section>
+
+  <section class="wrap" style="padding-block:20px 10px">
+    <div class="faq">
+      <details id="how-many" open>
+        <summary>So how many strands does the whole tiling make?</summary>
+        <div class="body withfig">
+          <div class="stack" style="gap:12px">
+            <p><b>One</b>, in the nest tiling drawn here: that is the Ariadne Theorem. (The spectre tiles the plane in infinitely many ways, and the answer may differ: computer checks suggest that some other spectre tilings have three strands. That is evidence, not a proof. In every one whose supertiles fill the plane, though, each strand is endless, by the Daedalus Theorem: none closes up.) Look at a small patch and you see many separate pieces, because each piece soon runs out of the patch. Look at a bigger patch and the pieces join up.</p>
+            <p>Follow the 14 pieces of one tile: in a block of 9 tiles they lie on 5 strands, in 71 tiles on 2, and from 559 tiles on they are one strand. In every block computed, up to 133 million tiles, every tile&rsquo;s pieces join up like this within a few levels. Why it goes on for ever is on the <a href="prove.html">Prove</a> page.</p>
+            <div class="row"><a class="btn small" href="see.html">See it happen &rarr;</a></div>
+          </div>
+          <figure class="fig" id="f-tree"><figcaption>Each dot is a strand through one tile. A line joins it to the strand it becomes in the next, bigger block. 14 pieces, then 5, 2, 1.</figcaption></figure>
+        </div>
+      </details>
+
+      <details id="why-one">
+        <summary>Why does it keep joining, instead of stopping at a few strands?</summary>
+        <div class="body withfig">
+          <div class="stack" style="gap:12px">
+            <p>The spectre tiles group into supertiles of 9 tiles, these into bigger supertiles of 71, then 559, and so on for ever, every level built by the same rule. Seen from outside, every supertile turns out to look the same: the ribbon makes a hook round each corner of its outline, except at the two ends of one edge, where two ribbons cross.</p>
+            <p>Because every supertile looks the same from outside, gluing supertiles together depends only on whether each shared run of edges is even or odd: a run two edges longer behaves exactly like the shorter one. The sides of the supertiles at any level are those at the smallest level made longer by even amounts, so one finite check at the smallest level speaks for all levels. The same idea shows that the gluing keeps merging strands until a given patch lies on one. That every level is glued by the same rule comes from the spectre paper&rsquo;s theorems.</p>
+            <div class="row"><a class="btn small" href="prove.html">The argument, step by step &rarr;</a></div>
+          </div>
+          <figure class="fig" id="f-why"><figcaption>The middle tile&rsquo;s strands at each size: colours join, never split.</figcaption></figure>
+        </div>
+      </details>
+
+      <details id="loops">
+        <summary>Could a closed loop appear somewhere far away?</summary>
+        <div class="body">
+          <div class="stack" style="gap:12px">
+            <p>None can, in the tiling drawn here or in any spectre tiling whose supertiles grow to fill the plane: that is the Daedalus Theorem. Every supertile, of every kind, was assembled by computer up to level 9 (about 133 million tiles) without a single closed loop, and the argument on the <a href="prove.html">Prove</a> page carries this to every level, using the spectre paper&rsquo;s theorems. So every strand runs on for ever in both directions. The page marks what is computed, what is quoted and what is argued, and which parts have also been checked by the Lean proof assistant.</p>
+            <p>It also says plainly what is not covered: tilings with &lsquo;fault lines&rsquo;, where two infinite supertiles meet. And no closed loop is not the same as one strand: one strand, the Ariadne Theorem, is claimed only for the nest tiling drawn here.</p>
+          </div>
+        </div>
+      </details>
+
+      <details id="periodic">
+        <summary>Why can&rsquo;t a repeating tiling do this?</summary>
+        <div class="body withfig">
+          <div class="stack" style="gap:12px">
+            <p>In a repeating pattern, there are two different slides, <b>a</b> and <b>b</b>, that each bring the whole pattern back onto itself. A slide moves every strand onto a strand.</p>
+            <p>If there were only one strand, both slides would have to move that one strand onto itself, so each would run it along its own length: <b>a</b> by some number of pieces, p, and <b>b</b> by some other number, q. However cleverly the strand winds, this fails. Do <b>a</b> q times, then <b>b</b> backwards p times. Along the strand that comes to q&times;p &minus; p&times;q = 0, so every piece is back where it started. But in the plane the two slides point different ways, so the combined slide is not zero and moves every piece. Both can&rsquo;t be true.</p>
+            <p>So it takes a tiling that never repeats. The spectre&rsquo;s is one.</p>
+          </div>
+          <figure class="fig" id="f-periodic"><figcaption>Slide <b>a</b> runs a strand along itself. Slide <b>b</b> lands it on a different strand.</figcaption></figure>
+        </div>
+        <div class="body"><div class="slides" id="f-slides" aria-label="Try it: the two slides, in the plane and along the strand"></div></div>
+      </details>
+    </div>
+  </section>
+
+  <div class="wrap"><nav class="upn" aria-label="Previous and next section"><a class="btn ghost small" href="understand-drawing.html">&larr; 2 The drawing</a><a class="btn ghost small all" href="understand.html">All sections</a><a class="btn small" href="understand-levels.html">4 Every level the same &rarr;</a></nav></div>
+</main>
+<footer class="foot"><div class="wrap"><nav aria-label="More"><a href="index.html">Home</a><a href="see.html">See</a><a href="understand.html">Understand</a><a href="make.html">Make</a><a href="prove.html">Prove</a><a href="made.html">How it was made</a><a href="about.html#credits">Credits and references</a><a href="about.html#cite">Cite</a><a href="about.html#licence">Licence and contact</a></nav><p>The tile is the straight-edged form of the spectre, discovered in 2023 by David Smith, Joseph Samuel Myers, Craig&nbsp;S. Kaplan and Chaim Goodman&#8209;Strauss. The knot: Justin Roughley came up with the original idea of looking for a mono&#8209;stranded aperiodic knot, and then used AI to search for it (2026).</p></div></footer>
+<script src="data/knot-data.js"></script>
+<script src="data/tile-data.js"></script>
+<script src="assets/knot.js"></script>
+<script src="assets/figs.js"></script>
+<script src="assets/site.js"></script>
+<script>
+(function () {
+  'use strict';
+  function put(id, svg) { var f = document.getElementById(id); f.insertAdjacentHTML('afterbegin', svg); }
+  put('f-tree', SKF.tree('t', { width: 560 }));
+  var strip = [0, 1, 2].map(function (k) { return '<div style="flex:1;min-width:0">' + SK.snapshot({ level: k, box: SK.boxOf(k, 0.06), width: 300, mode: 't', markTile: k > 0, markW: k === 2 ? 0.12 : 0.06, tileEdge: 'rgba(205,235,220,0.3)', label: SK.LV[k] }) + '<div class="small mut" style="text-align:center">' + SK.LV[k] + ': ' + [14, 5, 2][k] + (k ? ' strands' : ' pieces') + '</div></div>'; }).join('');
+  put('f-why', '<div style="display:flex;gap:8px;align-items:end;width:100%">' + strip + '</div>');
+  put('f-periodic', SKF.periodic({ width: 520 }));
+  SKF.slides(document.getElementById('f-slides'));
+})();
+</script>
+</body>
+</html>

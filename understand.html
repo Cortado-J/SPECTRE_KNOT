@@ -4,12 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Understand · The Spectre Knot</title>
-<meta name="description" content="Questions and answers about the Spectre Knot: the spectre tile, the drawing on each tile, why no strand ever closes into a loop, and why in the tiling drawn here it is one strand.">
+<meta name="description" content="Questions and answers about the Spectre Knot, in five short sections: the spectre tile, the drawing on each tile, why the pieces join into one endless strand, why every level of supertiles behaves the same, and the names.">
 <link rel="canonical" href="https://cortado-j.github.io/SPECTRE_KNOT/understand.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="The Spectre Knot">
 <meta property="og:title" content="Understand · The Spectre Knot">
-<meta property="og:description" content="Questions and answers about the Spectre Knot: the spectre tile, the drawing on each tile, why no strand ever closes into a loop, and why in the tiling drawn here it is one strand.">
+<meta property="og:description" content="Questions and answers about the Spectre Knot, in five short sections: the spectre tile, the drawing on each tile, why the pieces join into one endless strand, why every level of supertiles behaves the same, and the names.">
 <meta property="og:url" content="https://cortado-j.github.io/SPECTRE_KNOT/understand.html">
 <meta property="og:image" content="https://cortado-j.github.io/SPECTRE_KNOT/img/og-card.png">
 <meta property="og:image:width" content="1200">
@@ -18,6 +18,15 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="img/tile-icon.png">
 <link rel="stylesheet" href="assets/site.css">
+<script>
+// the questions used to be on this page: send an old link (understand.html#periodic) to the page each is on now
+(function () {
+  var at = { what: 'tile', spectre: 'tile', tile11: 'tile', drawing: 'drawing', edges: 'drawing', 'one-crossing': 'drawing',
+    'how-many': 'strand', 'why-one': 'strand', loops: 'strand', periodic: 'strand', names: 'names', who: 'names' };
+  var h = location.hash.slice(1);
+  if (at[h]) location.replace('understand-' + at[h] + '.html#' + h);
+})();
+</script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -26,179 +35,126 @@
   <section class="wrap page-head">
     <div class="kick">Understand</div>
     <h1>Questions and answers</h1>
-    <p class="lede">Everything you might want to ask, each with a picture. Start at the top or open any question.</p>
+    <p class="lede">Everything you might want to ask, in five short sections, each answer with a picture. Start with the first, or go straight to any question.</p>
   </section>
 
   <section class="wrap" style="padding-block:20px 10px">
-    <div class="faq">
-      <details id="what" open>
-        <summary>What is the Spectre Knot?</summary>
-        <div class="body withfig">
-          <div class="stack" style="gap:12px">
-            <p>It is a Celtic knot drawn on a tile. Every tile carries the same small drawing of ribbon, and when the tiles are laid together the ribbons meet across the edges and carry on, weaving over and under.</p>
-            <p>The tile is the spectre, a shape that covers the whole plane but only in patterns that never repeat. The surprise is twofold, and each half is a theorem. The <b>Daedalus Theorem</b>: in every spectre tiling whose supertiles fill the plane, no strand ever closes into a loop. The <b>Ariadne Theorem</b>: in the nest tiling drawn on this site, grown outwards from a single tile, each block sitting in the same place (child number 1) inside the next, all the pieces join into one endless strand, with no second strand. (Both names come from the Greek myth of the labyrinth: <a href="#names">where the names come from</a>.)</p>
-            <div class="row"><a class="btn small" href="see.html">Watch it join up &rarr;</a></div>
-          </div>
-          <figure class="fig" id="f-what"><figcaption>Nine tiles, printed as on the handout. Follow any ribbon: it never closes up.</figcaption></figure>
-        </div>
-      </details>
-
-      <details id="spectre">
-        <summary>What is the spectre, and what does &ldquo;never repeats&rdquo; mean?</summary>
-        <div class="body withfig">
-          <div class="stack" style="gap:12px">
-            <p>Squares and hexagons tile the plane periodically: slide the pattern in the right direction and it lands exactly on itself. For a long time nobody knew whether a single shape could force a tiling that never does this. It was called the <i>einstein</i> problem (&lsquo;one stone&rsquo;).</p>
-            <p>In 2023 David Smith, Joseph Samuel Myers, Craig&nbsp;S. Kaplan and Chaim Goodman&#8209;Strauss found one: first the <i>hat</i>, which needs some copies flipped over, then weeks later the <b>spectre</b>, which needs none. Copies of the spectre cover the whole plane, but every such covering is non-repeating.</p>
-            <p class="small"><a href="https://arxiv.org/abs/2305.17743">Their paper: <i>A chiral aperiodic monotile</i></a>.</p>
-          </div>
-          <figure class="fig" id="f-spectre"><figcaption>71 spectre tiles. They fit together, but no slide of the whole pattern ever brings it back onto itself.</figcaption></figure>
-        </div>
-      </details>
-
-      <details id="tile11">
-        <summary>Is it really a spectre? The edges are straight.</summary>
-        <div class="body withfig">
-          <div class="stack" style="gap:12px">
-            <p>The tile drawn here is the straight-edged form of the spectre, which the paper calls Tile(1,1). Laid without flipping, its copies tile exactly as spectres do, and only in patterns that never repeat.</p>
-            <p>Give each edge the paper&rsquo;s S-curve and you have the strict spectre, which cannot be flipped at all. The knot works the same way on both, because it only depends on how the tiles fit together, not on the exact shape of the edges.</p>
-            <p>The straight edges make the tile easy to cut out and fold. And because it is printed on one side, a flipped tile would show its blank back, so every tile goes down the same way up. That is what keeps out the mirror-image copies, and it is why straight edges are enough.</p>
-          </div>
-          <figure class="fig" id="f-curved"><figcaption>The same tiling, either way: straight edges on the left, curved on the right.</figcaption></figure>
-        </div>
-      </details>
-
-      <details id="drawing">
-        <summary>What exactly is drawn on each tile?</summary>
-        <div class="body withfig">
-          <div class="stack" style="gap:12px">
-            <p>Fourteen pieces of ribbon. Each runs from one edge of the tile to another. Each of the 14 edges has one <b>port</b>, a point a little way off the middle of the edge, and two pieces cross there, one over and one under.</p>
-            <p>Inside the tile there is just <b>one crossing</b>. That is about as simple as a design can be.</p>
-            <p>The colours here only tell the 14 pieces apart. On a single tile they are 14 separate pieces.</p>
-          </div>
-          <figure class="fig" id="f-drawing"><figcaption>The 14 pieces, the 14 ports (orange circles) and the one crossing inside (blue).</figcaption></figure>
-        </div>
-      </details>
-
-      <details id="edges">
-        <summary>How do the ribbons meet when tiles touch?</summary>
-        <div class="body withfig">
-          <div class="stack" style="gap:12px">
-            <p>The port on each edge sits 0.15 of the edge&rsquo;s length off the midpoint, to one side or the other depending on the edge. Around the tile the sides alternate, edge by edge. The offset is there only for looks: it makes the curves more pleasing. With every port at the midpoint, the ribbons would join up in exactly the same way.</p>
-            <p>When two spectres meet along an edge, one edge is always an &lsquo;even&rsquo; edge and the other an &lsquo;odd&rsquo; one, so their ports land on exactly the same point. The ribbon leaving one tile carries straight on into the next.</p>
-          </div>
-          <figure class="fig" id="f-edges"><figcaption>The outlined tile and its neighbours. Every ribbon crosses an edge at a port and carries on.</figcaption></figure>
-        </div>
-      </details>
-
-      <details id="one-crossing">
-        <summary>Why just one crossing, and does it matter where it is?</summary>
-        <div class="body withfig">
-          <div class="stack" style="gap:12px">
-            <p>The plainest Celtic recipe has no crossing inside the tile at all: every ribbon just turns back round a corner. On the spectre that fails at once: in every one of the first supertiles, of 8 or 9 tiles, a strand closes into a loop.</p>
-            <p>So change one thing: two ribbons that would have turned round two neighbouring corners cross each other instead. That one crossing is enough. It gives the design a pattern that copies itself: seen from outside, every supertile, however big, looks like the tile again, with a hook round every corner but two and a crossing at those two. That repetition is what the proof runs on (<a href="prove.html#p4">Prove, step 4</a>). The AI search turned up 34 candidate designs; Justin Roughley chose this one and drew its ribbons by hand.</p>
-            <p>Where the crossing goes matters a great deal. There are 14 places it could go, one beside each edge. With it at 8 of them, closed loops appear in supertiles of at most 559 tiles. At the other 6, this one among them, the computer found no loop in any supertile up to 272,791 tiles. Only the design drawn here has been proved.</p>
-            <p>What does not matter is the exact drawing: where precisely inside the tile the two ribbons cross, and how the curves bend. All that counts is which port each piece joins to which. Any drawing with the same joins gives exactly the same strands. Over and under don&rsquo;t change the strands either; they only make the weave alternate.</p>
-          </div>
-          <figure class="fig" id="f-places"><figcaption>The 14 places the crossing could go, one beside each edge. Solid blue: no loop found, up to 272,791 tiles. Dashed orange: loops in supertiles of at most 559 tiles. The six blue places form one unbroken run.</figcaption></figure>
-        </div>
-      </details>
-
-      <details id="how-many">
-        <summary>So how many strands does the whole tiling make?</summary>
-        <div class="body withfig">
-          <div class="stack" style="gap:12px">
-            <p><b>One</b>, in the nest tiling drawn here: that is the Ariadne Theorem. (The spectre tiles the plane in infinitely many ways, and the answer may differ: computer checks suggest that some other spectre tilings have three strands. That is evidence, not a proof. In every one whose supertiles fill the plane, though, each strand is endless, by the Daedalus Theorem: none closes up.) Look at a small patch and you see many separate pieces, because each piece soon runs out of the patch. Look at a bigger patch and the pieces join up.</p>
-            <p>Follow the 14 pieces of one tile: in a block of 9 tiles they lie on 5 strands, in 71 tiles on 2, and from 559 tiles on they are one strand. In every block computed, up to 133 million tiles, every tile&rsquo;s pieces join up like this within a few levels. Why it goes on for ever is on the <a href="prove.html">Prove</a> page.</p>
-            <div class="row"><a class="btn small" href="see.html">See it happen &rarr;</a></div>
-          </div>
-          <figure class="fig" id="f-tree"><figcaption>Each dot is a strand through one tile. A line joins it to the strand it becomes in the next, bigger block. 14 pieces, then 5, 2, 1.</figcaption></figure>
-        </div>
-      </details>
-
-      <details id="names">
-        <summary>Where do the theorems get their names?</summary>
-        <div class="body">
-          <div class="stack" style="gap:12px">
-            <p>Both come from the Greek myth of the labyrinth. King Minos of Crete had the craftsman Daedalus build a labyrinth to hold the Minotaur, half man and half bull: a maze so tangled that no one who went in could find the way out. Minos&rsquo;s daughter Ariadne gave Theseus a ball of thread. He tied one end at the entrance, unwound it as he went in, killed the Minotaur, and followed the thread back out.</p>
-            <p>The <b>Daedalus Theorem</b> is about the labyrinth itself, the way the passages are built. In every spectre tiling whose supertiles fill the plane, no strand ever closes into a loop: every passage of ribbon runs on for ever in both directions.</p>
-            <p>The <b>Ariadne Theorem</b> is about the thread. In the nest tiling drawn on this site, all the pieces of ribbon join into one thread that runs through every tile, so from any tile you can follow it to any other, however far away.</p>
-            <p>The story carries on into two words used for each tile. Its <b>thread</b> is the shortest stretch of the strand that holds all 14 of its pieces, and its <b>labyrinth</b> is the set of tiles that stretch passes through: the smallest patch in which the tile&rsquo;s pieces all join up. For the starting tile the thread is 112 pieces long and the labyrinth is 19 tiles. Across the 4,401-tile block, half the tiles have a labyrinth of about 60 tiles or fewer, but about one in ten needs thousands. (These are measurements, not part of the proof.)</p>
-          </div>
-        </div>
-      </details>
-
-      <details id="why-one">
-        <summary>Why does it keep joining, instead of stopping at a few strands?</summary>
-        <div class="body withfig">
-          <div class="stack" style="gap:12px">
-            <p>The spectre tiles group into supertiles of 9 tiles, these into bigger supertiles of 71, then 559, and so on for ever, every level built by the same rule. Seen from outside, every supertile turns out to look the same: the ribbon makes a hook round each corner of its outline, except at the two ends of one edge, where two ribbons cross.</p>
-            <p>Because every supertile looks the same from outside, gluing supertiles together depends only on whether each shared run of edges is even or odd: a run two edges longer behaves exactly like the shorter one. The sides of the supertiles at any level are those at the smallest level made longer by even amounts, so one finite check at the smallest level speaks for all levels. The same idea shows that the gluing keeps merging strands until a given patch lies on one. That every level is glued by the same rule comes from the spectre paper&rsquo;s theorems.</p>
-            <div class="row"><a class="btn small" href="prove.html">The argument, step by step &rarr;</a></div>
-          </div>
-          <figure class="fig" id="f-why"><figcaption>The middle tile&rsquo;s strands at each size: colours join, never split.</figcaption></figure>
-        </div>
-      </details>
-
-      <details id="periodic">
-        <summary>Why can&rsquo;t a repeating tiling do this?</summary>
-        <div class="body withfig">
-          <div class="stack" style="gap:12px">
-            <p>In a repeating pattern, there are two different slides, <b>a</b> and <b>b</b>, that each bring the whole pattern back onto itself. A slide moves every strand onto a strand.</p>
-            <p>If there were only one strand, both slides would have to move that one strand onto itself, so each would run it along its own length: <b>a</b> by some number of pieces, p, and <b>b</b> by some other number, q. However cleverly the strand winds, this fails. Do <b>a</b> q times, then <b>b</b> backwards p times. Along the strand that comes to q&times;p &minus; p&times;q = 0, so every piece is back where it started. But in the plane the two slides point different ways, so the combined slide is not zero and moves every piece. Both can&rsquo;t be true.</p>
-            <p>So it takes a tiling that never repeats. The spectre&rsquo;s is one.</p>
-          </div>
-          <figure class="fig" id="f-periodic"><figcaption>Slide <b>a</b> runs a strand along itself. Slide <b>b</b> lands it on a different strand.</figcaption></figure>
-        </div>
-        <div class="body"><div class="slides" id="f-slides" aria-label="Try it: the two slides, in the plane and along the strand"></div></div>
-      </details>
-
-      <details id="loops">
-        <summary>Could a closed loop appear somewhere far away?</summary>
-        <div class="body">
-          <div class="stack" style="gap:12px">
-            <p>None can, in the tiling drawn here or in any spectre tiling whose supertiles grow to fill the plane: that is the Daedalus Theorem. Every supertile, of every kind, was assembled by computer up to level 9 (about 133 million tiles) without a single closed loop, and the argument on the <a href="prove.html">Prove</a> page carries this to every level, using the spectre paper&rsquo;s theorems. So every strand runs on for ever in both directions. The page marks what is computed, what is quoted and what is argued, and which parts have also been checked by the Lean proof assistant.</p>
-            <p>It also says plainly what is not covered: tilings with &lsquo;fault lines&rsquo;, where two infinite supertiles meet. And no closed loop is not the same as one strand: one strand, the Ariadne Theorem, is claimed only for the nest tiling drawn here.</p>
-          </div>
-        </div>
-      </details>
-
-      <details id="who">
-        <summary>Who found what?</summary>
-        <div class="body">
-          <div class="stack" style="gap:12px">
-            <p>The spectre was discovered in 2023 by David Smith, Joseph Samuel Myers, Craig&nbsp;S. Kaplan and Chaim Goodman&#8209;Strauss. Justin Roughley came up with the original idea of looking for a mono&#8209;stranded aperiodic knot, and then used AI to search for it (2026).</p>
-            <p>The search, the computations, the proofs and this website were made with AI: <a href="made.html">Made with AI</a> says who did what. Also <a href="about.html#credits">full credits and references</a>.</p>
-          </div>
-        </div>
-      </details>
+    <div class="ucards">
+      <div class="ucard">
+        <a href="understand-tile.html"><div class="uthumb" id="t-tile"></div><h2><span>1</span>The knot and the tile</h2></a>
+        <ul class="uqs">
+          <li><a href="understand-tile.html#what">What is the Spectre Knot?</a></li>
+          <li><a href="understand-tile.html#spectre">What is the spectre, and what does &ldquo;never repeats&rdquo; mean?</a></li>
+          <li><a href="understand-tile.html#tile11">Is it really a spectre? The edges are straight.</a></li>
+        </ul>
+      </div>
+      <div class="ucard">
+        <a href="understand-drawing.html"><div class="uthumb" id="t-drawing"></div><h2><span>2</span>The drawing on each tile</h2></a>
+        <ul class="uqs">
+          <li><a href="understand-drawing.html#drawing">What exactly is drawn on each tile?</a></li>
+          <li><a href="understand-drawing.html#edges">How do the ribbons meet when tiles touch?</a></li>
+          <li><a href="understand-drawing.html#one-crossing">Why just one crossing, and does it matter where it is?</a></li>
+        </ul>
+      </div>
+      <div class="ucard">
+        <a href="understand-strand.html"><div class="uthumb" id="t-strand"></div><h2><span>3</span>One endless strand</h2></a>
+        <ul class="uqs">
+          <li><a href="understand-strand.html#how-many">So how many strands does the whole tiling make?</a></li>
+          <li><a href="understand-strand.html#why-one">Why does it keep joining, instead of stopping at a few strands?</a></li>
+          <li><a href="understand-strand.html#loops">Could a closed loop appear somewhere far away?</a></li>
+          <li><a href="understand-strand.html#periodic">Why can&rsquo;t a repeating tiling do this?</a></li>
+        </ul>
+      </div>
+      <div class="ucard">
+        <a href="understand-levels.html"><div class="uthumb" id="t-levels"></div><h2><span>4</span>Why every level behaves the same</h2></a>
+        <ul class="uqs">
+          <li><a href="understand-levels.html#assembly">What changes when you go up a level?</a></li>
+          <li><a href="understand-levels.html#corners">Why does a side stay odd or even?</a></li>
+          <li><a href="understand-levels.html#follow">What is the pattern&rsquo;s DNA?</a></li>
+          <li><a href="understand-levels.html#fib">Where do the Fibonacci numbers come in?</a></li>
+        </ul>
+      </div>
+      <div class="ucard">
+        <a href="understand-names.html"><div class="uthumb" id="t-names"></div><h2><span>5</span>Names and people</h2></a>
+        <ul class="uqs">
+          <li><a href="understand-names.html#names">Where do the theorems get their names?</a></li>
+          <li><a href="understand-names.html#who">Who found what?</a></li>
+        </ul>
+      </div>
     </div>
   </section>
 
   <div class="wrap"><div class="next"><div><b>Next: make one, or see the proof</b><p>Print and fold your own tile, or find out how we know it is one strand for ever.</p></div><div class="row"><a class="btn ghost" href="make.html">Make &rarr;</a><a class="btn" href="prove.html">Prove &rarr;</a></div></div></div>
 </main>
 <footer class="foot"><div class="wrap"><nav aria-label="More"><a href="index.html">Home</a><a href="see.html">See</a><a href="understand.html">Understand</a><a href="make.html">Make</a><a href="prove.html">Prove</a><a href="made.html">How it was made</a><a href="about.html#credits">Credits and references</a><a href="about.html#cite">Cite</a><a href="about.html#licence">Licence and contact</a></nav><p>The tile is the straight-edged form of the spectre, discovered in 2023 by David Smith, Joseph Samuel Myers, Craig&nbsp;S. Kaplan and Chaim Goodman&#8209;Strauss. The knot: Justin Roughley came up with the original idea of looking for a mono&#8209;stranded aperiodic knot, and then used AI to search for it (2026).</p></div></footer>
-<script src="data/knot-data.js"></script>
 <script src="data/tile-data.js"></script>
 <script src="assets/knot.js"></script>
 <script src="assets/figs.js"></script>
 <script src="assets/site.js"></script>
 <script>
+// one small picture per section, of an idea from its page
 (function () {
   'use strict';
-  function put(id, svg) { var f = document.getElementById(id); f.insertAdjacentHTML('afterbegin', svg); }
-  var PR = { tileFill: '#fff3c4', tileEdge: 'rgba(20,20,20,0.35)', rib: '#a6dcc4', ribEdge: '#0b6b4e', rimColour: '#141414', tileW: 0.035, rimW: 0.06 };
-  put('f-what', SK.snapshot(Object.assign({ level: 1, box: SK.boxOf(1, 0.04), width: 520, label: 'Nine tiles with their ribbons' }, PR)));
-  put('f-spectre', SK.snapshot({ level: 2, box: SK.boxOf(2, 0.03), width: 520, ribbons: false, tileFill: '#fff3c4', tileEdge: '#3a3a3a', tileW: 0.06, rimColour: '#141414', rimW: 0.12, label: '71 spectre tiles' }));
-  put('f-curved', SKF.curved({ width: 560 }));
-  put('f-drawing', SKF.tile({ colours: true, ports: true, cross: true, labels: true, width: 500, label: 'The tile with 14 coloured pieces, its ports and its crossing' }));
-  var D = window.SKDATA, ob = D.boxes[0], cx = (ob[0] + ob[2]) / 2, cy = (ob[1] + ob[3]) / 2, r = 3.3;
-  put('f-edges', SK.snapshot({ level: 1, box: [cx - r, cy - r * 0.75, cx + r, cy + r * 0.75], width: 520, mode: null, markTile: true, markW: 0.06, rimStroke: false, rib: '#7fd6b0', tileEdge: 'rgba(205,235,220,0.5)', tileW: 0.03, label: 'The middle tile and its neighbours' }));
-  put('f-tree', SKF.tree('t', { width: 560 }));
-  put('f-places', SKF.places({ width: 460, label: 'The fourteen places the crossing could go, coloured by whether loops appear' }));
-  var strip = [0, 1, 2].map(function (k) { return '<div style="flex:1;min-width:0">' + SK.snapshot({ level: k, box: SK.boxOf(k, 0.06), width: 300, mode: 't', markTile: k > 0, markW: k === 2 ? 0.12 : 0.06, tileEdge: 'rgba(205,235,220,0.3)', label: SK.LV[k] }) + '<div class="small mut" style="text-align:center">' + SK.LV[k] + ': ' + [14, 5, 2][k] + (k ? ' strands' : ' pieces') + '</div></div>'; }).join('');
-  put('f-why', '<div style="display:flex;gap:8px;align-items:end;width:100%">' + strip + '</div>');
-  put('f-periodic', SKF.periodic({ width: 520 }));
-  SKF.slides(document.getElementById('f-slides'));
+  var R = window.SKTILE.rim, MUT = '#a3b8ae', MINT = '#7fd6b0', AMB = '#E69F00', BG = '#0d1a16';
+  function put(id, svg) { document.getElementById(id).innerHTML = svg; }
+  function pathOf(P, f) { return 'M' + P.map(function (p) { return f(p).map(function (v) { return v.toFixed(1); }).join(','); }).join('L') + 'Z'; }
+  // 1: the straight-edged tile beside the same tile with every edge an S-curve
+  (function () {
+    var xs = R.map(function (p) { return p[0]; }), ys = R.map(function (p) { return p[1]; }), x0 = Math.min.apply(0, xs), y1 = Math.max.apply(0, ys);
+    var w = Math.max.apply(0, xs) - x0, h = y1 - Math.min.apply(0, ys), k = 100 / h, W = (2 * w + 1.2) * k + 20, H = 120;
+    var f = function (dx) { return function (p) { return [10 + (p[0] - x0 + dx) * k, 10 + (y1 - p[1]) * k]; }; };
+    var c = f(w + 1.2), d = 'M' + c(R[0]).join(',');
+    for (var i = 0; i < R.length; i++) {
+      var A = R[i], C = R[(i + 1) % R.length], ex = C[0] - A[0], ey = C[1] - A[1], nx = -ey * 0.28, ny = ex * 0.28;
+      d += 'C' + c([A[0] + ex / 3 + nx, A[1] + ey / 3 + ny]).join(',') + ' ' + c([A[0] + 2 * ex / 3 - nx, A[1] + 2 * ey / 3 - ny]).join(',') + ' ' + c(C).join(',');
+    }
+    put('t-tile', '<svg viewBox="0 0 ' + W.toFixed(0) + ' ' + H + '" aria-hidden="true"><path d="' + pathOf(R, f(0)) + '" fill="#fff3c4" stroke="#141414" stroke-width="1.5" stroke-linejoin="round"/>' +
+      '<path d="' + d + 'Z" fill="#fff3c4" stroke="#141414" stroke-width="1.5"/></svg>');
+  })();
+  // 2: the tile with its fourteen pieces and its one crossing
+  put('t-drawing', SKF.tile({ colours: true, cross: true, width: 300, pad: 0.3 }));
+  // 3: pieces joining into strands, block by block: 14, then 5, 2, 1
+  (function () {
+    var rows = [14, 5, 2, 1], W = 300, H = 120, y = function (r) { return 14 + r * 31; }, x = function (n, i) { return 30 + (W - 60) * (n > 1 ? i / (n - 1) : 0.5); };
+    var s = ['<svg viewBox="0 0 ' + W + ' ' + H + '" aria-hidden="true">'];
+    for (var r = 0; r < 3; r++) for (var i = 0; i < rows[r]; i++) {
+      var j = Math.min(rows[r + 1] - 1, Math.floor(i * rows[r + 1] / rows[r])), x0 = x(rows[r], i), x1 = x(rows[r + 1], j);
+      s.push('<path d="M' + x0 + ',' + y(r) + 'C' + x0 + ',' + (y(r) + 18) + ' ' + x1 + ',' + (y(r + 1) - 18) + ' ' + x1 + ',' + y(r + 1) + '" fill="none" stroke="' + (r === 2 ? AMB : MINT) + '" stroke-width="2" opacity="' + (r === 2 ? 1 : 0.6) + '"/>');
+    }
+    rows.forEach(function (n, r) { for (var i = 0; i < n; i++) s.push('<circle cx="' + x(n, i) + '" cy="' + y(r) + '" r="' + (r === 3 ? 8 : 5) + '" fill="' + (r === 3 ? AMB : MINT) + '" stroke="' + BG + '" stroke-width="2"/>'); });
+    put('t-strand', s.join('') + '</svg>');
+  })();
+  // 4: a supertile's six corners, black and white, and its sides odd (amber, dashed) or even (mint), with a smaller
+  //    one inside it pinned at the same corner
+  (function () {
+    var col = [0, 0, 1, 1, 0, 0], W = 300, H = 120, hex = function (cx, cy, r) { var p = []; for (var i = 0; i < 6; i++) { var a = Math.PI / 3 * i + Math.PI / 6; p.push([cx + r * Math.cos(a), cy - r * Math.sin(a)]); } return p; };
+    var big = hex(150, 60, 47), a = big[3], small = hex(a[0] + 0.45 * (150 - a[0]), a[1] + 0.45 * (60 - a[1]), 47 * 0.45);
+    var s = ['<svg viewBox="0 0 ' + W + ' ' + H + '" aria-hidden="true">', '<path d="M' + small.map(function (p) { return p.join(','); }).join('L') + 'Z" fill="#183029" stroke="' + MUT + '" stroke-width="1.2"/>'];
+    for (var i = 0; i < 6; i++) {
+      var A = big[i], B = big[(i + 1) % 6], odd = col[i] !== col[(i + 1) % 6];
+      s.push('<path d="M' + A.join(',') + 'L' + B.join(',') + '" stroke="' + (odd ? AMB : MINT) + '" stroke-width="4" stroke-linecap="round"' + (odd ? ' stroke-dasharray="7 5"' : '') + '/>');
+    }
+    big.forEach(function (p, i) { s.push('<circle cx="' + p[0] + '" cy="' + p[1] + '" r="7" fill="' + (col[i] ? '#f4f6f8' : '#0a1411') + '" stroke="#c9d2dc" stroke-width="2"/>'); });
+    put('t-levels', s.join('') + '</svg>');
+  })();
+  // 5: a labyrinth, and the thread through it
+  (function () {
+    // three walls, each with a gap (east, west, east); the thread goes in through each gap and half way round
+    var W = 300, H = 120, cx = 150, cy = 60, g = 0.42, s = ['<svg viewBox="0 0 ' + W + ' ' + H + '" aria-hidden="true">'];
+    var at = function (r, a) { return [(cx + r * Math.cos(a)).toFixed(1), (cy - r * Math.sin(a)).toFixed(1)]; };
+    [[54, 0], [40, Math.PI], [26, 0]].forEach(function (w) {
+      var A = at(w[0], w[1] + g), B = at(w[0], w[1] - g);
+      s.push('<path d="M' + A + 'A' + w[0] + ',' + w[0] + ' 0 1 0 ' + B + '" fill="none" stroke="' + MUT + '" stroke-width="5" stroke-linecap="round"/>');
+    });
+    var t = [[cx + 96, cy], at(47, 0)];
+    for (var a = 0; a <= Math.PI; a += 0.08) t.push(at(47, a));
+    t.push(at(47, Math.PI), at(33, Math.PI));
+    for (a = Math.PI; a <= 2 * Math.PI; a += 0.08) t.push(at(33, a));
+    t.push(at(33, 0), [cx, cy]);
+    s.push('<path d="M' + t.join('L') + '" fill="none" stroke="' + AMB + '" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>');
+    s.push('<circle cx="' + cx + '" cy="' + cy + '" r="5" fill="' + AMB + '"/>');
+    put('t-names', s.join('') + '</svg>');
+  })();
 })();
 </script>
 </body>
