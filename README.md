@@ -2,7 +2,7 @@
 
 A single-strand Celtic knot on the spectre aperiodic monotile: one tile, one ribbon design, and across the spectre tiling drawn on the site (the nest tiling) the pieces join into one endless strand.
 
-Made with AI (Claude, by Anthropic): how, and what has been checked, is on `made.html`.
+Made with AI (Claude, by Anthropic): how, and what has been checked, is on `made.html`. The paper has not been peer reviewed.
 
 This repository is the published website (GitHub Pages). It is generated; the sources live in a separate development repository (`site/src`, built by `publish_site.sh`).
 
