@@ -4,12 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Made with AI · The Spectre Knot</title>
-<meta name="description" content="How the Spectre Knot was made with AI: who did what, what has been checked, and what has not.">
+<meta name="description" content="How the Spectre Knot was made with AI: who did what, and where the proof stands.">
 <link rel="canonical" href="https://cortado-j.github.io/SPECTRE_KNOT/made.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="The Spectre Knot">
 <meta property="og:title" content="Made with AI · The Spectre Knot">
-<meta property="og:description" content="How the Spectre Knot was made with AI: who did what, what has been checked, and what has not.">
+<meta property="og:description" content="How the Spectre Knot was made with AI: who did what, and where the proof stands.">
 <meta property="og:url" content="https://cortado-j.github.io/SPECTRE_KNOT/made.html">
 <meta property="og:image" content="https://cortado-j.github.io/SPECTRE_KNOT/img/og-card.png">
 <meta property="og:image:width" content="1200">
@@ -32,7 +32,7 @@
   <section class="wrap section" style="display:grid;gap:18px">
     <div class="status">
       <h2>The status of the proof</h2>
-      <p>The proofs and the Lean were written by the AI, working with Justin Roughley. Lean checks the combinatorial heart of the proof; the step linking it to actual tilings of the plane (how real supertiles fit together) is argued in words. Justin Roughley has read parts of our paper and spot-checked pictures and counts; most of the proof has not been reviewed by a human, and no professional mathematician has reviewed it. The paper has not been peer reviewed.</p>
+      <p>The proofs and the Lean were written by the AI, working with Justin Roughley. Lean checks the combinatorial heart of the proof; the step linking it to actual tilings of the plane (how real supertiles fit together) is argued in words. Justin Roughley has read parts of our paper and spot-checked pictures and counts; most of the proof has not been reviewed by a human, and no professional mathematician has reviewed it. No human has checked that the Lean&rsquo;s statements say what the theorems say. The paper has not been peer reviewed.</p>
     </div>
     <p class="mut" style="max-width:72ch">AI can turn out a great deal of plausible-looking mathematics very quickly. That is why the proof was also written for Lean, whose checker verifies every step mechanically, and why this page sets out plainly who did what.</p>
   </section>
@@ -56,18 +56,8 @@
   </section>
 
   <section class="wrap section" id="checked">
-    <div class="grid2">
-      <div class="stack" style="align-content:start">
-        <h2>What has been checked</h2>
-        <p class="mut"><b style="color:var(--ink)">By Lean.</b> The combinatorial part of the proof is written out in Lean, a language for proofs whose checker verifies every step mechanically, and Lean accepts it: that every supertile, of every kind and size, looks the same from outside; that no strand closes into a loop; and that in the nest tiling all the pieces join into one strand. It takes as given how real supertiles fit together in the plane, from the spectre paper; that step is argued in words.</p>
-        <p class="mut"><b style="color:var(--ink)">By computer.</b> Every computation the proof relies on has been re-run in full, with logs kept. The geometric computations were done twice, by two separate programs, one in floating point and one in exact arithmetic. Every tool used, with its version, is listed in the <a href="https://cortado-j.github.io/SPECTRE_KNOT_PROOF/downloads/The-Spectre-Knot-paper.pdf">paper</a>&rsquo;s <i>Tool and computational resource disclosure</i>.</p>
-        <p class="mut"><b style="color:var(--ink)">By the AI.</b> The AI reviewed the written argument several times, and the errors it found were fixed.</p>
-      </div>
-      <div class="stack" style="align-content:start">
-        <h2>What has not</h2>
-        <p class="mut">The paper has not been peer reviewed. Most of the proof has not been reviewed by a human, and no professional mathematician has reviewed it. No human has checked that the Lean&rsquo;s statements say what the theorems say. The <a href="prove.html">Prove</a> page marks each step as cited from the spectre paper, computed, or argued in words, with a Lean tag where Lean also checks it, and says exactly which tilings each theorem covers.</p>
-      </div>
-    </div>
+    <h2 style="margin-bottom:12px">What has been checked</h2>
+    <p class="mut" style="max-width:72ch">What has been checked, by Lean, by computer, by the AI and by Justin Roughley, and what has not, is set out on the proof site: <a href="https://cortado-j.github.io/SPECTRE_KNOT_PROOF/#checked">What has been checked</a>. On this site, the <a href="prove.html">Prove</a> page marks each step as cited from the spectre paper, computed, or argued in words, with a Lean tag where Lean also checks it, and says exactly which tilings each theorem covers. Every tool used, with its version, is listed in <a href="https://cortado-j.github.io/SPECTRE_KNOT_PROOF/downloads/The-Spectre-Knot-paper.pdf">our paper</a>&rsquo;s <i>Tool and computational resource disclosure</i>.</p>
   </section>
 
   <section class="wrap section" id="words">

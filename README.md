@@ -2,7 +2,7 @@
 
 A single-strand Celtic knot on the spectre aperiodic monotile: one tile, one ribbon design, and across the spectre tiling drawn on the site (the nest tiling) the pieces join into one endless strand.
 
-Made with AI (Claude, by Anthropic): how, and what has been checked, is on `made.html`. The paper has not been peer reviewed.
+Made with AI (Claude, by Anthropic): how is on `made.html`; what has been checked is on the proof site, https://cortado-j.github.io/SPECTRE_KNOT_PROOF/#checked. The paper has not been peer reviewed.
 
 This repository is the published website (GitHub Pages). It is generated; the sources live in a separate development repository (`site/src`, built by `publish_site.sh`).
 
@@ -11,7 +11,7 @@ This repository is the published website (GitHub Pages). It is generated; the so
 - `understand.html`: questions and answers, with diagrams, in five sections (`understand-*.html`)
 - `make.html`: the fold-up tile and the downloads
 - `prove.html`: the proof, at four depths
-- `made.html`: how AI was used, who did what, and what has been checked
+- `made.html`: how AI was used, and who did what
 - `about.html`: how it was made, credits, citing
 - `downloads/`: the A4 handout, the cut-out page, and the tile as a large PNG
 - `assets/`, `data/`, `img/`: styles, scripts, drawing data and pictures
