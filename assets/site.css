@@ -52,6 +52,14 @@ table.who { width: 100%; border-collapse: collapse; }
 table.who th, table.who td { text-align: left; vertical-align: top; padding: 10px 12px; border-bottom: 1px solid var(--line); }
 table.who th { color: var(--mut); font-weight: 650; font-size: .9rem; }
 table.who td:last-child { color: var(--ink); }
+/* Who did what, three columns: on a phone each row stacks, each cell under its column's name */
+@media (max-width: 560px) {
+  table.who.roles thead { display: none; }
+  table.who.roles tr { display: block; padding: 10px 0; border-bottom: 1px solid var(--line); }
+  table.who.roles td { display: block; border: 0; padding: 3px 0; }
+  table.who.roles td:first-child { font-weight: 650; }
+  table.who.roles td[data-label]::before { content: attr(data-label); display: block; color: var(--mut); font-size: .78rem; font-weight: 650; letter-spacing: .04em; text-transform: uppercase; }
+}
 
 /* page frame */
 main { display: block; }
