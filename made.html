@@ -26,13 +26,13 @@
   <section class="wrap page-head">
     <div class="kick">How this was made</div>
     <h1>Made with AI: an experiment</h1>
-    <p class="lede">The Spectre Knot is an experiment in using AI for mathematical exploration. Justin Roughley came up with the original idea of looking for a mono&#8209;stranded aperiodic knot, and then used AI to search for it. From then on he and an AI system (Claude, by Anthropic) worked together at every stage: the AI did the detailed work, and he directed it, guided it and corrected it. Together they searched for the design, proved the two theorems, wrote a formal version of the proof that the Lean proof assistant checks, and made the paper, this website and the handout. Justin Roughley is the author, and is responsible for the work, including its correctness; the AI is not an author.</p>
+    <p class="lede">The Spectre Knot is an experiment in using AI for mathematical exploration. Justin Roughley came up with the original idea of looking for a mono&#8209;stranded aperiodic knot, and then used AI to search for it. From then on he used an AI system (Claude, by Anthropic) at every stage, to search for the design, prove the two theorems, write a formal version of the proof that the Lean proof assistant checks, and make the paper, this website and the handout: the AI did the detailed work, and he directed it, guided it and corrected it. Justin Roughley is the author, and is responsible for the work, including its correctness; the AI is not an author.</p>
   </section>
 
   <section class="wrap section" style="display:grid;gap:18px">
     <div class="status">
       <h2>The status of the proof</h2>
-      <p>The proofs and the Lean were written by the AI, working with Justin Roughley. Lean checks the combinatorial heart of the proof; the step linking it to actual tilings of the plane (how real supertiles fit together) is argued in words. Justin Roughley has read parts of our paper and spot-checked pictures and counts; most of the proof has not been reviewed by a human, and no professional mathematician has reviewed it. No human has checked that the Lean&rsquo;s statements say what the theorems say. The paper has not been peer reviewed.</p>
+      <p>Justin Roughley used the AI to write the proofs and the Lean. Lean checks the combinatorial heart of the proof; the step linking it to actual tilings of the plane (how real supertiles fit together) is argued in words. Justin Roughley has read parts of the paper and spot-checked pictures and counts; most of the proof has not been reviewed by a human, and no professional mathematician has reviewed it. No human has checked that the Lean&rsquo;s statements say what the theorems say. The paper has not been peer reviewed.</p>
     </div>
     <p class="mut" style="max-width:72ch">AI can turn out a great deal of plausible-looking mathematics very quickly. That is why the proof was also written for Lean, whose checker verifies every step mechanically, and why this page sets out plainly who did what.</p>
   </section>
@@ -43,27 +43,23 @@
       <thead><tr><th>What</th><th>Who</th></tr></thead>
       <tbody>
         <tr><td>The question: is there a single-strand knot tile on an aperiodic monotile?</td><td>Justin Roughley</td></tr>
-        <tr><td>Searching for designs (it produced 34 candidates)</td><td>The AI wrote and ran the search programs, with Justin Roughley guiding the search</td></tr>
-        <tr><td>Choosing design 0.1:01 and drawing its ribbons</td><td>Justin Roughley, by hand, in a tile editor the AI built</td></tr>
-        <tr><td>The computations, up to 133 million tiles</td><td>Programs written by the AI, as Justin Roughley directed</td></tr>
-        <tr><td>The proofs of the two theorems, and our paper setting them out</td><td>The AI, working with Justin Roughley: he directed the work, questioned it and asked for corrections</td></tr>
-        <tr><td>A formal version of the proof&rsquo;s combinatorial part, for the Lean proof assistant</td><td>Written by the AI, at Justin Roughley&rsquo;s direction; every step checked by Lean</td></tr>
+        <tr><td>Searching for designs (it produced 34 candidates)</td><td>Justin Roughley, using the AI to write and run the search programs, and guiding the search</td></tr>
+        <tr><td>Choosing design 0.1:01 and drawing its ribbons</td><td>Justin Roughley, by hand, in a tile editor made with the AI</td></tr>
+        <tr><td>The computations, up to 133 million tiles</td><td>Justin Roughley, using the AI to write the programs</td></tr>
+        <tr><td>The proofs of the two theorems, and the paper setting them out</td><td>Justin Roughley, using the AI for the detailed work: he directed it, questioned it and asked for corrections</td></tr>
+        <tr><td>A formal version of the proof&rsquo;s combinatorial part, for the Lean proof assistant</td><td>Justin Roughley, using the AI to write it; every step checked by Lean</td></tr>
         <tr><td>Naming the theorems and lemmas (the Daedalus Theorem, the Ariadne Theorem, the Signature Theorem; the Zigzag and Grandparent Lemmas)</td><td>Justin Roughley, choosing from names the AI suggested</td></tr>
-        <tr><td>This website, the handout and the figures</td><td>Written and drawn by the AI; Justin Roughley chose the direction and asked for changes</td></tr>
-        <tr><td>Reviewing the proof</td><td>The AI, reviewing its own work in several passes. Justin Roughley has read parts of our paper and spot-checked pictures and counts. No professional mathematician has reviewed it.</td></tr>
+        <tr><td>This website, the handout and the figures</td><td>Justin Roughley, using the AI to write and draw them: he chose the direction and asked for changes</td></tr>
+        <tr><td>Reviewing the proof</td><td>The AI, in several passes, at Justin Roughley&rsquo;s direction. Justin Roughley has read parts of the paper and spot-checked pictures and counts. No professional mathematician has reviewed it.</td></tr>
       </tbody>
     </table></div>
   </section>
 
   <section class="wrap section" id="checked">
     <h2 style="margin-bottom:12px">What has been checked</h2>
-    <p class="mut" style="max-width:72ch">What has been checked, by Lean, by computer, by the AI and by Justin Roughley, and what has not, is set out on the proof site: <a href="https://cortado-j.github.io/SPECTRE_KNOT_PROOF/#checked">What has been checked</a>. On this site, the <a href="prove.html">Prove</a> page marks each step as cited from the spectre paper, computed, or argued in words, with a Lean tag where Lean also checks it, and says exactly which tilings each theorem covers. Every tool used is listed in <a href="https://cortado-j.github.io/SPECTRE_KNOT_PROOF/downloads/The-Spectre-Knot-paper.pdf">our paper</a>&rsquo;s <i>Tool and computational resource disclosure</i>.</p>
+    <p class="mut" style="max-width:72ch">What has been checked, by Lean, by computer, by the AI and by Justin Roughley, and what has not, is set out on the proof site: <a href="https://cortado-j.github.io/SPECTRE_KNOT_PROOF/#checked">What has been checked</a>. On this site, the <a href="prove.html">Prove</a> page marks each step as cited from the spectre paper, computed, or argued in words, with a Lean tag where Lean also checks it, and says exactly which tilings each theorem covers. Every program, including the second or separate ones used as checks, and the Lean, was written with the same AI system. Every tool used is listed in <a href="https://cortado-j.github.io/SPECTRE_KNOT_PROOF/downloads/The-Spectre-Knot-paper.pdf">the paper</a>&rsquo;s <i>Tool and computational resource disclosure</i>.</p>
   </section>
 
-  <section class="wrap section" id="words">
-    <h2 style="margin-bottom:12px">A note on words</h2>
-    <p class="mut" style="max-width:72ch">Where this site says &lsquo;we&rsquo;, it means Justin Roughley working with the AI. Every program, including the second or separate ones used as checks, and the Lean, was written by the AI.</p>
-  </section>
 </main>
 <footer class="foot"><div class="wrap"><nav aria-label="More"><a href="index.html">Home</a><a href="see.html">See</a><a href="understand.html">Understand</a><a href="make.html">Make</a><a href="prove.html">Prove</a><a href="made.html">How it was made</a><a href="about.html#credits">Credits and references</a><a href="about.html#cite">Cite</a><a href="about.html#licence">Licence and contact</a></nav><p>The tile is the straight-edged form of the spectre, discovered in 2023 by David Smith, Joseph Samuel Myers, Craig&nbsp;S. Kaplan and Chaim Goodman&#8209;Strauss. The knot: Justin Roughley came up with the original idea of looking for a mono&#8209;stranded aperiodic knot, and then used AI to search for it (2026).</p></div></footer>
 <script src="assets/site.js"></script>
