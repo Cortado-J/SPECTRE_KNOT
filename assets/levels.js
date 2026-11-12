@@ -442,9 +442,31 @@
     }).join('');
   }
 
+  // ---- a level-1 Δ: its eight children (seven spectres and the two-tile Mystic), numbered in their order
+  function centroid(p) {
+    let a = 0, x = 0, y = 0;
+    p.forEach((q, i) => { const r = p[(i + 1) % p.length], c = q[0] * r[1] - r[0] * q[1]; a += c; x += (q[0] + r[0]) * c; y += (q[1] + r[1]) * c; });
+    return [x / (3 * a), y / (3 * a)];
+  }
+  function initNum() {
+    const all = M.num.flatMap(k => k.t.flat()), xs = all.map(p => p[0]), ys = all.map(p => p[1]);
+    const x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys), S = 520 / (x1 - x0), pad = 14;
+    const P = p => [pad + (p[0] - x0) * S, pad + (y1 - p[1]) * S];
+    const svg = $('l-num'); svg.setAttribute('viewBox', `0 0 ${(520 + 2 * pad).toFixed(0)} ${((y1 - y0) * S + 2 * pad).toFixed(0)}`);
+    const pat = el('pattern', { id: 'l-numHatch', width: 9, height: 9, patternUnits: 'userSpaceOnUse', patternTransform: 'rotate(45)' }, el('defs', {}, svg));
+    el('rect', { width: 9, height: 9, fill: 'var(--fill)' }, pat); el('line', { x1: 0, y1: 0, x2: 0, y2: 9, stroke: 'var(--muted)', 'stroke-width': 2.5 }, pat);
+    const fillOf = k => k.c === 1 ? 'var(--sky)' : k.kind === 'Gamma' ? 'url(#l-numHatch)' : 'var(--fill)';
+    M.num.forEach(k => k.t.forEach(t => el('polygon', { points: t.map(P).map(q => q.join(',')).join(' '), fill: fillOf(k), stroke: 'var(--fg)', 'stroke-width': 1.5, 'stroke-linejoin': 'round' }, svg)));
+    M.num.forEach(k => {
+      const C = P(centroid(k.t[0])), dark = k.c === 1 ? 'var(--bg)' : 'var(--fg)';
+      el('text', { x: C[0], y: C[1] + 4, 'text-anchor': 'middle', 'font-size': 34, 'font-weight': 700, fill: dark, stroke: k.c === 1 ? 'none' : 'var(--fill)', 'stroke-width': 6, 'paint-order': 'stroke' }, svg).textContent = k.c;
+      el('text', { x: C[0], y: C[1] + 28, 'text-anchor': 'middle', 'font-size': 18, fill: k.c === 1 ? 'var(--bg)' : 'var(--muted)', stroke: k.c === 1 ? 'none' : 'var(--fill)', 'stroke-width': 5, 'paint-order': 'stroke' }, svg).textContent = GR[k.kind];
+    });
+  }
+
   // ---- each figure drawn the first time its question opens; the level stepper redraws the ones that use it
   const FIGS = {
-    assembly: { init: initAsm, draw: drawAsm, m: true }, dominoes: { init: initDominoes, draw: drawDominoes, m: true },
+    assembly: { init: initAsm, draw: drawAsm, m: true }, numbering: { init: initNum, draw: () => {} }, dominoes: { init: initDominoes, draw: drawDominoes, m: true },
     corners: { init: initCols, draw: drawCols }, zigzag: { init: initZZ, draw: drawZZ }, levels: { data: 'corners', init: initLevels, draw: drawLevels },
     follow: { init: initFollow, draw: drawChain }, zoom: { data: 'zoom', init: initZoom, draw: zBuild }, fib: { init: initFib, draw: drawFib },
     bricks: { init: initBricks, draw: drawBricks }, sides: { data: 'sides', init: initSides, draw: drawSides }, recipes: { init: initRecipes, draw: drawRecipes, m: true }
