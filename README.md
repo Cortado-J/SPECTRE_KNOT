@@ -13,7 +13,7 @@ This repository is the published website (GitHub Pages). It is generated; the so
 - `prove.html`: the proof, at four depths
 - `made.html`: how AI was used, and who did what
 - `about.html`: how it was made, credits, citing
-- `downloads/`: the A4 handout, the cut-out page, and the tile as a large PNG
+- `downloads/`: the A4 handout, the cut-out page, and the activity (a 68-tile build plan and tiles to cut out)
 - `assets/`, `data/`, `img/`: styles, scripts, drawing data and pictures
 
 The paper (the write-up of the proof), its programs and logs, and the Lean formalisation are on the proof site,
